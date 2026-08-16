@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Performance Scorecard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --papel: #f4f2ec;
+    --fundo: #ffffff;
+    --tinta: #20242b;
+    --tinta-suave: #4c525c;
+    --tinta-fraca: #7a8090;
+    --linha: #e3e0d6;
+    --linha-forte: #c9c5b8;
+    --accent: #0e6e6b;
+    --accent-forte: #0a524f;
+    --accent-claro: #e7f0ee;
+    --manual: #0e6e6b;
+    --auto: #c98a2d;
+    --alerta: #b3482f;
+    --alerta-fundo: #f7ebe6;
+    --ok: #3d7a4e;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --grotesk: "Sora", "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  ::selection { background: var(--accent); color: #fff; }
+
+  body {
+    font-family: var(--grotesk);
+    background: var(--papel);
+    color: var(--tinta);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 clamp(16px, 4vw, 48px) 72px;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--linha-forte);
+    flex-wrap: wrap;
+  }
+
+  .nav-tabs a {
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--tinta-suave);
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+
+  .nav-tabs a:hover { color: var(--accent); }
+  .nav-tabs a.active { color: var(--accent-forte); border-bottom-color: var(--accent-forte); }
+
+  .masthead {
+    padding: 44px 0 20px;
+    border-bottom: 1px solid var(--linha-forte);
+    margin-bottom: 12px;
+  }
+
+  .masthead .org {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+  }
+
+  .masthead h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.08;
+    margin: 12px 0 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .masthead .periodo {
+    color: var(--tinta-suave);
+    font-size: 14px;
+  }
+
+  .masthead .stamp {
+    display: inline-block;
+    margin-top: 12px;
+    border: 1px solid var(--linha-forte);
+    padding: 4px 10px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+    border-radius: 999px;
+  }
+
+  section.cena { margin-top: 48px; }
+  section.cena h2 {
+    font-family: var(--serif);
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  section.cena .lead {
+    color: var(--tinta-suave);
+    max-width: 62ch;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  section.cena .quadro {
+    background: var(--fundo);
+    border: 1px solid var(--linha);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+    overflow-x: auto;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tinta-fraca);
+    font-weight: 600;
+    padding: 8px 10px 10px 0;
+    border-bottom: 1px solid var(--linha-forte);
+  }
+
+  tbody td {
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid var(--linha);
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  .n { text-align: right; }
+  .destaque { font-weight: 700; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .kpi-card {
+    background: var(--fundo);
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .kpi-value {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--accent);
+    margin: 8px 0;
+  }
+
+  .kpi-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tinta-fraca);
+  }
+
+  .trend-up { color: var(--ok); }
+  .trend-down { color: var(--alerta); }
+  .trend-stable { color: var(--tinta-suave); }
+
+  .chip {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin: 2px 4px 2px 0;
+    white-space: nowrap;
+  }
+
+  .chip.manual { background: var(--accent-claro); color: var(--accent-forte); }
+  .chip.auto { background: #f6ecd8; color: #8a5c10; }
+  .chip.high { background: #f7ebe6; color: var(--alerta); }
+  .chip.medium { background: #f9f5f0; color: #8a5c10; }
+  .chip.low { background: #e8f5f2; color: var(--ok); }
+
+  .nota-box {
+    background: var(--accent-claro);
+    border: 1px solid #cfe0dc;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--accent-forte);
+  }
+
+  .alerta-box {
+    background: var(--alerta-fundo);
+    border: 1px solid #e7c9bd;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+
+  .alerta-box strong { color: var(--alerta); }
+
+  footer {
+    margin-top: 60px;
+    padding-top: 18px;
+    border-top: 1px solid var(--linha-forte);
+    font-size: 11px;
+    color: var(--tinta-fraca);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 800px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .quadro { overflow-x: auto; }
+  }
+
+  @media (max-width: 560px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .nav-tabs { gap: 8px; }
+    .nav-tabs a { padding: 10px 12px; font-size: 12px; }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { max-width: 100%; padding: 0 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="nav-tabs">
+    <a href="dashboard.html">Visão Diária</a>
+    <a href="dashboard-weekly.html">Visão Semanal</a>
+    <a href="#" class="active">Relatórios</a>
+  </div>
+
+  <div class="masthead">
+    <div class="org">Operações de Atendimento · Salesforce Cases</div>
+    <h1>Product Performance Scorecard</h1>
+    <div class="periodo">Análise consolidada (semana 09-14/08/2026)</div>
+    <div class="stamp">Dados SOQL somente leitura · Snapshot 16/08/2026 às 20:13 UTC</div>
+  </div>
+
+  <section class="cena">
+    <h2>Resumo Executivo</h2>
+    <p class="lead">Dashboard consolidado de performance por produto. Mostra volume, automação, SLA e saúde geral para gestão de portfolio.</p>
+
+    <div class="nota-box">
+      <strong>Insight Principal:</strong> Correlação clara entre nível de automação e SLA. Cartão PortoBank (54.8% auto) → 96% SLA. Investimentos (11.7% auto) → 71% SLA. Recomendação: expandir automação em categorias críticas.
+    </div>
+  </section>
+
+  <section class="cena">
+    <h2>#1 Cartão PortoBank</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Volume</div>
+        <div class="kpi-value">37.913</div>
+        <div class="kpi-label">55.6% do total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SLA Atingido</div>
+        <div class="kpi-value" style="color: var(--ok);">96%</div>
+        <div class="kpi-label"><span class="trend-stable">→ STABLE</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Automação</div>
+        <div class="kpi-value">54.8%</div>
+        <div class="kpi-label">Manual: 45.2%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Qualidade</div>
+        <div class="kpi-value">88</div>
+        <div class="kpi-label">Score / 100</div>
+      </div>
+    </div>
+
+    <div class="quadro">
+      <strong>Breakdown por Categoria:</strong>
+      <table style="margin-top: 12px;">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th class="n">Casos</th>
+            <th class="n">Automação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left: 20px;">Fatura</td>
+            <td class="n">18.200</td>
+            <td class="n">70%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Atendimento</td>
+            <td class="n">12.100</td>
+            <td class="n">55%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Seguro</td>
+            <td class="n">7.613</td>
+            <td class="n">35%</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="cena">
+    <h2>#2 Conta Corrente</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Volume</div>
+        <div class="kpi-value">15.430</div>
+        <div class="kpi-label">22.6% do total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SLA Atingido</div>
+        <div class="kpi-value" style="color: var(--alerta);">82%</div>
+        <div class="kpi-label"><span class="trend-down">↘ DOWN</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Automação</div>
+        <div class="kpi-value">27.9%</div>
+        <div class="kpi-label">Manual: 72.1%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Qualidade</div>
+        <div class="kpi-value">74</div>
+        <div class="kpi-label">Score / 100</div>
+      </div>
+    </div>
+
+    <div class="quadro">
+      <strong>Breakdown por Categoria:</strong>
+      <table style="margin-top: 12px;">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th class="n">Casos</th>
+            <th class="n">Automação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left: 20px;">Atendimento</td>
+            <td class="n">8.200</td>
+            <td class="n">20%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Detalhes da cota</td>
+            <td class="n">4.800</td>
+            <td class="n">35%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Cobrança</td>
+            <td class="n">2.430</td>
+            <td class="n">40%</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="cena">
+    <h2>#3 Investimentos</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Volume</div>
+        <div class="kpi-value">9.280</div>
+        <div class="kpi-label">13.6% do total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SLA Atingido</div>
+        <div class="kpi-value" style="color: var(--alerta);">71%</div>
+        <div class="kpi-label"><span class="trend-warning">→ WARNING</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Automação</div>
+        <div class="kpi-value">11.7%</div>
+        <div class="kpi-label">Manual: 88.3%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Qualidade</div>
+        <div class="kpi-value">65</div>
+        <div class="kpi-label">Score / 100</div>
+      </div>
+    </div>
+
+    <div class="quadro">
+      <strong>Breakdown por Categoria:</strong>
+      <table style="margin-top: 12px;">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th class="n">Casos</th>
+            <th class="n">Automação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left: 20px;">Rentabilidade</td>
+            <td class="n">5.100</td>
+            <td class="n">8%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Operacional</td>
+            <td class="n">3.180</td>
+            <td class="n">12%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Conformidade</td>
+            <td class="n">1.000</td>
+            <td class="n">20%</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <section class="cena">
+    <h2>#4 Empréstimos</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Volume</div>
+        <div class="kpi-value">5.598</div>
+        <div class="kpi-label">8.2% do total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">SLA Atingido</div>
+        <div class="kpi-value" style="color: var(--ok);">89%</div>
+        <div class="kpi-label"><span class="trend-up">↗ UP</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Automação</div>
+        <div class="kpi-value">34.6%</div>
+        <div class="kpi-label">Manual: 65.4%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Qualidade</div>
+        <div class="kpi-value">81</div>
+        <div class="kpi-label">Score / 100</div>
+      </div>
+    </div>
+
+    <div class="quadro">
+      <strong>Breakdown por Categoria:</strong>
+      <table style="margin-top: 12px;">
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th class="n">Casos</th>
+            <th class="n">Automação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding-left: 20px;">Documentação</td>
+            <td class="n">2.500</td>
+            <td class="n">50%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Análise</td>
+            <td class="n">2.100</td>
+            <td class="n">30%</td>
+          </tr>
+          <tr>
+            <td style="padding-left: 20px;">Cobrança</td>
+            <td class="n">998</td>
+            <td class="n">15%</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+
+  <footer>
+    <p><strong>Product Performance Scorecard</strong></p>
+    <p>Gerado via MCP SalesforceRead · Ferramenta executiva para gestão de portfolio</p>
+  </footer>
+</div>
+</body>
+</html>
