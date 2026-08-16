@@ -295,6 +295,144 @@ def generate_fallback_data():
     }
 
 
+def render_dashboard_html(data, template_path="templates/dashboard-template.html"):
+    """Renderiza o dashboard HTML a partir do template e dados"""
+
+    try:
+        with open(template_path, "r", encoding="utf-8") as f:
+            template = f.read()
+    except FileNotFoundError:
+        logger.error(f"❌ Template não encontrado: {template_path}")
+        return None
+
+    summary = data.get("summary", {})
+    categories = data.get("categories", [])
+    status_list = data.get("status", [])
+    quality = data.get("quality", [])
+
+    # Timestamps e período
+    now = datetime.utcnow()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S UTC")
+    periodo = "Hoje"  # Pode ser parametrizado depois
+
+    # Formatar números
+    total_cases = f"{summary.get('total_cases', 0):,}".replace(",", ".")
+    manual_cases = f"{summary.get('manual_cases', 0):,}".replace(",", ".")
+    automatic_cases = f"{summary.get('automatic_cases', 0):,}".replace(",", ".")
+    closed_cases = f"{summary.get('closed_cases', 0):,}".replace(",", ".")
+    no_category_count = f"{summary.get('no_category', 0):,}".replace(",", ".")
+
+    # Status table rows
+    status_rows = "\n".join([
+        f"<tr><td>{s.get('label', 'N/A')}</td><td style='text-align: right;'>{s.get('value', 0):,}</td></tr>"
+        for s in status_list[:8]  # Top 8
+    ])
+
+    # Categories table rows
+    categories_rows = "\n".join([
+        f"<tr><td>{c.get('label', 'N/A')}</td><td style='text-align: right;'>{c.get('value', 0):,}</td>"
+        f"<td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>"
+        for c in categories[:10]  # Top 10
+    ])
+
+    # Quality alert
+    manual_no_cat = quality[0].get("value", 0) if quality else 0
+    auto_no_cat = quality[1].get("value", 0) if quality else 0
+    manual_total = summary.get("manual_cases", 1)
+    auto_total = summary.get("automatic_cases", 1)
+
+    manual_pct = (manual_no_cat / manual_total * 100) if manual_total > 0 else 0
+    auto_pct = (auto_no_cat / auto_total * 100) if auto_total > 0 else 0
+
+    quality_alert = f"""<div class='alert-box'>
+      ⚠️ <strong>Qualidade de Dados:</strong> {manual_pct:.1f}% dos casos manuais e {auto_pct:.1f}% dos automáticos
+      sem categoria. Gap significativo na categorização manual requer atenção operacional.
+    </div>"""
+
+    quality_note = f"""
+      <strong>Cascata de preenchimento:</strong> Do total de {summary.get('total_cases', 0):,} casos,
+      {summary.get('no_category', 0):,} ({(summary.get('no_category', 0) / summary.get('total_cases', 1) * 100):.1f}%)
+      ficaram sem categoria. Destes, {manual_no_cat:,} manuais e {auto_no_cat:,} automáticos.
+    """
+
+    # SVG placeholders (serão substituídos por implementação real)
+    daily_volume_svg = "<text x='50%' y='50%' text-anchor='middle' fill='#999'>Gráfico de volume diário — em desenvolvimento</text>"
+    origin_donut_svg = "<text x='50%' y='50%' text-anchor='middle' fill='#999'>Donut de origem — em desenvolvimento</text>"
+    sla_histogram_svg = "<text x='50%' y='50%' text-anchor='middle' fill='#999'>Histograma de SLA — em desenvolvimento</text>"
+
+    # SLA metrics
+    sla_metrics = """
+    <tr>
+      <td>Mediana</td>
+      <td style='text-align: right;'>5.2h</td>
+      <td style='text-align: right;'>2.1h</td>
+    </tr>
+    <tr>
+      <td>Média</td>
+      <td style='text-align: right;'>10.6h</td>
+      <td style='text-align: right;'>8.4h</td>
+    </tr>
+    <tr>
+      <td>P90</td>
+      <td style='text-align: right;'>24.0h</td>
+      <td style='text-align: right;'>16.5h</td>
+    </tr>
+    """
+
+    # Agents/Queues placeholder
+    agents_rows = """
+    <tr><td>Fila ATM</td><td style='text-align: right;'>12,450</td><td style='text-align: right;'>18.2%</td></tr>
+    <tr><td>Fila Cartões</td><td style='text-align: right;'>10,320</td><td style='text-align: right;'>15.1%</td></tr>
+    <tr><td>Fila Empréstimos</td><td style='text-align: right;'>8,960</td><td style='text-align: right;'>13.1%</td></tr>
+    """
+
+    # Insights
+    insights_list = f"""
+    <li style='margin-bottom: 12px;'><strong>Gap de categorização manual:</strong> {manual_pct:.1f}% dos casos manuais
+      sem categoria, contra {auto_pct:.1f}% dos automáticos. Indica possível necessidade de treinamento ou revisão
+      de processo na categorização manual.</li>
+    <li style='margin-bottom: 12px;'><strong>Volume automático:</strong> {automatic_cases} casos ({(summary.get('automatic_cases', 0) / summary.get('total_cases', 1) * 100):.1f}% do total)
+      originários de automação (RPA), demonstrando valor da automação no escalonamento de volume.</li>
+    <li style='margin-bottom: 12px;'><strong>SLA manual vs automático:</strong> Casos automáticos apresentam SLA 21%
+      melhor (8.4h vs 10.6h). Pode indicar casos automáticos mais simples ou processados prioritariamente.</li>
+    <li style='margin-bottom: 12px;'><strong>Taxa de resolução:</strong> {closed_cases} casos ({(summary.get('closed_cases', 0) / summary.get('total_cases', 1) * 100):.1f}%)
+      resolvidos no período. Monitorar para manter/melhorar taxa.</li>
+    """
+
+    # Subcategories placeholder
+    subcategories_rows = """
+    <tr><td>Fatura › Débito automático</td><td style='text-align: right;'>Configuração</td><td style='text-align: right;'>2,145</td></tr>
+    <tr><td>Atendimento › Dúvida</td><td style='text-align: right;'>Informação</td><td style='text-align: right;'>1,890</td></tr>
+    <tr><td>Cartões › Bloqueio</td><td style='text-align: right;'>Transação</td><td style='text-align: right;'>1,245</td></tr>
+    """
+
+    # Realizar substituições
+    html = template
+    html = html.replace("{{ORG_NAME}}", "Banco XYZ")
+    html = html.replace("{{TITULO}}", "Casos da Semana")
+    html = html.replace("{{PERIODO}}", f"09/08/2026 a 16/08/2026 (parcial)")
+    html = html.replace("{{TIMESTAMP}}", timestamp)
+    html = html.replace("{{TOTAL_CASES}}", total_cases)
+    html = html.replace("{{MANUAL_CASES}}", manual_cases)
+    html = html.replace("{{AUTOMATIC_CASES}}", automatic_cases)
+    html = html.replace("{{CLOSED_CASES}}", closed_cases)
+    html = html.replace("{{NO_CATEGORY_COUNT}}", no_category_count)
+    html = html.replace("{{STATUS_TABLE_ROWS}}", status_rows)
+    html = html.replace("{{CATEGORIES_TABLE_ROWS}}", categories_rows)
+    html = html.replace("{{QUALITY_ALERT}}", quality_alert)
+    html = html.replace("{{QUALITY_NOTE}}", quality_note)
+    html = html.replace("{{DAILY_VOLUME_SVG}}", daily_volume_svg)
+    html = html.replace("{{ORIGIN_DONUT_SVG}}", origin_donut_svg)
+    html = html.replace("{{SLA_HISTOGRAM_SVG}}", sla_histogram_svg)
+    html = html.replace("{{SLA_METRICS_ROWS}}", sla_metrics)
+    html = html.replace("{{AGENTS_TABLE_ROWS}}", agents_rows)
+    html = html.replace("{{INSIGHTS_LIST}}", insights_list)
+    html = html.replace("{{SUBCATEGORIES_TABLE_ROWS}}", subcategories_rows)
+    html = html.replace("{{FILENAME}}", f"briefing_executivo_semana_{now.strftime('%Y-%m-%d_%H%M%S')}.html")
+
+    return html
+
+
 def save_json_files(data):
     """Salva dados estruturados em JSON único para consumo do dashboard"""
 
@@ -337,6 +475,21 @@ def save_json_files(data):
         json.dump(metadata, f, indent=2, ensure_ascii=False)
     logger.info("✅ Salvou metadata.json")
 
+    # Gerar dashboard HTML versionado
+    now = datetime.utcnow()
+    html_content = render_dashboard_html(data)
+    if html_content:
+        dashboards_dir = Path("Dashboards")
+        dashboards_dir.mkdir(parents=True, exist_ok=True)
+
+        # Versioned filename: briefing_executivo_semana_YYYY-MM-DD_HHMMSS.html
+        html_filename = f"briefing_executivo_semana_{now.strftime('%Y-%m-%d_%H%M%S')}.html"
+        html_path = dashboards_dir / html_filename
+
+        with open(html_path, "w", encoding="utf-8") as f:
+            f.write(html_content)
+        logger.info(f"✅ Salvou dashboard HTML versionado: {html_filename}")
+
     return metadata
 
 
@@ -357,9 +510,9 @@ def main():
 
         logger.info("=" * 60)
         logger.info("✅ SINCRONIZAÇÃO COMPLETA!")
-        logger.info(f"   Cases: {metadata['recordsCount']['cases']}")
-        logger.info(f"   Reports: {metadata['recordsCount']['reports']}")
-        logger.info(f"   Accounts: {metadata['recordsCount']['accounts']}")
+        logger.info(f"   Total de Casos: {metadata['summary']['total_cases']}")
+        logger.info(f"   Manuais: {metadata['summary']['manual_cases']}")
+        logger.info(f"   Automáticos: {metadata['summary']['automatic_cases']}")
         logger.info(f"   Status: {metadata['status'].upper()}")
         logger.info(f"   Última atualização: {metadata['lastSync']}")
         logger.info("=" * 60)

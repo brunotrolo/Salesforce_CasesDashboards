@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITULO}} — Briefing Executivo de Casos</title>
+  <style>
+    :root {
+      --page-bg: #f4f2ec;
+      --surface-white: #ffffff;
+      --text-main: #20242b;
+      --text-soft: #4c525c;
+      --text-weak: #7a8090;
+      --border-light: #e3e0d6;
+      --border-strong: #c9c5b8;
+      --accent-teal: #0e6e6b;
+      --accent-teal-strong: #0a524f;
+      --accent-teal-light: #e7f0ee;
+      --accent-amber: #c98a2d;
+      --accent-amber-bg: #f6ecd8;
+      --accent-amber-text: #8a5c10;
+      --alert-red: #b3482f;
+      --alert-red-bg: #f7ebe6;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: clamp(16px, 4vw, 48px);
+      background: var(--page-bg);
+      font-family: 'Sora', -apple-system, system-ui, sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Display/Headings: Newsreader Serif */
+    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600&family=Sora:wght@400;700&display=swap');
+
+    h1, h2, h3, h4 { font-family: 'Newsreader', serif; font-weight: 400; }
+    h1 { font-size: clamp(30px, 5vw, 44px); margin: 0 0 8px; }
+    h2 { font-size: clamp(24px, 4vw, 32px); margin: 0 0 12px; }
+    h3 { font-size: 18px; margin: 0 0 8px; }
+
+    /* Masthead Editorial */
+    .masthead {
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .masthead-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+    .org-name {
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-weak);
+    }
+    .data-badge {
+      font-size: 12px;
+      background: var(--alert-red-bg);
+      color: var(--alert-red);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .period-info {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-top: 8px;
+    }
+
+    /* Status Ruler (5 KPIs) */
+    .status-ruler {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: var(--surface-white);
+    }
+    @media (max-width: 900px) {
+      .status-ruler {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 560px) {
+      .status-ruler {
+        grid-template-columns: 1fr;
+      }
+    }
+    .kpi {
+      padding: 24px 26px;
+      border-right: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .kpi:last-child {
+      border-right: none;
+      border-bottom: none;
+    }
+    .kpi.alert {
+      background: var(--alert-red-bg);
+    }
+    .kpi-label {
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-weak);
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-family: 'Newsreader', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .kpi.alert .kpi-value {
+      color: var(--alert-red);
+    }
+
+    /* Scene Container */
+    .scene {
+      margin-bottom: 48px;
+    }
+    .scene-title {
+      font-family: 'Newsreader', serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 12px;
+    }
+    .scene-lead {
+      font-size: 15px;
+      color: var(--text-soft);
+      max-width: 62ch;
+      margin-bottom: 20px;
+    }
+
+    /* Data Frame (white box) */
+    .frame {
+      background: var(--surface-white);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: clamp(24px, 4vw, 26px);
+    }
+
+    /* Charts: SVG styling */
+    .chart-container {
+      margin: 20px 0;
+    }
+    svg { max-width: 100%; height: auto; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      background: var(--page-bg);
+      padding: 12px 8px;
+      text-align: left;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-weak);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-light);
+    }
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--border-light);
+      font-variant-numeric: tabular-nums;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* Chips: Manual/Automático */
+    .chip {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .chip-manual {
+      background: var(--accent-teal-light);
+      color: var(--accent-teal-strong);
+    }
+    .chip-auto {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      background: var(--alert-red-bg);
+      border: 1px solid var(--alert-red);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      color: var(--alert-red);
+      font-size: 14px;
+    }
+    .note-box {
+      background: var(--accent-teal-light);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: var(--accent-teal-strong);
+    }
+
+    /* Responsive tables */
+    @media (max-width: 720px) {
+      table { font-size: 12px; }
+      th, td { padding: 8px 4px; }
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-light);
+      font-size: 12px;
+      color: var(--text-weak);
+    }
+
+    /* Print: white bg, no shadows */
+    @media print {
+      body { background: white; }
+      .frame { box-shadow: none; }
+    }
+
+    /* Browser UI theming */
+    ::selection {
+      background: var(--accent-teal);
+      color: white;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--page-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <!-- DIRECTION CONTRACT · seed 007ba89f -->
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-header">
+      <div>
+        <div class="org-name">{{ORG_NAME}}</div>
+        <h1>{{TITULO}}</h1>
+      </div>
+      <div class="data-badge">DADOS SOQL SOMENTE LEITURA</div>
+    </div>
+    <div class="period-info">
+      Período: {{PERIODO}} · Atualizado em {{TIMESTAMP}}
+    </div>
+  </div>
+
+  <!-- Status Ruler: 5 KPIs -->
+  <div class="status-ruler">
+    <div class="kpi">
+      <div class="kpi-label">Casos Criados</div>
+      <div class="kpi-value">{{TOTAL_CASES}}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Manuais</div>
+      <div class="kpi-value">{{MANUAL_CASES}}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Automáticos</div>
+      <div class="kpi-value">{{AUTOMATIC_CASES}}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Encerrados</div>
+      <div class="kpi-value">{{CLOSED_CASES}}</div>
+    </div>
+    <div class="kpi alert">
+      <div class="kpi-label">Sem Categoria</div>
+      <div class="kpi-value">{{NO_CATEGORY_COUNT}}</div>
+    </div>
+  </div>
+
+  <!-- Cena 1: Volume Diário -->
+  <div class="scene">
+    <h2 class="scene-title">Volume Diário</h2>
+    <p class="scene-lead">Composição manual e automático ao longo do período.</p>
+    <div class="frame">
+      <div class="chart-container">
+        <svg viewBox="0 0 980 260" style="background: white; border-radius: 8px; display: block; margin: 0 auto;">
+          {{DAILY_VOLUME_SVG}}
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cena 2: Origem + Status -->
+  <div class="scene">
+    <h2 class="scene-title">Distribuição: Origem e Status</h2>
+    <p class="scene-lead">Manual versus automático, e estados dos casos no período.</p>
+    <div class="frame">
+      <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; align-items: start;">
+        <!-- Donut -->
+        <div class="chart-container">
+          <svg viewBox="0 0 320 240" style="display: block; margin: 0 auto;">
+            {{ORIGIN_DONUT_SVG}}
+          </svg>
+        </div>
+        <!-- Status Table -->
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th style="text-align: right;">Quantidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{STATUS_TABLE_ROWS}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cena 3: Categorias + Qualidade -->
+  <div class="scene">
+    <h2 class="scene-title">Categorização: Top Categorias e Qualidade de Dado</h2>
+    <p class="scene-lead">Distribuição por categoria e gap de preenchimento manual versus automático.</p>
+    <div class="frame">
+      {{QUALITY_ALERT}}
+      <table>
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th style="text-align: right;">Total</th>
+            <th style="text-align: center;">Origem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{CATEGORIES_TABLE_ROWS}}
+        </tbody>
+      </table>
+      <div class="note-box" style="margin-top: 20px;">
+        {{QUALITY_NOTE}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Cena 4: Hierarquia de Categorias -->
+  <div class="scene">
+    <h2 class="scene-title">Hierarquia: Subcategorias e Detalhes</h2>
+    <p class="scene-lead">Profundidade analítica da categorização.</p>
+    <div class="frame">
+      <table>
+        <thead>
+          <tr>
+            <th>Subcategoria</th>
+            <th style="text-align: right;">Detalhes</th>
+            <th style="text-align: right;">Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{SUBCATEGORIES_TABLE_ROWS}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cena 5: SLA -->
+  <div class="scene">
+    <h2 class="scene-title">SLA: Tempo até Fechamento</h2>
+    <p class="scene-lead">Mediana, média e percentil 90 do tempo de resolução por origem.</p>
+    <div class="frame">
+      <div class="chart-container">
+        <svg viewBox="0 0 980 240" style="background: white; border-radius: 8px; display: block; margin: 0 auto;">
+          {{SLA_HISTOGRAM_SVG}}
+        </svg>
+      </div>
+      <table style="margin-top: 24px; font-size: 13px;">
+        <thead>
+          <tr>
+            <th>Métrica</th>
+            <th style="text-align: right;">Manual (horas)</th>
+            <th style="text-align: right;">Automático (horas)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{SLA_METRICS_ROWS}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cena 6: Carga Operacional -->
+  <div class="scene">
+    <h2 class="scene-title">Operacional: Top Atendentes e Filas</h2>
+    <p class="scene-lead">Distribuição de carga por atendente/fila.</p>
+    <div class="frame">
+      <table>
+        <thead>
+          <tr>
+            <th>Atendente/Fila</th>
+            <th style="text-align: right;">Casos</th>
+            <th style="text-align: right;">% do Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{AGENTS_TABLE_ROWS}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cena 7: Insights Gerenciais -->
+  <div class="scene">
+    <h2 class="scene-title">Insights Gerenciais</h2>
+    <p class="scene-lead">Achados principais para decisão operacional.</p>
+    <div class="frame">
+      <ul style="list-style: none; padding: 0;">
+        {{INSIGHTS_LIST}}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      <strong>Fonte de dados:</strong> Salesforce (objeto Case) via SOQL, somente leitura. Período: {{PERIODO}} · Gerado em {{TIMESTAMP}}<br>
+      <strong>Método:</strong> Dashboard executivo automatizado via CI/CD. Arquivo: {{FILENAME}}<br>
+      <strong>Versão:</strong> v2.0 (template-based, versionado com timestamp)
+    </p>
+  </footer>
+
+</body>
+</html>
