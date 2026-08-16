@@ -1,0 +1,85 @@
+name: Gerar Relatórios e Dashboards
+
+on:
+  schedule:
+    # Executar diariamente às 6h UTC (03h GMT-3)
+    - cron: '0 6 * * *'
+
+  # Permitir execução manual via GitHub Actions UI
+  workflow_dispatch:
+
+  # Executar ao fazer push para main
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/generate_*.py'
+      - '.github/workflows/generate-reports.yml'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Gerar todos os dashboards e relatórios
+        run: |
+          echo "📊 Gerando Visão Diária e Semanal..."
+          python scripts/generate_dashboard.py both
+
+          echo "📋 Gerando 7 Relatórios Estratégicos..."
+          python scripts/generate_reports.py all
+
+          echo "✅ Geração concluída com sucesso"
+
+      - name: Verificar arquivos gerados
+        run: |
+          echo "Dashboards:"
+          ls -lh docs/dashboard*.html || true
+          echo ""
+          echo "Relatórios:"
+          ls -lh docs/report-*.html || true
+          echo ""
+          echo "Portais:"
+          ls -lh docs/*briefing.html docs/reports-index.html || true
+
+      - name: Configurar Git
+        run: |
+          git config --local user.email "github-actions@github.com"
+          git config --local user.name "GitHub Actions"
+
+      - name: Commit e Push das mudanças
+        run: |
+          # Verificar se há mudanças
+          if git diff --quiet docs/; then
+            echo "✓ Nenhuma mudança nos dashboards/relatórios"
+          else
+            echo "📝 Enviando atualização de dashboards e relatórios..."
+            git add docs/dashboard*.html docs/report-*.html docs/*briefing.html docs/reports-index.html
+            git commit -m "chore(reports): auto-update dashboards and reports via scheduled workflow"
+            git push
+            echo "✅ Mudanças enviadas com sucesso"
+          fi
+
+      - name: Notificar sucesso
+        if: success()
+        run: echo "✅ Pipeline de relatórios concluído com sucesso!"
+
+      - name: Notificar falha
+        if: failure()
+        run: echo "❌ Pipeline de relatórios falhou. Verifique os logs acima."

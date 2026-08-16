@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatórios Estratégicos — Salesforce Cases</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #f4f2ec 0%, #ede9df 100%);
+    color: #20242b;
+    line-height: 1.6;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #0e6e6b 0%, #0a524f 100%);
+    color: white;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    font-family: "Newsreader", serif;
+  }
+
+  .header p {
+    font-size: 1.1em;
+    opacity: 0.95;
+  }
+
+  .breadcrumb {
+    background: #f4f2ec;
+    padding: 12px 40px;
+    font-size: 0.9em;
+    color: #7a8090;
+  }
+
+  .breadcrumb a {
+    color: #0e6e6b;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .content {
+    padding: 40px;
+  }
+
+  .section-title {
+    font-family: "Newsreader", serif;
+    font-size: 1.8em;
+    color: #0e6e6b;
+    margin: 30px 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #0e6e6b;
+  }
+
+  .reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .report-card {
+    background: white;
+    border: 2px solid #e3e0d6;
+    border-radius: 8px;
+    padding: 24px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .report-card:hover {
+    border-color: #0e6e6b;
+    box-shadow: 0 8px 24px rgba(14, 110, 107, 0.15);
+    transform: translateY(-4px);
+  }
+
+  .report-card.phase-1 {
+    border-left: 6px solid #d97706;
+  }
+
+  .report-card.phase-2 {
+    border-left: 6px solid #f59e0b;
+  }
+
+  .report-card.phase-3 {
+    border-left: 6px solid #6b7280;
+  }
+
+  .report-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    width: fit-content;
+  }
+
+  .badge-phase-1 {
+    background: #fed7aa;
+    color: #92400e;
+  }
+
+  .badge-phase-2 {
+    background: #fef08a;
+    color: #713f12;
+  }
+
+  .badge-phase-3 {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .report-card h3 {
+    font-family: "Newsreader", serif;
+    font-size: 1.3em;
+    margin-bottom: 8px;
+    color: #20242b;
+  }
+
+  .report-card p {
+    font-size: 0.95em;
+    color: #7a8090;
+    flex-grow: 1;
+    margin-bottom: 16px;
+  }
+
+  .report-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.85em;
+    color: #7a8090;
+    padding-top: 16px;
+    border-top: 1px solid #e3e0d6;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .report-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #0e6e6b;
+    font-weight: 600;
+    margin-top: 12px;
+    transition: gap 0.2s ease;
+  }
+
+  .report-card:hover .report-link {
+    gap: 12px;
+  }
+
+  .nav-section {
+    background: #f4f2ec;
+    padding: 24px 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    border-top: 1px solid #e3e0d6;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: white;
+    border: 1px solid #e3e0d6;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #0e6e6b;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background: #0e6e6b;
+    color: white;
+    border-color: #0e6e6b;
+  }
+
+  .footer {
+    background: #20242b;
+    color: white;
+    padding: 24px 40px;
+    text-align: center;
+    font-size: 0.9em;
+  }
+
+  .footer a {
+    color: #0e6e6b;
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 800px) {
+    .header h1 {
+      font-size: 1.8em;
+    }
+
+    .reports-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-title {
+      font-size: 1.4em;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📊 Relatórios Estratégicos</h1>
+    <p>Sistema de análise de Cases do Salesforce — Fase 1, 2 e 3</p>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="./index.html">Home</a> → Relatórios Estratégicos
+  </div>
+
+  <div class="content">
+    <div class="section-title">🔴 Fase 1 — Alta Prioridade (Próximas 2 semanas)</div>
+    <div class="reports-grid">
+      <a href="./report-sla.html" class="report-card phase-1">
+        <span class="report-badge badge-phase-1">FASE 1 — URGENTE</span>
+        <h3>SLA por Categoria</h3>
+        <p>Acompanhamento de SLA por categoria com análise de gap manual vs automático. Detecção de degradação em 48h.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 2 semanas</span>
+          <span class="meta-item">ROI: 5-10%</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+
+      <a href="./report-product-scorecard.html" class="report-card phase-1">
+        <span class="report-badge badge-phase-1">FASE 1 — URGENTE</span>
+        <h3>Product Performance</h3>
+        <p>Scorecard centralizado de performance por produto com SLA, volume e oportunidades de automação.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 2 semanas</span>
+          <span class="meta-item">ROI: 5-8h/semana</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+    </div>
+
+    <div class="section-title">🟡 Fase 2 — Média Prioridade (Semanas 3-4)</div>
+    <div class="reports-grid">
+      <a href="./report-effectiveness.html" class="report-card phase-2">
+        <span class="report-badge badge-phase-2">FASE 2</span>
+        <h3>Manual vs Auto — Comparação</h3>
+        <p>Análise de efetividade com breakdown por categoria, subcategoria e tipo de erro.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 3-4 semanas</span>
+          <span class="meta-item">Impacto: Médio</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+
+      <a href="./report-quality-tracker.html" class="report-card phase-2">
+        <span class="report-badge badge-phase-2">FASE 2</span>
+        <h3>Data Quality Tracker</h3>
+        <p>Trend de categorização com identificação de gaps permanentes e roadmap de melhoria.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 3-4 semanas</span>
+          <span class="meta-item">ROI: 3-5%</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+
+      <a href="./report-capacity.html" class="report-card phase-2">
+        <span class="report-badge badge-phase-2">FASE 2</span>
+        <h3>Capacity Planning</h3>
+        <p>Análise de variação de volume, padrões diários e previsão de demanda operacional.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 3-4 semanas</span>
+          <span class="meta-item">ROI: 3-5%</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+    </div>
+
+    <div class="section-title">🟢 Fase 3 — Futuro (Semana 5+)</div>
+    <div class="reports-grid">
+      <a href="./report-automation-matrix.html" class="report-card phase-3">
+        <span class="report-badge badge-phase-3">FASE 3</span>
+        <h3>RPA Expansion Matrix</h3>
+        <p>Matriz de oportunidades de RPA com ROI score, esforço estimado e timeline.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 5+ semanas</span>
+          <span class="meta-item">Impacto: Estratégico</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+
+      <a href="./report-hierarchy.html" class="report-card phase-3">
+        <span class="report-badge badge-phase-3">FASE 3</span>
+        <h3>Hierarchy Completion</h3>
+        <p>Status de completude de hierarquia (Níveis 1-3) com governance de dados estruturados.</p>
+        <div class="report-meta">
+          <span class="meta-item">⏱️ 5+ semanas</span>
+          <span class="meta-item">Impacto: Governança</span>
+        </div>
+        <span class="report-link">Abrir Relatório →</span>
+      </a>
+    </div>
+
+    <div style="background: #e7f0ee; border-left: 4px solid #0e6e6b; padding: 20px; margin: 30px 0; border-radius: 4px;">
+      <strong style="color: #0e6e6b;">📈 Impacto Total Estimado</strong><br>
+      <p style="margin-top: 10px; font-size: 0.95em;">Redução de custos: <strong>5-10%</strong> | Melhoria de SLA: <strong>+3-5pp</strong> | Economia de tempo: <strong>8-12h/semana</strong></p>
+      <p style="margin-top: 8px; font-size: 0.9em; color: #7a8090;">Roadmap baseado em análise de 327.405 casos (09-14/08/2026) com 63.9% manual e 36.1% automático.</p>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <a href="./index.html" class="nav-link">← Voltar ao Home</a>
+    <a href="./dashboard.html" class="nav-link">📊 Visão Diária</a>
+    <a href="./dashboard-weekly.html" class="nav-link">📈 Visão Semanal</a>
+    <a href="./OPPORTUNITIES.md" class="nav-link">💡 Análise Completa</a>
+  </div>
+
+  <div class="footer">
+    Gerado via MCP SalesforceRead · <a href="https://github.com/brunotrolo/Salesforce_CasesDashboards">GitHub</a>
+    <br>
+    <span style="color: #7a8090;">Últimas atualizações: 16 de agosto de 2026</span>
+  </div>
+</div>
+</body>
+</html>
