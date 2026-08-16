@@ -1,6 +1,232 @@
 {
-  "total": 0,
-  "records": [],
-  "lastSync": "2026-08-16T00:00:00.000Z",
+  "total": 25,
+  "records": [
+    {
+      "id": "5001Q00000Ir000",
+      "number": "001001",
+      "subject": "Suporte Técnico - Caso #1",
+      "status": "New",
+      "priority": "High",
+      "created": "2026-08-16T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir001",
+      "number": "001002",
+      "subject": "Suporte Técnico - Caso #2",
+      "status": "In Progress",
+      "priority": "Medium",
+      "created": "2026-08-15T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir002",
+      "number": "001003",
+      "subject": "Suporte Técnico - Caso #3",
+      "status": "On Hold",
+      "priority": "Low",
+      "created": "2026-08-14T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir003",
+      "number": "001004",
+      "subject": "Suporte Técnico - Caso #4",
+      "status": "Resolved",
+      "priority": "High",
+      "created": "2026-08-13T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir004",
+      "number": "001005",
+      "subject": "Suporte Técnico - Caso #5",
+      "status": "New",
+      "priority": "Medium",
+      "created": "2026-08-12T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir005",
+      "number": "001006",
+      "subject": "Suporte Técnico - Caso #6",
+      "status": "In Progress",
+      "priority": "Low",
+      "created": "2026-08-11T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir006",
+      "number": "001007",
+      "subject": "Suporte Técnico - Caso #7",
+      "status": "On Hold",
+      "priority": "High",
+      "created": "2026-08-10T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir007",
+      "number": "001008",
+      "subject": "Suporte Técnico - Caso #8",
+      "status": "Resolved",
+      "priority": "Medium",
+      "created": "2026-08-09T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir008",
+      "number": "001009",
+      "subject": "Suporte Técnico - Caso #9",
+      "status": "New",
+      "priority": "Low",
+      "created": "2026-08-08T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir009",
+      "number": "001010",
+      "subject": "Suporte Técnico - Caso #10",
+      "status": "In Progress",
+      "priority": "High",
+      "created": "2026-08-07T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir010",
+      "number": "001011",
+      "subject": "Suporte Técnico - Caso #11",
+      "status": "On Hold",
+      "priority": "Medium",
+      "created": "2026-08-06T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir011",
+      "number": "001012",
+      "subject": "Suporte Técnico - Caso #12",
+      "status": "Resolved",
+      "priority": "Low",
+      "created": "2026-08-05T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir012",
+      "number": "001013",
+      "subject": "Suporte Técnico - Caso #13",
+      "status": "New",
+      "priority": "High",
+      "created": "2026-08-04T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir013",
+      "number": "001014",
+      "subject": "Suporte Técnico - Caso #14",
+      "status": "In Progress",
+      "priority": "Medium",
+      "created": "2026-08-03T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir014",
+      "number": "001015",
+      "subject": "Suporte Técnico - Caso #15",
+      "status": "On Hold",
+      "priority": "Low",
+      "created": "2026-08-02T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir015",
+      "number": "001016",
+      "subject": "Suporte Técnico - Caso #16",
+      "status": "Resolved",
+      "priority": "High",
+      "created": "2026-08-16T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir016",
+      "number": "001017",
+      "subject": "Suporte Técnico - Caso #17",
+      "status": "New",
+      "priority": "Medium",
+      "created": "2026-08-15T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir017",
+      "number": "001018",
+      "subject": "Suporte Técnico - Caso #18",
+      "status": "In Progress",
+      "priority": "Low",
+      "created": "2026-08-14T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir018",
+      "number": "001019",
+      "subject": "Suporte Técnico - Caso #19",
+      "status": "On Hold",
+      "priority": "High",
+      "created": "2026-08-13T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir019",
+      "number": "001020",
+      "subject": "Suporte Técnico - Caso #20",
+      "status": "Resolved",
+      "priority": "Medium",
+      "created": "2026-08-12T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir020",
+      "number": "001021",
+      "subject": "Suporte Técnico - Caso #21",
+      "status": "New",
+      "priority": "Low",
+      "created": "2026-08-11T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir021",
+      "number": "001022",
+      "subject": "Suporte Técnico - Caso #22",
+      "status": "In Progress",
+      "priority": "High",
+      "created": "2026-08-10T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir022",
+      "number": "001023",
+      "subject": "Suporte Técnico - Caso #23",
+      "status": "On Hold",
+      "priority": "Medium",
+      "created": "2026-08-09T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir023",
+      "number": "001024",
+      "subject": "Suporte Técnico - Caso #24",
+      "status": "Resolved",
+      "priority": "Low",
+      "created": "2026-08-08T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir024",
+      "number": "001025",
+      "subject": "Suporte Técnico - Caso #25",
+      "status": "New",
+      "priority": "High",
+      "created": "2026-08-07T10:30:00.000Z",
+      "owner": "João Silva"
+    }
+  ],
+  "lastSync": "2026-08-16T18:31:30.603907Z",
   "isLive": false
 }

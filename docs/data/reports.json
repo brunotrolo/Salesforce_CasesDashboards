@@ -1,6 +1,112 @@
 {
-  "total": 0,
-  "records": [],
-  "lastSync": "2026-08-16T00:00:00.000Z",
+  "total": 15,
+  "records": [
+    {
+      "id": "00P1Q00000Ir000",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-15T14:20:00.000Z",
+      "createdBy": "Admin"
+    },
+    {
+      "id": "00P1Q00000Ir001",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-14T14:20:00.000Z",
+      "createdBy": "Gerente"
+    },
+    {
+      "id": "00P1Q00000Ir002",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-13T14:20:00.000Z",
+      "createdBy": "Analista"
+    },
+    {
+      "id": "00P1Q00000Ir003",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-12T14:20:00.000Z",
+      "createdBy": "Admin"
+    },
+    {
+      "id": "00P1Q00000Ir004",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-11T14:20:00.000Z",
+      "createdBy": "Gerente"
+    },
+    {
+      "id": "00P1Q00000Ir005",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-10T14:20:00.000Z",
+      "createdBy": "Analista"
+    },
+    {
+      "id": "00P1Q00000Ir006",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-09T14:20:00.000Z",
+      "createdBy": "Admin"
+    },
+    {
+      "id": "00P1Q00000Ir007",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-08T14:20:00.000Z",
+      "createdBy": "Gerente"
+    },
+    {
+      "id": "00P1Q00000Ir008",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-07T14:20:00.000Z",
+      "createdBy": "Analista"
+    },
+    {
+      "id": "00P1Q00000Ir009",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-06T14:20:00.000Z",
+      "createdBy": "Admin"
+    },
+    {
+      "id": "00P1Q00000Ir010",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-05T14:20:00.000Z",
+      "createdBy": "Gerente"
+    },
+    {
+      "id": "00P1Q00000Ir011",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-04T14:20:00.000Z",
+      "createdBy": "Analista"
+    },
+    {
+      "id": "00P1Q00000Ir012",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-03T14:20:00.000Z",
+      "createdBy": "Admin"
+    },
+    {
+      "id": "00P1Q00000Ir013",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-02T14:20:00.000Z",
+      "createdBy": "Gerente"
+    },
+    {
+      "id": "00P1Q00000Ir014",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-01T14:20:00.000Z",
+      "createdBy": "Analista"
+    }
+  ],
+  "lastSync": "2026-08-16T18:31:30.603927Z",
   "isLive": false
 }

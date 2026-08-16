@@ -1,6 +1,112 @@
 {
-  "total": 0,
-  "records": [],
-  "lastSync": "2026-08-16T00:00:00.000Z",
+  "total": 15,
+  "records": [
+    {
+      "id": "0011Q00000Ir000",
+      "name": "Empresa AB Ltda",
+      "industry": "Technology",
+      "revenue": 20000000,
+      "created": "2026-07-28T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir001",
+      "name": "Empresa BC Ltda",
+      "industry": "Finance",
+      "revenue": 19000000,
+      "created": "2026-07-27T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir002",
+      "name": "Empresa CD Ltda",
+      "industry": "Healthcare",
+      "revenue": 18000000,
+      "created": "2026-07-26T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir003",
+      "name": "Empresa DE Ltda",
+      "industry": "Retail",
+      "revenue": 17000000,
+      "created": "2026-07-25T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir004",
+      "name": "Empresa EF Ltda",
+      "industry": "Technology",
+      "revenue": 16000000,
+      "created": "2026-07-24T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir005",
+      "name": "Empresa FG Ltda",
+      "industry": "Finance",
+      "revenue": 15000000,
+      "created": "2026-07-23T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir006",
+      "name": "Empresa GH Ltda",
+      "industry": "Healthcare",
+      "revenue": 14000000,
+      "created": "2026-07-22T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir007",
+      "name": "Empresa HI Ltda",
+      "industry": "Retail",
+      "revenue": 13000000,
+      "created": "2026-07-21T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir008",
+      "name": "Empresa IJ Ltda",
+      "industry": "Technology",
+      "revenue": 12000000,
+      "created": "2026-07-20T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir009",
+      "name": "Empresa JK Ltda",
+      "industry": "Finance",
+      "revenue": 11000000,
+      "created": "2026-07-19T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir010",
+      "name": "Empresa KL Ltda",
+      "industry": "Healthcare",
+      "revenue": 10000000,
+      "created": "2026-07-18T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir011",
+      "name": "Empresa LM Ltda",
+      "industry": "Retail",
+      "revenue": 9000000,
+      "created": "2026-07-17T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir012",
+      "name": "Empresa MN Ltda",
+      "industry": "Technology",
+      "revenue": 8000000,
+      "created": "2026-07-16T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir013",
+      "name": "Empresa NO Ltda",
+      "industry": "Finance",
+      "revenue": 7000000,
+      "created": "2026-07-15T09:15:00.000Z"
+    },
+    {
+      "id": "0011Q00000Ir014",
+      "name": "Empresa OP Ltda",
+      "industry": "Healthcare",
+      "revenue": 6000000,
+      "created": "2026-07-14T09:15:00.000Z"
+    }
+  ],
+  "lastSync": "2026-08-16T18:31:30.603944Z",
   "isLive": false
 }
