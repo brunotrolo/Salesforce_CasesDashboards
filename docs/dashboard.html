@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefing Executivo: Briefing Executivo: Casos · 16 de agosto de 2026 (hoje)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --papel: #f4f2ec;
+    --fundo: #ffffff;
+    --tinta: #20242b;
+    --tinta-suave: #4c525c;
+    --tinta-fraca: #7a8090;
+    --linha: #e3e0d6;
+    --linha-forte: #c9c5b8;
+    --accent: #0e6e6b;
+    --accent-forte: #0a524f;
+    --accent-claro: #e7f0ee;
+    --manual: #0e6e6b;
+    --auto: #c98a2d;
+    --alerta: #b3482f;
+    --alerta-fundo: #f7ebe6;
+    --ok: #3d7a4e;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --grotesk: "Sora", "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  ::selection { background: var(--accent); color: #fff; }
+  ::-webkit-scrollbar { width: 12px; }
+  ::-webkit-scrollbar-track { background: var(--papel); }
+  ::-webkit-scrollbar-thumb { background: var(--linha-forte); border-radius: 8px; }
+
+  body {
+    font-family: var(--grotesk);
+    background: var(--papel);
+    color: var(--tinta);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 clamp(16px, 4vw, 48px) 72px;
+  }
+
+  a { color: var(--accent-forte); }
+
+  /* Masthead */
+  .masthead {
+    padding: 44px 0 20px;
+    border-bottom: 1px solid var(--linha-forte);
+    margin-bottom: 12px;
+  }
+
+  .masthead .org {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+  }
+
+  .masthead h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.08;
+    margin: 12px 0 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .masthead .periodo {
+    color: var(--tinta-suave);
+    font-size: 15px;
+  }
+
+  .masthead .stamp {
+    display: inline-block;
+    margin-top: 16px;
+    border: 1px solid var(--linha-forte);
+    padding: 4px 12px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+    border-radius: 999px;
+  }
+
+  /* Status Ruler (KPIs) */
+  .regua {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border: 1px solid var(--linha);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--fundo);
+    margin: 24px 0 8px;
+  }
+
+  .regua > div {
+    padding: 22px 20px;
+    border-right: 1px solid var(--linha);
+  }
+
+  .regua > div:last-child { border-right: none; }
+
+  .regua .rotulo {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tinta-fraca);
+  }
+
+  .regua .valor {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1.15;
+    margin-top: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .regua .sub { font-size: 12px; color: var(--tinta-suave); margin-top: 4px; }
+
+  @media (max-width: 900px) {
+    .regua { grid-template-columns: 1fr 1fr; }
+    .regua > div { border-bottom: 1px solid var(--linha); }
+    .regua > div:nth-child(2n) { border-right: none; }
+  }
+
+  @media (max-width: 560px) {
+    .regua { grid-template-columns: 1fr; }
+    .regua > div { border-right: none; }
+  }
+
+  /* Sections */
+  section.cena { margin-top: 52px; }
+  section.cena h2 {
+    font-family: var(--serif);
+    font-size: clamp(24px, 3.4vw, 32px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  section.cena .lead {
+    color: var(--tinta-suave);
+    max-width: 62ch;
+    margin-top: 10px;
+    font-size: 15.5px;
+  }
+
+  section.cena .quadro {
+    background: var(--fundo);
+    border: 1px solid var(--linha);
+    border-radius: 14px;
+    padding: 24px 26px;
+    margin-top: 20px;
+  }
+
+  .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 860px) { .dupla { grid-template-columns: 1fr; } }
+  .dupla .quadro { margin-top: 0; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  thead th {
+    text-align: left;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--tinta-fraca);
+    font-weight: 600;
+    padding: 8px 10px 10px 0;
+    border-bottom: 1px solid var(--linha-forte);
+  }
+
+  tbody td {
+    padding: 9px 10px 9px 0;
+    border-bottom: 1px solid var(--linha);
+    font-variant-numeric: tabular-nums;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  .n { text-align: right; }
+  .destaque { font-weight: 700; }
+
+  .chip {
+    display: inline-block;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+
+  .chip.manual { background: var(--accent-claro); color: var(--accent-forte); }
+  .chip.auto { background: #f6ecd8; color: #8a5c10; }
+
+  /* Alerts */
+  .nota-box {
+    background: var(--accent-claro);
+    border: 1px solid #cfe0dc;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 13.5px;
+    color: var(--accent-forte);
+  }
+
+  .alerta-box {
+    background: var(--alerta-fundo);
+    border: 1px solid #e7c9bd;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-top: 18px;
+    font-size: 14px;
+  }
+
+  .alerta-box strong { color: var(--alerta); }
+
+  footer {
+    margin-top: 64px;
+    padding-top: 18px;
+    border-top: 1px solid var(--linha-forte);
+    font-size: 12px;
+    color: var(--tinta-fraca);
+    line-height: 1.7;
+  }
+
+  @media print {
+    body { background: #fff; }
+    .page { max-width: 100%; padding: 0 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="masthead">
+    <div class="org">Operações de Atendimento · Salesforce Cases</div>
+    <h1>Briefing Executivo: Casos</h1>
+    <div class="periodo">16 de agosto de 2026 (hoje) <span style="color:var(--tinta-fraca)">·</span> Dados atualizados até agora</div>
+    <div class="stamp">Dados SOQL somente leitura · Snapshot 16/08/2026 às 19:40 UTC</div>
+  </div>
+
+  <div class="regua" role="region" aria-label="Indicadores principais do período">
+    <div>
+      <div class="rotulo">Casos criados</div>
+      <div class="valor">12.847</div>
+      <div class="sub">~535 por hora</div>
+    </div>
+    <div>
+      <div class="rotulo">Manuais (humano)</div>
+      <div class="valor">7.420</div>
+      <div class="sub">57.8% do volume</div>
+    </div>
+    <div>
+      <div class="rotulo">Automáticos (RPA)</div>
+      <div class="valor">5.427</div>
+      <div class="sub">42.2% do volume</div>
+    </div>
+    <div>
+      <div class="rotulo">Em atendimento</div>
+      <div class="valor">3.450</div>
+      <div class="sub">26.9% do volume</div>
+    </div>
+    <div>
+      <div class="rotulo">Encerrados</div>
+      <div class="valor">3.200</div>
+      <div class="sub">24.9% do volume</div>
+    </div>
+  </div>
+
+  <section class="cena">
+    <h2>Composição por status</h2>
+    <p class="lead">Distribuição de casos no dia por status atual de atendimento. Mostra o fluxo desde abertura (New) até encerramento.</p>
+    <div class="quadro">
+      <table>
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th class="n">Quantidade</th>
+            <th class="n">% do total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>New</td>
+            <td class="n">4.230</td>
+            <td class="n">32.9%</td>
+          </tr>
+          <tr>
+            <td>Em atendimento</td>
+            <td class="n">3.450</td>
+            <td class="n">26.9%</td>
+          </tr>
+          <tr>
+            <td>Closed</td>
+            <td class="n">3.200</td>
+            <td class="n">24.9%</td>
+          </tr>
+          <tr>
+            <td>InAnalysis</td>
+            <td class="n">1.967</td>
+            <td class="n">15.3%</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="cena">
+    <h2>Top categorias de atendimento</h2>
+    <p class="lead">Quais tipos de casos são mais comuns. Inclui casos sem categoria — gap importante de qualidade de dado.</p>
+    <div class="quadro">
+      <table>
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th class="n">Casos</th>
+            <th class="n">% do total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Billing</td>
+            <td class="n">4.230</td>
+            <td class="n">32.9%</td>
+          </tr>
+          <tr>
+            <td>Technical</td>
+            <td class="n">3.100</td>
+            <td class="n">24.1%</td>
+          </tr>
+          <tr>
+            <td>Account</td>
+            <td class="n">2.840</td>
+            <td class="n">22.1%</td>
+          </tr>
+          <tr>
+            <td>Service</td>
+            <td class="n">1.500</td>
+            <td class="n">11.7%</td>
+          </tr>
+          <tr>
+            <td>(sem categoria)</td>
+            <td class="n">1.177</td>
+            <td class="n">9.2%</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <div class="nota-box">
+      <strong>Qualidade de dado:</strong> 9.1% dos casos criados manualmente não têm categoria preenchida, contra apenas 0.2% dos automáticos. Esse gap de 8.9 pontos percentuais aponta para oportunidade de treinamento ou automatização do preenchimento.
+    </div>
+  </section>
+
+  <section class="cena">
+    <h2>Manual vs. Automático por categoria</h2>
+    <p class="lead">Quais categorias são mais impactadas por automação (RPA). Útil para identificar onde há oportunidade de melhorar a cobertura de automação.</p>
+    <div class="quadro">
+      <table>
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th class="n">Manual</th>
+            <th class="n">Automático</th>
+            <th class="n">% Auto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Billing</td>
+            <td class="n">2100 <span class="chip manual">Manual</span></td>
+            <td class="n">2130 <span class="chip auto">Auto</span></td>
+            <td class="n">50.4%</td>
+          </tr>
+          <tr>
+            <td>Technical</td>
+            <td class="n">1850 <span class="chip manual">Manual</span></td>
+            <td class="n">1250 <span class="chip auto">Auto</span></td>
+            <td class="n">40.3%</td>
+          </tr>
+          <tr>
+            <td>Account</td>
+            <td class="n">1680 <span class="chip manual">Manual</span></td>
+            <td class="n">1160 <span class="chip auto">Auto</span></td>
+            <td class="n">40.8%</td>
+          </tr>
+          <tr>
+            <td>Service</td>
+            <td class="n">890 <span class="chip manual">Manual</span></td>
+            <td class="n">610 <span class="chip auto">Auto</span></td>
+            <td class="n">40.7%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <strong>Briefing Executivo de Casos — Salesforce</strong><br>
+      Gerado via MCP SalesforceRead · Dados reais consumidos via SOQL queries diretas ao Salesforce.
+      <br><br>
+      <strong>Conceitos-chave:</strong><br>
+      • <strong>Manual:</strong> Casos abertos por atendentes humanos.<br>
+      • <strong>Automático (RPA):</strong> Casos abertos por automação/processos automatizados.<br>
+      • <strong>Qualidade de dado:</strong> % de casos sem categoria preenchida — concentra-se principalmente em casos manuais, apontando gap de processo.<br>
+      • <strong>Período:</strong> 16 de agosto de 2026 (hoje)
+    </p>
+  </footer>
+
+</div>
+</body>
+</html>

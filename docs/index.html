@@ -1,391 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard de Casos — Salesforce</title>
-  <style>
-    .viz-root {
-      color-scheme: light;
-      --surface-1:      #fcfcfb;
-      --page-plane:     #f9f9f7;
-      --text-primary:   #0b0b0b;
-      --text-secondary: #52514e;
-      --text-muted:     #898781;
-      --grid:           #e1e0d9;
-      --baseline:       #c3c2b7;
-      --border:         rgba(11,11,11,0.10);
-      --series-1:       #2a78d6;
-      --series-2:       #eb6834;
-      --series-3:       #1baf7a;
-      --series-4:       #eda100;
-      --series-5:       #e87ba4;
-      --series-6:       #008300;
-      --series-7:       #4a3aa7;
-      --series-8:       #e34948;
-      --good:           #0ca30c;
-      --warning:        #fab219;
-      --critical:       #d03b3b;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root:where(:not([data-theme="light"])) .viz-root {
-        color-scheme: dark;
-        --surface-1:      #1a1a19;
-        --page-plane:     #0d0d0d;
-        --text-primary:   #ffffff;
-        --text-secondary: #c3c2b7;
-        --text-muted:     #898781;
-        --grid:           #2c2c2a;
-        --baseline:       #383835;
-        --border:         rgba(255,255,255,0.10);
-        --series-1:       #3987e5;
-        --series-2:       #d95926;
-        --series-3:       #199e70;
-        --series-4:       #c98500;
-        --series-5:       #d55181;
-        --series-6:       #008300;
-        --series-7:       #9085e9;
-        --series-8:       #e66767;
-        --good:           #0ca30c;
-        --warning:        #fab219;
-        --critical:       #e66767;
-      }
-    }
-    :root[data-theme="dark"] .viz-root {
-      color-scheme: dark;
-      --surface-1:      #1a1a19;
-      --page-plane:     #0d0d0d;
-      --text-primary:   #ffffff;
-      --text-secondary: #c3c2b7;
-      --text-muted:     #898781;
-      --grid:           #2c2c2a;
-      --baseline:       #383835;
-      --border:         rgba(255,255,255,0.10);
-      --series-1:       #3987e5;
-      --series-2:       #d95926;
-      --series-3:       #199e70;
-      --series-4:       #c98500;
-      --series-5:       #d55181;
-      --series-6:       #008300;
-      --series-7:       #9085e9;
-      --series-8:       #e66767;
-      --good:           #0ca30c;
-      --warning:        #fab219;
-      --critical:       #e66767;
-    }
-
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--page-plane);
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      color: var(--text-primary);
-    }
-    .viz-root { padding: 32px 24px 64px; max-width: 1180px; margin: 0 auto; }
-    h1 { font-size: 22px; margin: 0 0 4px; }
-    .subtitle { color: var(--text-secondary); font-size: 14px; margin: 0 0 28px; }
-    code { background: var(--surface-1); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
-
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .kpi {
-      background: var(--surface-1);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 18px;
-    }
-    .kpi .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
-    .kpi .value { font-size: 26px; font-weight: 600; font-variant-numeric: proportional-nums; }
-    .kpi .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
-
-    .card {
-      background: var(--surface-1);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 20px 16px;
-    }
-    .card h2 { font-size: 14px; margin: 0 0 4px; }
-    .card .desc { font-size: 12px; color: var(--text-secondary); margin: 0 0 16px; }
-
-    /* horizontal bar chart */
-    .hbar-row { display: grid; grid-template-columns: 150px 1fr 56px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12.5px; }
-    .hbar-label { color: var(--text-secondary); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .hbar-track { background: var(--grid); border-radius: 4px; height: 14px; position: relative; overflow: hidden; }
-    .hbar-fill { height: 100%; border-radius: 4px 0 0 4px; }
-    .hbar-value { color: var(--text-primary); font-variant-numeric: tabular-nums; text-align: right; }
-
-    /* donut via conic-gradient */
-    .donut-wrap { display: flex; align-items: center; gap: 20px; }
-    .donut {
-      width: 148px; height: 148px; border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .legend { display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
-    .legend-item { display: flex; align-items: center; gap: 8px; }
-    .swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-    .legend-item .name { color: var(--text-secondary); }
-    .legend-item .num { color: var(--text-primary); font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 12px; }
-
-    .note {
-      font-size: 12.5px;
-      color: var(--text-secondary);
-      line-height: 1.55;
-      border-left: 3px solid var(--warning);
-      padding: 10px 14px;
-      background: color-mix(in srgb, var(--warning) 10%, transparent);
-      border-radius: 0 6px 6px 0;
-      margin-top: 6px;
-    }
-    .note.critical { border-left-color: var(--critical); background: color-mix(in srgb, var(--critical) 10%, transparent); }
-    .note b { color: var(--text-primary); }
-
-    .footer-note { font-size: 11.5px; color: var(--text-muted); margin-top: 28px; line-height: 1.6; }
-
-    .loading { text-align: center; padding: 40px; color: var(--text-secondary); }
-    .error { color: var(--critical); padding: 20px; background: color-mix(in srgb, var(--critical) 10%, transparent); border-radius: 8px; margin: 20px 0; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce Cases Dashboard</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f4f2ec;
+    color: #20242b;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  h1 {
+    color: #0e6e6b;
+    margin-bottom: 20px;
+  }
+  .links {
+    margin: 30px 0;
+  }
+  .links a {
+    display: inline-block;
+    margin: 10px 10px 10px 0;
+    padding: 12px 24px;
+    background: #0e6e6b;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.2s;
+  }
+  .links a:hover {
+    background: #0a524f;
+  }
+  .info {
+    background: #e7f0ee;
+    border-left: 4px solid #0e6e6b;
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 4px;
+  }
+</style>
 </head>
 <body>
-  <div class="viz-root">
-    <h1>Dashboard de Casos — visão gerencial</h1>
-    <p class="subtitle" id="subtitle">Carregando dados...</p>
-
-    <div class="kpi-row" id="kpi-row">
-      <div class="loading">Sincronizando com Salesforce...</div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h2>Top categorias (Category__c)</h2>
-        <p class="desc">Volume de casos criados hoje por categoria — top 10 preenchidas</p>
-        <div id="bar-cat"></div>
-      </div>
-      <div class="card">
-        <h2>Status dos casos</h2>
-        <p class="desc">Distribuição do dia por status</p>
-        <div class="donut-wrap">
-          <div class="donut" id="donut-status"></div>
-          <div class="legend" id="legend-status"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="card">
-        <h2>Manual vs. automático</h2>
-        <p class="desc">Origem da criação do caso (<code>CreatedAutomatically__c</code>)</p>
-        <div class="donut-wrap">
-          <div class="donut" id="donut-auto"></div>
-          <div class="legend" id="legend-auto"></div>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Prioridade</h2>
-        <p class="desc">Distribuição por prioridade do caso</p>
-        <div id="bar-priority"></div>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:16px;">
-      <h2>Qualidade de dado — categorização</h2>
-      <p class="desc">Casos sem <code>Category__c</code> preenchida, hoje, por origem de criação</p>
-      <div id="bar-quality"></div>
-      <div class="note critical" id="quality-note"></div>
-    </div>
-
-    <div class="card">
-      <h2>SLA de fechamento (amostra de hoje)</h2>
-      <p class="desc">Tempo entre criação e fechamento — calculado fora do SOQL</p>
-      <div class="kpi-row" style="margin-bottom:0;" id="sla-row">
-        <div class="kpi">
-          <div class="label">Mediana geral</div>
-          <div class="value">0 min</div>
-          <div class="sub">maioria fecha no mesmo minuto da criação</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Média — manual</div>
-          <div class="value">10,6 min</div>
-          <div class="sub">casos na amostra</div>
-        </div>
-        <div class="kpi">
-          <div class="label">Média — automático</div>
-          <div class="value">0 min</div>
-          <div class="sub">casos na amostra</div>
-        </div>
-      </div>
-      <div class="note">
-        <b>Leitura:</b> a maior parte dos casos (inclusive manuais) fecha quase instantaneamente — típico de
-        fluxos de autoatendimento/consulta que abrem e encerram o caso no mesmo passo.
-      </div>
-    </div>
-
-    <p class="footer-note">
-      Dashboard sincronizado via GitHub Actions + Salesforce SOQL agregado (GROUP BY/COUNT).
-      Dados atualizados a cada 1 hora. Números refletem o momento da consulta e podem variar ao longo do dia.
-    </p>
+<div class="container">
+  <h1>Salesforce Cases Dashboard</h1>
+  <p>Briefing executivo com análise gerencial de Cases do Salesforce em tempo real.</p>
+  
+  <div class="links">
+    <a href="./dashboard.html">Ver Dashboard →</a>
   </div>
 
-  <script>
-    const colors = {
-      series: [
-        'var(--series-1)', 'var(--series-2)', 'var(--series-3)', 'var(--series-4)',
-        'var(--series-5)', 'var(--series-6)', 'var(--series-7)', 'var(--series-8)'
-      ]
-    };
+  <div class="info">
+    <strong>ℹ️ Dados em tempo real via MCP</strong><br>
+    Este dashboard consome dados reais do Salesforce via MCP SalesforceRead (SOQL queries somente leitura).
+    Inclui: volume total, composição manual vs automática, distribuição por status, categorias e métricas de qualidade de dados.
+  </div>
 
-    function cssVar(name) {
-      return getComputedStyle(document.querySelector('.viz-root')).getPropertyValue(name).trim();
-    }
+  <h2>Como usar</h2>
+  <ol>
+    <li>Clique em "Ver Dashboard" acima</li>
+    <li>O dashboard é autossuficiente (HTML + CSS + dados embutidos)</li>
+    <li>Compartilhe o link ou exporte como PDF</li>
+    <li>Integre em relatórios automáticos via GitHub Actions</li>
+  </ol>
 
-    function renderHBar(containerId, data, color) {
-      const el = document.getElementById(containerId);
-      if (!data || data.length === 0) {
-        el.innerHTML = '<div class="error">Sem dados para exibir</div>';
-        return;
-      }
-      const max = Math.max(...data.map(d => d.value));
-      el.innerHTML = data.map(d => `
-        <div class="hbar-row">
-          <div class="hbar-label" title="${d.label}">${d.label}</div>
-          <div class="hbar-track">
-            <div class="hbar-fill" style="width:${(d.value/max*100).toFixed(1)}%; background:${color};"></div>
-          </div>
-          <div class="hbar-value">${d.value.toLocaleString('pt-BR')}</div>
-        </div>
-      `).join('');
-    }
+  <h2>Regenerar dashboard</h2>
+  <pre><code>python3 scripts/generate_dashboard.py</code></pre>
 
-    function renderDonut(donutId, legendId, data, colorList) {
-      if (!data || data.length === 0) return;
-      const total = data.reduce((s, d) => s + d.value, 0);
-      let acc = 0;
-      const stops = data.map((d, i) => {
-        const start = acc / total * 360;
-        acc += d.value;
-        const end = acc / total * 360;
-        return `${colorList[i] || colorList[colorList.length - 1]} ${start}deg ${end}deg`;
-      }).join(', ');
+  <h2>Configuração</h2>
+  <p>Variáveis de ambiente necessárias:</p>
+  <ul>
+    <li><code>SF_CLIENT_ID</code> - Salesforce OAuth Client ID</li>
+    <li><code>SF_CLIENT_SECRET</code> - Salesforce OAuth Client Secret</li>
+    <li><code>SF_REFRESH_TOKEN</code> - Salesforce OAuth Refresh Token</li>
+  </ul>
 
-      const donut = document.getElementById(donutId);
-      donut.style.background = `conic-gradient(${stops})`;
-      donut.style.setProperty('mask', 'radial-gradient(circle, transparent 58%, black 59%)');
-      donut.style.setProperty('-webkit-mask', 'radial-gradient(circle, transparent 58%, black 59%)');
-
-      const legend = document.getElementById(legendId);
-      legend.innerHTML = data.map((d, i) => `
-        <div class="legend-item">
-          <div class="swatch" style="background:${colorList[i] || colorList[colorList.length - 1]};"></div>
-          <div class="name">${d.label}</div>
-          <div class="num">${d.value.toLocaleString('pt-BR')} (${(d.value/total*100).toFixed(1)}%)</div>
-        </div>
-      `).join('');
-    }
-
-    function formatDate(isoDate) {
-      return new Date(isoDate).toLocaleDateString('pt-BR', {
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit'
-      });
-    }
-
-    async function render() {
-      try {
-        const response = await fetch('data/dashboard.json?' + Date.now());
-        if (!response.ok) throw new Error('Erro ao carregar dados');
-        const data = await response.json();
-
-        const isLive = data.isLive ? '🔴 Dados ao Vivo' : '📦 Dados de Fallback';
-        document.getElementById('subtitle').innerHTML =
-          `${isLive} · atualizado em ${formatDate(data.lastSync)} · fonte: Salesforce (Case) via SOQL agregado`;
-
-        const s = data.summary || {};
-        const manualPct = s.total_cases > 0 ? (s.manual_cases / s.total_cases * 100).toFixed(1) : 0;
-        const autoPct = s.total_cases > 0 ? (s.automatic_cases / s.total_cases * 100).toFixed(1) : 0;
-        const noCategoryPct = s.total_cases > 0 ? (s.no_category / s.total_cases * 100).toFixed(1) : 0;
-        const closedPct = s.total_cases > 0 ? (s.closed_cases / s.total_cases * 100).toFixed(1) : 0;
-
-        document.getElementById('kpi-row').innerHTML = `
-          <div class="kpi">
-            <div class="label">Casos criados hoje</div>
-            <div class="value">${s.total_cases?.toLocaleString('pt-BR') || 0}</div>
-            <div class="sub">até o momento da consulta</div>
-          </div>
-          <div class="kpi">
-            <div class="label">Criação manual</div>
-            <div class="value">${s.manual_cases?.toLocaleString('pt-BR') || 0}</div>
-            <div class="sub">${manualPct}% do volume</div>
-          </div>
-          <div class="kpi">
-            <div class="label">Criação automática</div>
-            <div class="value">${s.automatic_cases?.toLocaleString('pt-BR') || 0}</div>
-            <div class="sub">${autoPct}% do volume</div>
-          </div>
-          <div class="kpi">
-            <div class="label">Encerrados</div>
-            <div class="value">${s.closed_cases?.toLocaleString('pt-BR') || 0}</div>
-            <div class="sub">${closedPct}% (Closed + Fechado Com Sucesso + Protocolo Fechado)</div>
-          </div>
-          <div class="kpi">
-            <div class="label">Sem categoria preenchida</div>
-            <div class="value" style="color: var(--critical);">${s.no_category?.toLocaleString('pt-BR') || 0}</div>
-            <div class="sub">${noCategoryPct}% do total</div>
-          </div>
-        `;
-
-        const s1 = cssVar('--series-1');
-        const s2 = cssVar('--series-2');
-        const critical = cssVar('--critical');
-
-        renderHBar('bar-cat', data.categories || [], s1);
-        renderHBar('bar-priority', data.priority || [], s2);
-        renderHBar('bar-quality', data.quality || [], critical);
-
-        const statusColors = [
-          cssVar('--series-1'), cssVar('--series-3'), cssVar('--series-4'), cssVar('--series-7'),
-          cssVar('--series-5'), cssVar('--series-6'), cssVar('--series-8'), cssVar('--series-2')
-        ];
-        renderDonut('donut-status', 'legend-status', data.status || [], statusColors);
-        renderDonut('donut-auto', 'legend-auto', data.creationType || [], [s2, s1]);
-
-        // Qualidade nota
-        if (data.quality && data.quality.length > 0) {
-          const manual = data.quality.find(q => q.label === 'Manual')?.value || 0;
-          const automatic = data.quality.find(q => q.label === 'Automático')?.value || 0;
-          const manualTotal = s.manual_cases || 1;
-          const autoTotal = s.automatic_cases || 1;
-          const manualPctNoCategory = (manual / manualTotal * 100).toFixed(1);
-          const autoPctNoCategory = (automatic / autoTotal * 100).toFixed(1);
-
-          document.getElementById('quality-note').innerHTML = `
-            <b>Achado:</b> ${manualPctNoCategory}% dos casos criados <b>manualmente</b> ficam sem categoria (${manual.toLocaleString('pt-BR')} de ${manualTotal.toLocaleString('pt-BR')}),
-            contra apenas ${autoPctNoCategory}% dos casos <b>automáticos</b> (${automatic.toLocaleString('pt-BR')} de ${autoTotal.toLocaleString('pt-BR')}). O gap de categorização é quase
-            inteiramente um problema do fluxo manual, não da automação — sugere falha de processo/treinamento
-            na abertura manual de casos, não um problema técnico do robô.
-          `;
-        }
-
-      } catch (error) {
-        console.error(error);
-        document.getElementById('kpi-row').innerHTML =
-          `<div class="error">Erro ao carregar dashboard: ${error.message}</div>`;
-      }
-    }
-
-    render();
-    // Auto-refresh a cada 5 minutos
-    setInterval(render, 5 * 60 * 1000);
-  </script>
+  <p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e3e0d6; color: #7a8090; font-size: 14px;">
+    Gerado via MCP SalesforceRead · <a href="https://github.com/brunotrolo/Salesforce_CasesDashboards" style="color: #7a8090;">GitHub</a>
+  </p>
+</div>
 </body>
 </html>
