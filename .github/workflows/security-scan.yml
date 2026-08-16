@@ -1,0 +1,26 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Bandit (Python security)
+        run: pip install bandit && bandit -r services/ || true
+
+      - name: Run npm audit
+        run: npm audit --workspaces || true
+
+      - name: OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: 'Salesforce Reports'
+          path: '.'
+          format: 'JSON'

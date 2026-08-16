@@ -99,7 +99,6 @@ export const ResultsPage: React.FC = () => {
       setExportLoading(null)
     }
   }
-
   if (!result) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -257,7 +256,6 @@ export const ResultsPage: React.FC = () => {
             {exportMessage.text}
           </div>
         )}
-
         {/* Content */}
         {view === 'table' ? (
           <DataTable data={tableData} maxRows={50} />
