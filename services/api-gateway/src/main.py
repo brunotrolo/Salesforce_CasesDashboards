@@ -12,6 +12,10 @@ from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from auth import get_current_user, create_access_token
+from rate_limit import RateLimitMiddleware
+from cache import cache, get_cache_key
+
 # Initialize stdlib logger for bootstrap messages
 bootstrap_logger = logging.getLogger(__name__)
 
@@ -164,7 +168,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add CORS middleware
+# Add middleware (order matters - most specific first)
+app.add_middleware(RateLimitMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Configure properly in production
@@ -196,6 +201,18 @@ class ReportUpdateRequest(BaseModel):
     filters: Optional[List[dict]] = None
 
 
+class LoginRequest(BaseModel):
+    """Request to login."""
+    username: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    """Response with access token."""
+    access_token: str
+    token_type: str = "bearer"
+
+
 class ReportListResponse(BaseModel):
     """Response for listing reports."""
     success: bool
@@ -217,6 +234,42 @@ class ReportExecuteResponse(BaseModel):
 
 
 # ============================================================================
+# Authentication
+# ============================================================================
+
+@app.post("/auth/login", response_model=TokenResponse)
+async def login(request: LoginRequest):
+    """Login endpoint - generate access token."""
+    # Simple validation - in production, validate against real user store
+    if not request.username or not request.password:
+        raise HTTPException(
+            status_code=400,
+            detail="Username and password required"
+        )
+
+    # For demo: accept any non-empty credentials
+    # In production: validate against LDAP, database, OAuth, etc.
+    token = create_access_token(data={"sub": request.username})
+
+    logger.info(
+        "User logged in",
+        extra={
+            "action": "login",
+            "username": request.username,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    )
+
+    return TokenResponse(access_token=token)
+
+
+@app.post("/auth/token", response_model=TokenResponse)
+async def get_token(request: LoginRequest):
+    """Token endpoint - generate access token."""
+    return await login(request)
+
+
+# ============================================================================
 # Health Check
 # ============================================================================
 
@@ -227,6 +280,7 @@ async def health_check():
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "service": "api-gateway",
+        "cache": "available" if cache.available else "unavailable",
     }
 
 
@@ -243,6 +297,22 @@ async def list_reports(
 ):
     """List all reports with optional filtering by status."""
     try:
+        # Check cache first
+        cache_key = get_cache_key("reports", status or "all", limit, offset)
+        cached_result = cache.get(cache_key)
+        if cached_result:
+            logger.info(
+                "Listing reports (from cache)",
+                extra={
+                    "action": "list_reports",
+                    "status": status,
+                    "limit": limit,
+                    "offset": offset,
+                    "cache": "hit",
+                },
+            )
+            return cached_result
+
         logger.info(
             "Listing reports",
             extra={
@@ -250,6 +320,7 @@ async def list_reports(
                 "status": status,
                 "limit": limit,
                 "offset": offset,
+                "cache": "miss",
             },
         )
 
@@ -262,6 +333,9 @@ async def list_reports(
             limit=limit,
             offset=offset,
         )
+
+        # Cache the result
+        cache.set(cache_key, result.model_dump() if hasattr(result, 'model_dump') else result)
 
         return result
     except KeyError:
