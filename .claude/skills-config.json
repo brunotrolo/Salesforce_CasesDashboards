@@ -1,0 +1,79 @@
+{
+  "enabled_skills": [
+    {
+      "name": "agent-skills",
+      "repository": "https://github.com/addyosmani/agent-skills",
+      "branch": "main",
+      "local_path": "skills/agent-skills",
+      "auto_load": true,
+      "commands": {
+        "suggest_tests": "agent-skills suggest-tests",
+        "analyze_coverage": "agent-skills analyze-coverage",
+        "refactor": "agent-skills refactor",
+        "detect_patterns": "agent-skills detect-patterns"
+      },
+      "triggers": [
+        "on_new_service",
+        "on_new_feature",
+        "on_code_review"
+      ]
+    },
+    {
+      "name": "ui-ux-pro-max",
+      "repository": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill",
+      "branch": "main",
+      "local_path": "skills/ui-ux-pro-max",
+      "auto_load": true,
+      "commands": {
+        "setup_design_system": "ui-ux setup-design-system",
+        "audit_accessibility": "ui-ux audit-accessibility",
+        "validate_responsive": "ui-ux validate-responsive",
+        "create_component": "ui-ux create-component"
+      },
+      "triggers": [
+        "on_new_frontend",
+        "on_ui_changes",
+        "on_accessibility_review"
+      ]
+    },
+    {
+      "name": "impeccable",
+      "repository": "https://github.com/pbakaus/impeccable",
+      "branch": "main",
+      "local_path": "skills/impeccable",
+      "auto_load": true,
+      "commands": {
+        "setup_linting": "impeccable setup-linting",
+        "quality_report": "impeccable quality-report",
+        "lint": "impeccable lint",
+        "format": "impeccable format"
+      },
+      "triggers": [
+        "pre_commit",
+        "on_pull_request",
+        "on_code_review"
+      ]
+    }
+  ],
+  "workflow": {
+    "feature_development": [
+      "agent-skills:detect_patterns",
+      "impeccable:setup_linting",
+      "agent-skills:suggest_tests"
+    ],
+    "frontend_development": [
+      "ui-ux:setup_design_system",
+      "ui-ux:validate_responsive",
+      "impeccable:lint"
+    ],
+    "code_review": [
+      "impeccable:quality_report",
+      "agent-skills:analyze_coverage",
+      "ui-ux:audit_accessibility"
+    ],
+    "pre_commit": [
+      "impeccable:lint",
+      "impeccable:format"
+    ]
+  }
+}
