@@ -105,6 +105,73 @@ claude /impeccable quality-report --branch main
 
 ---
 
+## Automação de Skills
+
+As três skills estão configuradas para ativação automática via `.claude/skills-config.json`. 
+
+### Fluxo Automático
+
+**Ao começar trabalho em novo serviço:**
+- Agent Skills detecta padrão anti-design
+- Impeccable configura linting automaticamente
+- Sugere estrutura de testes
+
+**Ao fazer commit:**
+- Pre-commit hook (Impeccable) valida qualidade
+- Auto-formata código se necessário
+- Bloqueia commit se quality < threshold
+
+**Ao enviar PR:**
+- Quality gates (Impeccable) verificam coverage
+- Sugestões de testes via Agent Skills
+- Audit de acessibilidade via UI/UX (se frontend)
+
+### Setup Rápido de Skills
+
+```bash
+# Clonar e configurar todas as skills
+bash scripts/setup-skills.sh
+
+# Resultado:
+# ✓ agent-skills clonado
+# ✓ ui-ux-pro-max clonado  
+# ✓ impeccable clonado
+# ✓ Pre-commit hooks instalados
+# ✓ Design system setup (optional)
+```
+
+Depois de setup, skills estarão disponíveis automaticamente.
+
+### Exemplo de Workflow Automático
+
+```bash
+# 1. Checkout nova branch
+git checkout -b claude/nova-feature
+
+# 2. Escrever código
+# ... seu desenvolvimento ...
+
+# 3. Commit (Impeccable hook roda automaticamente)
+git add .
+git commit -m "feat(service): add feature"
+# Pre-commit: ESLint ✓ | Pylint ✓ | Format ✓
+
+# 4. Agent Skills sugere testes
+# (aparece em comentário de PR via CI)
+
+# 5. Push
+git push origin claude/nova-feature
+
+# 6. Quality gates automaticamente verificam:
+# - Coverage (Agent Skills)
+# - Code quality (Impeccable)
+# - Accessibility (UI/UX, se frontend)
+```
+
+Para detalhes completos, ver: [SKILLS_INTEGRATION.md](./SKILLS_INTEGRATION.md)
+
+---
+
 ## Estrutura de Diretórios
 
 ```

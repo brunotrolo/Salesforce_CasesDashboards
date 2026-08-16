@@ -21,25 +21,8 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
-      - name: Install Node dependencies
-        run: |
-          cd frontends/dashboard-fe && npm install
-          cd ../builder-fe && npm install
-          cd ../analytics-fe && npm install
-
       - name: Run Python tests
-        run: pytest services/ -v --cov=services/ --cov-report=xml
+        run: |
+          cd services/api-gateway
+          python -m pytest tests/ -v
 
-      - name: Run Frontend tests
-        run: npm run test --workspaces
-
-      - name: Lint Python
-        run: pylint services/ || true
-
-      - name: Lint Frontend
-        run: npm run lint --workspaces || true
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage.xml

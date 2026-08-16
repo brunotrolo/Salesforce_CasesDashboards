@@ -219,3 +219,80 @@ class SalesforceConnector:
                 {"action": "delete_report", "report_id": report_id}
             )
             return SalesforceResponse(success=False, error=str(error))
+
+    async def query_sobject(
+        self,
+        sobject_type: str,
+        fields: list[str],
+        filters: Optional[Dict[str, Any]] = None,
+        limit: int = 10000
+    ) -> SalesforceResponse:
+        """
+        Executar query SOQL em um objeto Salesforce.
+
+        Args:
+            sobject_type: Tipo de objeto (Case, Opportunity, Account)
+            fields: Lista de campos a selecionar
+            filters: Dicionário com filtros WHERE
+            limit: Limite de registros a retornar
+        """
+        try:
+            session = await self.get_session()
+            headers = await self._get_headers()
+
+            # Construir query SOQL
+            fields_str = ", ".join(fields)
+            query = f"SELECT {fields_str} FROM {sobject_type}"
+
+            if filters:
+                where_clauses = []
+                for field, value in filters.items():
+                    if isinstance(value, str):
+                        where_clauses.append(f"{field} = '{value}'")
+                    elif isinstance(value, (int, float)):
+                        where_clauses.append(f"{field} = {value}")
+                    elif isinstance(value, bool):
+                        where_clauses.append(f"{field} = {str(value).lower()}")
+                    else:
+                        where_clauses.append(f"{field} = '{value}'")
+
+                if where_clauses:
+                    query += " WHERE " + " AND ".join(where_clauses)
+
+            query += f" LIMIT {limit}"
+
+            url = f"{self.credentials.instance_url}/services/data/v60.0/query"
+            params = {"q": query}
+
+            async with session.get(url, headers=headers, params=params) as resp:
+                data = await resp.json()
+
+                if resp.status != 200:
+                    return SalesforceResponse(
+                        success=False,
+                        error=data.get("message", "Query failed")
+                    )
+
+                logger.info(
+                    "SOQL query successful",
+                    extra={
+                        "sobject_type": sobject_type,
+                        "records_returned": len(data.get("records", []))
+                    }
+                )
+
+                return SalesforceResponse(
+                    success=True,
+                    data={
+                        "records": data.get("records", []),
+                        "total_size": data.get("totalSize", 0),
+                        "done": data.get("done", True),
+                    }
+                )
+
+        except Exception as e:
+            error = self.error_handler.handle_error(
+                e,
+                {"action": "query_sobject", "sobject_type": sobject_type}
+            )
+            return SalesforceResponse(success=False, error=str(error))
