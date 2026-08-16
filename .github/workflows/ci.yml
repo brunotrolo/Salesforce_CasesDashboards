@@ -22,5 +22,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python tests
-        run: pytest services/api-gateway/tests/test_health.py -v
+        run: |
+          cd services/api-gateway
+          python -m pytest tests/ -v
 
