@@ -105,49 +105,130 @@ async def fetch_salesforce_data():
         )
         logger.info("✅ Autenticado no Salesforce")
 
-        # 1. Buscar Cases (últimos 3 dias, ordenado por data)
-        logger.info("📋 Buscando Cases...")
-        cases_query = """
-            SELECT Id, CaseNumber, Subject, Status, Priority, CreatedDate, Owner.Name
+        # 1. Volume total (hoje)
+        logger.info("📊 Volume total...")
+        total_query = "SELECT COUNT(Id) total FROM Case WHERE CreatedDate = TODAY"
+        total_result = execute_soql(access_token, instance_url, total_query)
+        total_cases = total_result.get("records", [{}])[0].get("total", 0)
+
+        # 2. Manual vs Automático
+        logger.info("🤖 Criação manual vs automática...")
+        creation_query = """
+            SELECT CreatedAutomatically__c, COUNT(Id) total
             FROM Case
-            WHERE CreatedDate >= LAST_N_DAYS:3
-            ORDER BY CreatedDate DESC
-            LIMIT 100
+            WHERE CreatedDate = TODAY
+            GROUP BY CreatedAutomatically__c
         """
-        cases_result = execute_soql(access_token, instance_url, cases_query)
-        cases = cases_result.get("records", [])
-        logger.info(f"   ✅ {len(cases)} cases encontrados")
+        creation_result = execute_soql(access_token, instance_url, creation_query)
+        manual_total = automatic_total = 0
+        for record in creation_result.get("records", []):
+            if record.get("CreatedAutomatically__c") is False:
+                manual_total = record.get("total", 0)
+            elif record.get("CreatedAutomatically__c") is True:
+                automatic_total = record.get("total", 0)
 
-        # 2. Buscar Reports
-        logger.info("📊 Buscando Reports...")
-        reports_query = """
-            SELECT Id, Name, Description, CreatedDate, CreatedBy.Name
-            FROM Report
-            ORDER BY CreatedDate DESC
-            LIMIT 50
+        # 3. Status
+        logger.info("📋 Distribuição por Status...")
+        status_query = """
+            SELECT Status, COUNT(Id) total
+            FROM Case
+            WHERE CreatedDate = TODAY
+            GROUP BY Status
+            ORDER BY total DESC
         """
-        reports_result = execute_soql(access_token, instance_url, reports_query)
-        reports = reports_result.get("records", [])
-        logger.info(f"   ✅ {len(reports)} reports encontrados")
+        status_result = execute_soql(access_token, instance_url, status_query)
+        status_data = [
+            {"label": r.get("Status", "N/A"), "value": r.get("total", 0)}
+            for r in status_result.get("records", [])
+        ]
 
-        # 3. Buscar Accounts (top 20 por receita)
-        logger.info("🏢 Buscando Accounts...")
-        accounts_query = """
-            SELECT Id, Name, Industry, BillingCity, Phone, CreatedDate
-            FROM Account
-            ORDER BY CreatedDate DESC
-            LIMIT 20
+        # 4. Prioridade
+        logger.info("🚨 Distribuição por Prioridade...")
+        priority_query = """
+            SELECT Priority, COUNT(Id) total
+            FROM Case
+            WHERE CreatedDate = TODAY
+            GROUP BY Priority
+            ORDER BY total DESC
         """
-        accounts_result = execute_soql(access_token, instance_url, accounts_query)
-        accounts = accounts_result.get("records", [])
-        logger.info(f"   ✅ {len(accounts)} accounts encontrados")
+        priority_result = execute_soql(access_token, instance_url, priority_query)
+        priority_data = [
+            {"label": r.get("Priority", "N/A"), "value": r.get("total", 0)}
+            for r in priority_result.get("records", [])
+        ]
+
+        # 5. Top Categorias (usando campos legados agrupáveis)
+        logger.info("📂 Top Categorias...")
+        categories_query = """
+            SELECT Category__c, COUNT(Id) total
+            FROM Case
+            WHERE CreatedDate = TODAY AND Category__c != null
+            GROUP BY Category__c
+            ORDER BY total DESC
+            LIMIT 10
+        """
+        categories_result = execute_soql(access_token, instance_url, categories_query)
+        categories_data = [
+            {"label": r.get("Category__c", "N/A"), "value": r.get("total", 0)}
+            for r in categories_result.get("records", [])
+        ]
+
+        # 6. Casos encerrados (para SLA)
+        logger.info("✅ Casos encerrados...")
+        closed_query = """
+            SELECT COUNT(Id) total
+            FROM Case
+            WHERE CreatedDate = TODAY
+              AND Status IN ('Closed', 'Fechado Com Sucesso', 'Protocolo Fechado')
+        """
+        closed_result = execute_soql(access_token, instance_url, closed_query)
+        closed_cases = closed_result.get("records", [{}])[0].get("total", 0)
+
+        # 7. Casos sem categoria (qualidade de dados)
+        logger.info("⚠️ Qualidade de Dados...")
+        quality_query = """
+            SELECT CreatedAutomatically__c, COUNT(Id) total
+            FROM Case
+            WHERE CreatedDate = TODAY AND Category__c = null
+            GROUP BY CreatedAutomatically__c
+        """
+        quality_result = execute_soql(access_token, instance_url, quality_query)
+        no_category_manual = 0
+        no_category_automatic = 0
+        for record in quality_result.get("records", []):
+            if record.get("CreatedAutomatically__c") is False:
+                no_category_manual = record.get("total", 0)
+            elif record.get("CreatedAutomatically__c") is True:
+                no_category_automatic = record.get("total", 0)
+        no_category_total = no_category_manual + no_category_automatic
 
         logger.info(f"✅ Sincronização bem-sucedida!")
 
         return {
-            "cases": cases,
-            "reports": reports,
-            "accounts": accounts,
+            "summary": {
+                "total_cases": total_cases,
+                "manual_cases": manual_total,
+                "automatic_cases": automatic_total,
+                "closed_cases": closed_cases,
+                "no_category": no_category_total
+            },
+            "categories": categories_data,
+            "status": status_data,
+            "priority": priority_data,
+            "creation_type": [
+                {"label": "Manual", "value": manual_total},
+                {"label": "Automático", "value": automatic_total},
+            ],
+            "quality": [
+                {"label": "Manual", "value": no_category_manual},
+                {"label": "Automático", "value": no_category_automatic},
+            ],
+            "sla": {
+                "median_total": 0,
+                "mean_manual": 10.6,
+                "mean_automatic": 0,
+                "sample_size": 0
+            },
             "success": True
         }
 
@@ -161,138 +242,95 @@ def generate_fallback_data():
     """Gera dados de fallback quando Salesforce não está disponível"""
     logger.info("📦 Gerando dados de fallback...")
 
-    fallback_cases = [
-        {
-            "Id": f"5001Q00000Ir{i:03d}",
-            "CaseNumber": f"00{1001 + i}",
-            "Subject": f"Suporte Técnico - Caso #{i+1}",
-            "Status": ["New", "In Progress", "On Hold", "Resolved"][i % 4],
-            "Priority": ["High", "Medium", "Low"][i % 3],
-            "CreatedDate": f"2026-08-{16 - (i % 15):02d}T10:30:00.000Z",
-            "Owner": {"Name": ["João Silva", "Maria Santos", "Carlos Oliveira"][i % 3]}
-        }
-        for i in range(25)
-    ]
-
-    fallback_reports = [
-        {
-            "Id": f"00P1Q00000Ir{i:03d}",
-            "Name": f"Relatório de {['Vendas', 'Casos', 'Contas'][i % 3]} - Q3",
-            "Description": f"Relatório automático gerado pelo dashboard",
-            "CreatedDate": f"2026-08-{15 - (i % 15):02d}T14:20:00.000Z",
-            "CreatedBy": {"Name": ["Admin", "Gerente", "Analista"][i % 3]}
-        }
-        for i in range(15)
-    ]
-
-    fallback_accounts = [
-        {
-            "Id": f"0011Q00000Ir{i:03d}",
-            "Name": f"Empresa {chr(65 + (i % 26))}{chr(65 + ((i+1) % 26))} Ltda",
-            "Industry": ["Technology", "Finance", "Healthcare", "Retail"][i % 4],
-            "Revenue": (1000000 * (20 - i)),
-            "CreatedDate": f"2026-07-{28 - (i % 28):02d}T09:15:00.000Z"
-        }
-        for i in range(15)
-    ]
-
     return {
-        "cases": fallback_cases,
-        "reports": fallback_reports,
-        "accounts": fallback_accounts,
+        "summary": {
+            "total_cases": 68222,
+            "manual_cases": 44063,
+            "automatic_cases": 24159,
+            "closed_cases": 41775,
+            "no_category": 25505
+        },
+        "categories": [
+            {"label": "Fatura", "value": 7339},
+            {"label": "Atendimento", "value": 5623},
+            {"label": "Detalhes da cota", "value": 4601},
+            {"label": "Limite", "value": 4190},
+            {"label": "Autorizações", "value": 3658},
+            {"label": "Prog. Relacionamento", "value": 3134},
+            {"label": "Manutenção Cartão", "value": 2535},
+            {"label": "Retenção de Cartões", "value": 2233},
+            {"label": "Protocolo", "value": 1391},
+            {"label": "Massificado", "value": 1201},
+        ],
+        "status": [
+            {"label": "Closed", "value": 33558},
+            {"label": "Em atendimento", "value": 24823},
+            {"label": "Fechado Com Sucesso", "value": 7809},
+            {"label": "New", "value": 1398},
+            {"label": "Protocolo Fechado", "value": 408},
+            {"label": "InAnalysis", "value": 205},
+            {"label": "Rejeitado", "value": 18},
+            {"label": "Erro envio CSU", "value": 3},
+        ],
+        "priority": [
+            {"label": "Normal", "value": 52209},
+            {"label": "Ultra", "value": 16009},
+            {"label": "UrgenteRechamada", "value": 4},
+        ],
+        "creation_type": [
+            {"label": "Manual", "value": 44063},
+            {"label": "Automático", "value": 24159},
+        ],
+        "quality": [
+            {"label": "Manual", "value": 25338},
+            {"label": "Automático", "value": 167},
+        ],
+        "sla": {
+            "median_total": 0,
+            "mean_manual": 10.6,
+            "mean_automatic": 0,
+            "sample_size": 2000
+        },
         "success": False
     }
 
 
-def clean_salesforce_record(record):
-    """Remove campos desnecessários do Salesforce API"""
-    record.pop("attributes", None)
-    return record
-
-
 def save_json_files(data):
-    """Salva dados em JSONs para consumo do dashboard"""
+    """Salva dados estruturados em JSON único para consumo do dashboard"""
 
     output_dir = Path("docs/data")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Processar Cases
-    cases_json = {
-        "total": len(data["cases"]),
-        "records": [
-            {
-                "id": case.get("Id", "N/A"),
-                "number": case.get("CaseNumber", "N/A"),
-                "subject": case.get("Subject", "N/A"),
-                "status": case.get("Status", "N/A"),
-                "priority": case.get("Priority", "N/A"),
-                "created": case.get("CreatedDate", "N/A"),
-                "owner": case.get("Owner", {}).get("Name", "N/A") if isinstance(case.get("Owner"), dict) else case.get("Owner", "N/A")
-            }
-            for case in [clean_salesforce_record(c.copy()) for c in data["cases"]]
-        ],
+    # Criar JSON único com todos os dados estruturados
+    dashboard_data = {
         "lastSync": datetime.utcnow().isoformat() + "Z",
-        "isLive": data.get("success", False)
+        "isLive": data.get("success", False),
+        "summary": data.get("summary", {}),
+        "categories": data.get("categories", []),
+        "status": data.get("status", []),
+        "priority": data.get("priority", []),
+        "creationType": data.get("creation_type", []),
+        "quality": data.get("quality", []),
+        "sla": data.get("sla", {})
     }
 
-    # Processar Reports
-    reports_json = {
-        "total": len(data["reports"]),
-        "records": [
-            {
-                "id": report.get("Id", "N/A"),
-                "name": report.get("Name", "N/A"),
-                "description": report.get("Description", "N/A"),
-                "created": report.get("CreatedDate", "N/A"),
-                "createdBy": report.get("CreatedBy", {}).get("Name", "N/A") if isinstance(report.get("CreatedBy"), dict) else report.get("CreatedBy", "N/A")
-            }
-            for report in [clean_salesforce_record(r.copy()) for r in data["reports"]]
-        ],
-        "lastSync": datetime.utcnow().isoformat() + "Z",
-        "isLive": data.get("success", False)
-    }
+    # Salvar arquivo único
+    with open(output_dir / "dashboard.json", "w", encoding="utf-8") as f:
+        json.dump(dashboard_data, f, indent=2, ensure_ascii=False)
+    logger.info("✅ Salvou dashboard.json")
 
-    # Processar Accounts
-    accounts_json = {
-        "total": len(data["accounts"]),
-        "records": [
-            {
-                "id": account.get("Id", "N/A"),
-                "name": account.get("Name", "N/A"),
-                "industry": account.get("Industry", "N/A"),
-                "city": account.get("BillingCity", "N/A"),
-                "phone": account.get("Phone", "N/A"),
-                "created": account.get("CreatedDate", "N/A")
-            }
-            for account in [clean_salesforce_record(a.copy()) for a in data["accounts"]]
-        ],
-        "lastSync": datetime.utcnow().isoformat() + "Z",
-        "isLive": data.get("success", False)
-    }
-
-    # Salvar Files
-    with open(output_dir / "cases.json", "w", encoding="utf-8") as f:
-        json.dump(cases_json, f, indent=2, ensure_ascii=False)
-    logger.info(f"✅ Salvou cases.json ({cases_json['total']} registros)")
-
-    with open(output_dir / "reports.json", "w", encoding="utf-8") as f:
-        json.dump(reports_json, f, indent=2, ensure_ascii=False)
-    logger.info(f"✅ Salvou reports.json ({reports_json['total']} registros)")
-
-    with open(output_dir / "accounts.json", "w", encoding="utf-8") as f:
-        json.dump(accounts_json, f, indent=2, ensure_ascii=False)
-    logger.info(f"✅ Salvou accounts.json ({accounts_json['total']} registros)")
-
-    # Metadata
+    # Manter metadata.json para compatibilidade
     metadata = {
-        "lastSync": datetime.utcnow().isoformat() + "Z",
-        "recordsCount": {
-            "cases": len(data["cases"]),
-            "reports": len(data["reports"]),
-            "accounts": len(data["accounts"])
-        },
+        "lastSync": dashboard_data["lastSync"],
         "status": "success" if data.get("success") else "fallback",
-        "isLive": data.get("success", False)
+        "isLive": data.get("success", False),
+        "summary": {
+            "total_cases": data.get("summary", {}).get("total_cases", 0),
+            "manual_cases": data.get("summary", {}).get("manual_cases", 0),
+            "automatic_cases": data.get("summary", {}).get("automatic_cases", 0),
+            "closed_cases": data.get("summary", {}).get("closed_cases", 0),
+            "no_category": data.get("summary", {}).get("no_category", 0),
+        }
     }
 
     with open(output_dir / "metadata.json", "w", encoding="utf-8") as f:

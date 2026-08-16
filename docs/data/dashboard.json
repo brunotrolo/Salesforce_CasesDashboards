@@ -1,0 +1,52 @@
+{
+  "lastSync": "2026-08-16T18:42:00.000Z",
+  "isLive": false,
+  "summary": {
+    "total_cases": 68222,
+    "manual_cases": 44063,
+    "automatic_cases": 24159,
+    "closed_cases": 41775,
+    "no_category": 25505
+  },
+  "categories": [
+    { "label": "Fatura", "value": 7339 },
+    { "label": "Atendimento", "value": 5623 },
+    { "label": "Detalhes da cota", "value": 4601 },
+    { "label": "Limite", "value": 4190 },
+    { "label": "Autorizações", "value": 3658 },
+    { "label": "Prog. Relacionamento", "value": 3134 },
+    { "label": "Manutenção Cartão", "value": 2535 },
+    { "label": "Retenção de Cartões", "value": 2233 },
+    { "label": "Protocolo", "value": 1391 },
+    { "label": "Massificado", "value": 1201 }
+  ],
+  "status": [
+    { "label": "Closed", "value": 33558 },
+    { "label": "Em atendimento", "value": 24823 },
+    { "label": "Fechado Com Sucesso", "value": 7809 },
+    { "label": "New", "value": 1398 },
+    { "label": "Protocolo Fechado", "value": 408 },
+    { "label": "InAnalysis", "value": 205 },
+    { "label": "Rejeitado", "value": 18 },
+    { "label": "Erro envio CSU", "value": 3 }
+  ],
+  "priority": [
+    { "label": "Normal", "value": 52209 },
+    { "label": "Ultra", "value": 16009 },
+    { "label": "UrgenteRechamada", "value": 4 }
+  ],
+  "creationType": [
+    { "label": "Manual", "value": 44063 },
+    { "label": "Automático", "value": 24159 }
+  ],
+  "quality": [
+    { "label": "Manual", "value": 25338 },
+    { "label": "Automático", "value": 167 }
+  ],
+  "sla": {
+    "median_total": 0,
+    "mean_manual": 10.6,
+    "mean_automatic": 0,
+    "sample_size": 2000
+  }
+}
