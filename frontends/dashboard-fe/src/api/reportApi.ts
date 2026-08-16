@@ -1,5 +1,6 @@
 import axios from 'axios'
-import { Report, ReportExecutionResult, ListReportsResponse, CreateReportResponse, ReportStatus } from '@types/report'
+import type { Report, ReportExecutionResult, ListReportsResponse, CreateReportResponse } from '../types/report'
+import { ReportStatus } from '../types/report'
 
 const API_BASE = '/api'
 

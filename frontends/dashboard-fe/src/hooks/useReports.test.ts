@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useReports } from './useReports'
-import * as reportApi from '@api/reportApi'
-import { Report, ReportStatus, ReportType } from '@types/report'
+import * as reportApi from '../api/reportApi'
+import type { Report } from '../types/report'
+import { ReportStatus, ReportType } from '../types/report'
 
 vi.mock('@api/reportApi')
 
@@ -82,7 +83,7 @@ describe('useReports', () => {
   it('executes report successfully', async () => {
     const mockResult = {
       report_id: 'report:1',
-      status: 'success',
+      status: 'success' as const,
       rows_returned: 10,
       execution_time_ms: 150,
       executed_at: new Date().toISOString(),

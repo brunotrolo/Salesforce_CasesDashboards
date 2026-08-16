@@ -12,7 +12,11 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDev = import.meta.env.DEV
+  private isDev: boolean
+
+  constructor() {
+    this.isDev = import.meta.env.DEV
+  }
 
   private log(level: string, message: string, context?: LogContext, error?: Error) {
     const entry: LogEntry = {
@@ -31,7 +35,18 @@ class Logger {
     }
 
     if (this.isDev) {
-      console[level.toLowerCase() as keyof Console](entry)
+      const logLevel = level.toLowerCase()
+      if (logLevel === 'info') {
+        console.info(entry)
+      } else if (logLevel === 'warn') {
+        console.warn(entry)
+      } else if (logLevel === 'error') {
+        console.error(entry)
+      } else if (logLevel === 'debug') {
+        console.debug(entry)
+      } else {
+        console.log(entry)
+      }
     }
 
     // In production, send to logging service

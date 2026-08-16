@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
-import { Report, ReportStatus } from '@types/report'
+import React from 'react'
+import type { Report } from '../types/report'
+import { ReportStatus } from '../types/report'
 import { ReportCard } from './ReportCard'
 
 interface ReportsListProps {
