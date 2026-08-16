@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briefing Executivo: Casos · Salesforce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --papel: #f4f2ec;
+    --fundo: #ffffff;
+    --tinta: #20242b;
+    --tinta-suave: #4c525c;
+    --tinta-fraca: #7a8090;
+    --linha: #e3e0d6;
+    --linha-forte: #c9c5b8;
+    --accent: #0e6e6b;
+    --accent-forte: #0a524f;
+    --accent-claro: #e7f0ee;
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --grotesk: "Sora", "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--grotesk);
+    background: var(--papel);
+    color: var(--tinta);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 clamp(16px, 4vw, 48px) 72px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    padding: 60px 0 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--linha-forte);
+    margin-bottom: 60px;
+  }
+
+  .header h1 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 500;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .header p {
+    color: var(--tinta-suave);
+    font-size: 16px;
+    max-width: 60ch;
+    margin: 0 auto;
+  }
+
+  .dashboard-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 32px;
+    margin-bottom: 60px;
+  }
+
+  .dashboard-card {
+    background: var(--fundo);
+    border: 1px solid var(--linha);
+    border-radius: 16px;
+    padding: 40px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .dashboard-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(14, 110, 107, 0.12);
+    transform: translateY(-4px);
+  }
+
+  .dashboard-card h2 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: var(--accent-forte);
+  }
+
+  .dashboard-card .description {
+    color: var(--tinta-suave);
+    margin-bottom: 24px;
+    font-size: 14px;
+  }
+
+  .dashboard-card .meta {
+    font-size: 12px;
+    color: var(--tinta-fraca);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .dashboard-card .arrow {
+    display: inline-block;
+    margin-left: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .dashboard-card:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  footer {
+    margin-top: auto;
+    padding-top: 40px;
+    border-top: 1px solid var(--linha-forte);
+    font-size: 13px;
+    color: var(--tinta-fraca);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .dashboard-links {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Briefing Executivo: Casos</h1>
+    <p>Relatórios em tempo real de operações Salesforce. Escolha a visualização desejada para explorar dados e insights.</p>
+  </div>
+
+  <div class="dashboard-links">
+    <a href="dashboard.html" class="dashboard-card">
+      <h2>Visão Diária</h2>
+      <p class="description">Análise detalhada de casos do dia. Volume, categorias, status e qualidade de dados em perspectiva diária com granularidade horária.</p>
+      <span class="meta">Atualizado a cada hora</span>
+      <span class="arrow">→</span>
+    </a>
+
+    <a href="dashboard-weekly.html" class="dashboard-card">
+      <h2>Visão Semanal</h2>
+      <p class="description">Tendências e padrões da semana. Produto, automação, SLA e oportunidades estratégicas com agregação de 6 dias.</p>
+      <span class="meta">Atualizado diariamente</span>
+      <span class="arrow">→</span>
+    </a>
+  </div>
+
+  <footer>
+    <p><strong>Briefing Executivo — Salesforce Cases</strong></p>
+    <p>Dados consumidos via MCP SalesforceRead · SOQL queries diretas ao Salesforce</p>
+  </footer>
+
+</div>
+</body>
+</html>
