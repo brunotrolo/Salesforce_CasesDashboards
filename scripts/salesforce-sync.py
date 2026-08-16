@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script para sincronizar dados reais do Salesforce via MCP.
+Script para sincronizar dados reais do Salesforce via REST API OAuth2.
 Executado automaticamente por GitHub Actions a cada 1 hora.
 Gera JSONs que são consumidos pelo dashboard estático.
 """
@@ -11,6 +11,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 import logging
+import requests
+from urllib.parse import urlencode
 
 # Configurar logging
 logging.basicConfig(
@@ -19,17 +21,65 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-try:
-    # Tentar importar do MCP Client local
-    sys.path.insert(0, str(Path(__file__).parent.parent / "services" / "mcp-client" / "src"))
-    from salesforce_connector import MCPClient
-except ImportError:
-    logger.warning("MCP Client não encontrado. Usando dados de fallback.")
-    MCPClient = None
+# Salesforce OAuth2 endpoints
+SALESFORCE_LOGIN_URL = "https://login.salesforce.com"
+OAUTH_TOKEN_ENDPOINT = f"{SALESFORCE_LOGIN_URL}/services/oauth2/token"
+SOBJECT_API_ENDPOINT = "/services/data/v57.0"
+
+
+def get_access_token(client_id, client_secret, refresh_token):
+    """Obtém um novo access token usando o refresh token"""
+
+    try:
+        logger.info("🔑 Obtendo novo access token...")
+
+        payload = {
+            "grant_type": "refresh_token",
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "refresh_token": refresh_token
+        }
+
+        response = requests.post(OAUTH_TOKEN_ENDPOINT, data=payload, timeout=30)
+        response.raise_for_status()
+
+        token_data = response.json()
+        access_token = token_data.get("access_token")
+        instance_url = token_data.get("instance_url")
+
+        logger.info(f"✅ Token obtido com sucesso (instance: {instance_url})")
+        return access_token, instance_url
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"❌ Erro ao obter token: {str(e)}")
+        if hasattr(e.response, 'text'):
+            logger.error(f"   Response: {e.response.text}")
+        raise
+
+
+def execute_soql(access_token, instance_url, query):
+    """Executa uma query SOQL no Salesforce"""
+
+    url = f"{instance_url}{SOBJECT_API_ENDPOINT}/query"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    params = {"q": query}
+
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=30)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"❌ Erro ao executar SOQL: {str(e)}")
+        if hasattr(e.response, 'text'):
+            logger.error(f"   Response: {e.response.text}")
+        raise
 
 
 async def fetch_salesforce_data():
-    """Busca dados reais do Salesforce via MCP"""
+    """Busca dados reais do Salesforce via OAuth2 REST API"""
 
     try:
         # Verificar credenciais
@@ -45,52 +95,54 @@ async def fetch_salesforce_data():
             logger.info("  - SF_REFRESH_TOKEN")
             return generate_fallback_data()
 
-        if MCPClient is None:
-            logger.warning("⚠️ MCP Client não disponível. Usando dados de fallback.")
-            return generate_fallback_data()
+        logger.info("🔄 Conectando ao Salesforce via OAuth2...")
 
-        logger.info("🔄 Conectando ao Salesforce via MCP...")
-
-        mcp = MCPClient(
-            client_id=client_id,
-            client_secret=client_secret,
-            refresh_token=refresh_token
+        # Obter access token
+        access_token, instance_url = get_access_token(
+            client_id,
+            client_secret,
+            refresh_token
         )
-
-        await mcp.authenticate()
         logger.info("✅ Autenticado no Salesforce")
 
-        # 1. Buscar Cases
+        # 1. Buscar Cases (últimos 3 dias, ordenado por data)
         logger.info("📋 Buscando Cases...")
-        cases_result = await mcp.soql_query("""
+        cases_query = """
             SELECT Id, CaseNumber, Subject, Status, Priority, CreatedDate, Owner.Name
             FROM Case
+            WHERE CreatedDate >= LAST_N_DAYS:3
             ORDER BY CreatedDate DESC
             LIMIT 100
-        """)
+        """
+        cases_result = execute_soql(access_token, instance_url, cases_query)
         cases = cases_result.get("records", [])
+        logger.info(f"   ✅ {len(cases)} cases encontrados")
 
         # 2. Buscar Reports
         logger.info("📊 Buscando Reports...")
-        reports_result = await mcp.soql_query("""
+        reports_query = """
             SELECT Id, Name, Description, CreatedDate, CreatedBy.Name
             FROM Report
             ORDER BY CreatedDate DESC
             LIMIT 50
-        """)
+        """
+        reports_result = execute_soql(access_token, instance_url, reports_query)
         reports = reports_result.get("records", [])
+        logger.info(f"   ✅ {len(reports)} reports encontrados")
 
-        # 3. Buscar Accounts
+        # 3. Buscar Accounts (top 20 por receita)
         logger.info("🏢 Buscando Accounts...")
-        accounts_result = await mcp.soql_query("""
-            SELECT Id, Name, Industry, Revenue, CreatedDate
+        accounts_query = """
+            SELECT Id, Name, Industry, BillingCity, Phone, CreatedDate
             FROM Account
-            ORDER BY Revenue DESC
+            ORDER BY CreatedDate DESC
             LIMIT 20
-        """)
+        """
+        accounts_result = execute_soql(access_token, instance_url, accounts_query)
         accounts = accounts_result.get("records", [])
+        logger.info(f"   ✅ {len(accounts)} accounts encontrados")
 
-        logger.info(f"✅ Dados obtidos: {len(cases)} cases, {len(reports)} reports, {len(accounts)} accounts")
+        logger.info(f"✅ Sincronização bem-sucedida!")
 
         return {
             "cases": cases,
@@ -152,6 +204,12 @@ def generate_fallback_data():
     }
 
 
+def clean_salesforce_record(record):
+    """Remove campos desnecessários do Salesforce API"""
+    record.pop("attributes", None)
+    return record
+
+
 def save_json_files(data):
     """Salva dados em JSONs para consumo do dashboard"""
 
@@ -169,9 +227,9 @@ def save_json_files(data):
                 "status": case.get("Status", "N/A"),
                 "priority": case.get("Priority", "N/A"),
                 "created": case.get("CreatedDate", "N/A"),
-                "owner": case.get("Owner", {}).get("Name", "N/A") if isinstance(case.get("Owner"), dict) else "N/A"
+                "owner": case.get("Owner", {}).get("Name", "N/A") if isinstance(case.get("Owner"), dict) else case.get("Owner", "N/A")
             }
-            for case in data["cases"]
+            for case in [clean_salesforce_record(c.copy()) for c in data["cases"]]
         ],
         "lastSync": datetime.utcnow().isoformat() + "Z",
         "isLive": data.get("success", False)
@@ -186,9 +244,9 @@ def save_json_files(data):
                 "name": report.get("Name", "N/A"),
                 "description": report.get("Description", "N/A"),
                 "created": report.get("CreatedDate", "N/A"),
-                "createdBy": report.get("CreatedBy", {}).get("Name", "N/A") if isinstance(report.get("CreatedBy"), dict) else "N/A"
+                "createdBy": report.get("CreatedBy", {}).get("Name", "N/A") if isinstance(report.get("CreatedBy"), dict) else report.get("CreatedBy", "N/A")
             }
-            for report in data["reports"]
+            for report in [clean_salesforce_record(r.copy()) for r in data["reports"]]
         ],
         "lastSync": datetime.utcnow().isoformat() + "Z",
         "isLive": data.get("success", False)
@@ -202,10 +260,11 @@ def save_json_files(data):
                 "id": account.get("Id", "N/A"),
                 "name": account.get("Name", "N/A"),
                 "industry": account.get("Industry", "N/A"),
-                "revenue": account.get("Revenue", 0),
+                "city": account.get("BillingCity", "N/A"),
+                "phone": account.get("Phone", "N/A"),
                 "created": account.get("CreatedDate", "N/A")
             }
-            for account in data["accounts"]
+            for account in [clean_salesforce_record(a.copy()) for a in data["accounts"]]
         ],
         "lastSync": datetime.utcnow().isoformat() + "Z",
         "isLive": data.get("success", False)
