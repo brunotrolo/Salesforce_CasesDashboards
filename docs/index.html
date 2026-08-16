@@ -4,88 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatórios Estratégicos — Salesforce Cases</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* ═══════════════════════════════════════════════════════════ */
-        /* TOKENS: Design System */
+        /* TOKENS: Design System (Unified with Dashboards) */
         /* ═══════════════════════════════════════════════════════════ */
 
         :root {
             /* Semantic Colors — Light Theme */
-            --color-manual: #0e6e6b;
-            --color-automation: #c98a2d;
-            --color-critical: #b3482f;
-            --color-success: #3d7a4e;
+            --manual: #0e6e6b;
+            --auto: #c98a2d;
+            --alerta: #b3482f;
+            --ok: #3d7a4e;
 
-            /* Neutrals — Light */
-            --bg-page: #f9f7f4;
-            --bg-surface: #ffffff;
-            --bg-muted: #f2ede7;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --text-muted: #999999;
-            --border-color: #e5dfd7;
+            /* Neutrals — Light (matching dashboards) */
+            --papel: #f4f2ec;
+            --fundo: #ffffff;
+            --tinta: #20242b;
+            --tinta-suave: #4c525c;
+            --tinta-fraca: #7a8090;
+            --linha: #e3e0d6;
+            --linha-forte: #c9c5b8;
+            --accent-claro: #e7f0ee;
 
-            /* Typography */
-            --font-display: Garamond, Georgia, serif;
-            --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-            --font-mono: "Courier New", monospace;
+            /* Typography (matching dashboards) */
+            --serif: "Newsreader", Georgia, "Times New Roman", serif;
+            --grotesk: "Sora", "Segoe UI", system-ui, sans-serif;
 
-            /* Scale */
-            --font-xs: 0.75rem;
-            --font-sm: 0.875rem;
-            --font-base: 1rem;
-            --font-lg: 1.125rem;
-            --font-xl: 1.5rem;
-            --font-2xl: 2rem;
-            --font-3xl: 2.625rem;
-
-            /* Spacing */
-            --space-xs: 0.5rem;
-            --space-sm: 0.875rem;
-            --space-md: 1.5rem;
-            --space-lg: 2.5rem;
-            --space-xl: 4rem;
-
-            /* Effects */
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) {
-                /* Semantic Colors — Dark Theme */
-                --color-manual: #4ec7c1;
-                --color-automation: #e8b857;
-                --color-critical: #e67d68;
-                --color-success: #6ba876;
-
-                /* Neutrals — Dark */
-                --bg-page: #0f0d0b;
-                --bg-surface: #1a1a1a;
-                --bg-muted: #2a2a2a;
-                --text-primary: #f4f1ea;
-                --text-secondary: #b0a89f;
-                --text-muted: #7a7370;
-                --border-color: #3a3530;
-            }
-        }
-
-        :root[data-theme="dark"] {
-            /* Semantic Colors — Dark Theme (explicit) */
-            --color-manual: #4ec7c1;
-            --color-automation: #e8b857;
-            --color-critical: #e67d68;
-            --color-success: #6ba876;
-
-            /* Neutrals — Dark */
-            --bg-page: #0f0d0b;
-            --bg-surface: #1a1a1a;
-            --bg-muted: #2a2a2a;
-            --text-primary: #f4f1ea;
-            --text-secondary: #b0a89f;
-            --text-muted: #7a7370;
-            --border-color: #3a3530;
+            /* Spacing (matching dashboards) */
+            --space-xs: 8px;
+            --space-sm: 12px;
+            --space-md: 16px;
+            --space-lg: 20px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            --space-3xl: 72px;
         }
 
         /* ═══════════════════════════════════════════════════════════ */
@@ -103,27 +58,26 @@
         }
 
         body {
-            background-color: var(--bg-page);
-            color: var(--text-primary);
-            font-family: var(--font-body);
-            font-size: var(--font-base);
-            line-height: 1.6;
+            font-family: var(--grotesk);
+            background: var(--papel);
+            color: var(--tinta);
+            font-size: 15px;
+            line-height: 1.55;
             -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         a {
-            color: var(--color-manual);
+            color: var(--manual);
             text-decoration: none;
             transition: color 0.2s ease;
         }
 
         a:hover {
-            color: var(--color-automation);
+            color: var(--auto);
         }
 
         a:focus-visible {
-            outline: 2px solid var(--color-manual);
+            outline: 2px solid var(--manual);
             outline-offset: 2px;
         }
 
@@ -131,11 +85,16 @@
         /* LAYOUT STRUCTURE */
         /* ═══════════════════════════════════════════════════════════ */
 
+        .page {
+            width: 100%;
+            max-width: 100%;
+            padding: 0 clamp(16px, 4vw, 48px) 72px;
+        }
+
         .container {
             width: 100%;
-            max-width: 1440px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 0 var(--space-md);
         }
 
         /* ═══════════════════════════════════════════════════════════ */
@@ -143,55 +102,60 @@
         /* ═══════════════════════════════════════════════════════════ */
 
         .header {
-            background-color: var(--bg-surface);
-            border-bottom: 1px solid var(--border-color);
-            padding: var(--space-lg) var(--space-md);
-            margin-bottom: var(--space-xl);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
+            background-color: transparent;
+            border-bottom: none;
+            padding: 44px 0 20px;
+            margin-bottom: 0;
+            position: static;
+            z-index: auto;
+            box-shadow: none;
         }
 
         .header .container {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--linha-forte);
         }
 
         .header-branding {
             display: flex;
-            align-items: baseline;
+            align-items: flex-start;
             gap: var(--space-md);
         }
 
         .header-logo {
             width: 32px;
             height: 32px;
-            background: linear-gradient(135deg, var(--color-manual) 0%, var(--color-automation) 100%);
+            background: linear-gradient(135deg, var(--manual) 0%, var(--auto) 100%);
             border-radius: 2px;
+            flex-shrink: 0;
+            margin-top: 4px;
         }
 
         .header-title {
-            font-family: var(--font-display);
-            font-size: var(--font-2xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            text-wrap: balance;
+            font-family: var(--serif);
+            font-weight: 500;
+            font-size: clamp(28px, 4vw, 40px);
+            line-height: 1.08;
+            margin: 12px 0 10px;
+            letter-spacing: -0.01em;
+            color: var(--tinta);
         }
 
         .header-subtitle {
-            font-size: var(--font-xs);
-            color: var(--text-muted);
-            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--tinta-suave);
+            font-family: var(--grotesk);
             font-weight: 400;
-            margin-top: var(--space-xs);
+            margin-top: 0;
         }
 
         .header-meta {
             text-align: right;
-            font-size: var(--font-xs);
-            color: var(--text-muted);
+            font-size: 14px;
+            color: var(--tinta-suave);
         }
 
         /* ═══════════════════════════════════════════════════════════ */
@@ -199,73 +163,75 @@
         /* ═══════════════════════════════════════════════════════════ */
 
         .kpi-section {
-            margin-bottom: var(--space-xl);
+            margin-top: 48px;
+            margin-bottom: 48px;
         }
 
         .kpi-label {
-            font-family: var(--font-body);
-            font-size: var(--font-xs);
+            font-family: var(--grotesk);
+            font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            margin-bottom: var(--space-md);
+            letter-spacing: 0.1em;
+            color: var(--tinta-fraca);
+            margin-bottom: 20px;
         }
 
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--space-md);
-            margin-bottom: var(--space-xl);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
         }
 
         .kpi-card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            padding: var(--space-md);
+            background-color: var(--fundo);
+            border: 1px solid var(--linha);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: var(--space-xs);
+            gap: 8px;
         }
 
         .kpi-label-card {
-            font-family: var(--font-body);
-            font-size: var(--font-xs);
+            font-family: var(--grotesk);
+            font-size: 10px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--tinta-fraca);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.1em;
         }
 
         .kpi-value {
-            font-family: var(--font-display);
-            font-size: var(--font-3xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1;
+            font-family: var(--serif);
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--tinta);
+            line-height: 1.1;
         }
 
         .kpi-unit {
-            font-family: var(--font-body);
-            font-size: var(--font-sm);
-            color: var(--text-muted);
+            font-family: var(--grotesk);
+            font-size: 13px;
+            color: var(--tinta-fraca);
             font-weight: 400;
         }
 
         .kpi-card.manual {
-            border-left: 4px solid var(--color-manual);
+            border-left: 4px solid var(--manual);
         }
 
         .kpi-card.automation {
-            border-left: 4px solid var(--color-automation);
+            border-left: 4px solid var(--auto);
         }
 
         .kpi-card.critical {
-            border-left: 4px solid var(--color-critical);
+            border-left: 4px solid var(--alerta);
         }
 
         .kpi-card.success {
-            border-left: 4px solid var(--color-success);
+            border-left: 4px solid var(--ok);
         }
 
         /* ═══════════════════════════════════════════════════════════ */
@@ -273,20 +239,22 @@
         /* ═══════════════════════════════════════════════════════════ */
 
         .phase-section {
-            margin-bottom: var(--space-xl);
+            margin-top: 48px;
         }
 
         .phase-title {
-            font-family: var(--font-display);
-            font-size: var(--font-xl);
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: var(--space-md);
-            padding-bottom: var(--space-md);
-            border-bottom: 2px solid var(--border-color);
+            font-family: var(--serif);
+            font-size: clamp(22px, 3vw, 30px);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            line-height: 1.15;
+            color: var(--tinta);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--linha-forte);
             display: flex;
             align-items: center;
-            gap: var(--space-md);
+            gap: 16px;
         }
 
         .phase-badge {
@@ -296,37 +264,40 @@
             width: 32px;
             height: 32px;
             border-radius: 2px;
-            font-family: var(--font-display);
-            font-size: var(--font-base);
-            font-weight: 700;
+            font-family: var(--serif);
+            font-size: 16px;
+            font-weight: 600;
             color: white;
+            flex-shrink: 0;
         }
 
         .phase-badge.phase-1 {
-            background-color: var(--color-manual);
+            background-color: var(--manual);
         }
 
         .phase-badge.phase-2 {
-            background: linear-gradient(135deg, var(--color-manual) 0%, var(--color-automation) 100%);
+            background: linear-gradient(135deg, var(--manual) 0%, var(--auto) 100%);
         }
 
         .phase-badge.phase-3 {
-            background-color: var(--color-automation);
+            background-color: var(--auto);
         }
 
         .report-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: var(--space-lg);
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .report-card {
-            background-color: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            padding: var(--space-lg);
+            background-color: var(--fundo);
+            border: 1px solid var(--linha);
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: var(--space-md);
+            gap: 16px;
             transition: all 0.3s ease;
             cursor: pointer;
             text-decoration: none;
@@ -335,49 +306,50 @@
 
         .report-card:hover {
             transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--color-manual);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: var(--manual);
         }
 
         .report-card:focus-visible {
-            outline: 2px solid var(--color-manual);
+            outline: 2px solid var(--manual);
             outline-offset: -2px;
         }
 
         .report-icon {
             width: 48px;
             height: 48px;
-            background-color: var(--bg-muted);
+            background-color: var(--accent-claro);
             border-radius: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--font-2xl);
+            font-size: 28px;
         }
 
         .report-title {
-            font-family: var(--font-display);
-            font-size: var(--font-lg);
-            font-weight: 700;
-            color: var(--text-primary);
+            font-family: var(--serif);
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            color: var(--tinta);
         }
 
         .report-description {
-            font-size: var(--font-sm);
-            color: var(--text-secondary);
-            line-height: 1.5;
+            font-size: 14px;
+            color: var(--tinta-suave);
+            line-height: 1.55;
         }
 
         .report-chart-preview {
             width: 100%;
             height: 140px;
-            background-color: var(--bg-muted);
+            background-color: var(--accent-claro);
             border-radius: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: var(--font-xs);
-            color: var(--text-muted);
+            font-size: 12px;
+            color: var(--tinta-fraca);
             overflow: hidden;
         }
 
@@ -391,14 +363,14 @@
         .report-cta {
             display: inline-flex;
             align-items: center;
-            gap: var(--space-sm);
-            font-family: var(--font-body);
-            font-size: var(--font-sm);
+            gap: 8px;
+            font-family: var(--grotesk);
+            font-size: 13px;
             font-weight: 600;
-            color: var(--color-manual);
-            margin-top: var(--space-md);
-            padding-top: var(--space-md);
-            border-top: 1px solid var(--border-color);
+            color: var(--manual);
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--linha);
         }
 
         .report-cta::after {
@@ -415,10 +387,12 @@
         /* ═══════════════════════════════════════════════════════════ */
 
         .footer {
-            background-color: var(--bg-surface);
-            border-top: 1px solid var(--border-color);
-            padding: var(--space-lg) var(--space-md);
-            margin-top: var(--space-xl);
+            background-color: var(--fundo);
+            border-top: 1px solid var(--linha);
+            padding: 20px 0;
+            margin-top: 72px;
+            padding-left: clamp(16px, 4vw, 48px);
+            padding-right: clamp(16px, 4vw, 48px);
         }
 
         .footer .container {
@@ -426,17 +400,17 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: var(--space-md);
+            gap: 16px;
         }
 
         .footer-text {
-            font-size: var(--font-xs);
-            color: var(--text-muted);
+            font-size: 13px;
+            color: var(--tinta-fraca);
         }
 
         .footer-link {
-            font-size: var(--font-xs);
-            color: var(--color-manual);
+            font-size: 13px;
+            color: var(--manual);
         }
 
         /* ═══════════════════════════════════════════════════════════ */
@@ -445,16 +419,25 @@
 
         @media (max-width: 768px) {
             .header-title {
-                font-size: var(--font-xl);
+                font-size: 28px;
+            }
+
+            .header .container {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .header-meta {
+                text-align: left;
             }
 
             .kpi-grid {
-                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-                gap: var(--space-sm);
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 12px;
             }
 
             .kpi-value {
-                font-size: var(--font-2xl);
+                font-size: 24px;
             }
 
             .report-grid {
@@ -462,11 +445,20 @@
             }
 
             .phase-title {
-                font-size: var(--font-lg);
+                font-size: 22px;
             }
 
-            .container {
-                padding: 0 var(--space-sm);
+            .phase-section {
+                margin-top: 32px;
+            }
+
+            .page {
+                padding: 0 16px 48px;
+            }
+
+            .footer {
+                padding-left: 16px;
+                padding-right: 16px;
             }
         }
 
@@ -479,9 +471,10 @@
     </style>
 </head>
 <body>
-    <!-- MASTHEAD -->
-    <header class="header">
-        <div class="container">
+    <div class="page">
+        <!-- MASTHEAD -->
+        <header class="header">
+            <div class="container">
             <div class="header-branding">
                 <div class="header-logo"></div>
                 <div>
@@ -741,21 +734,22 @@
                     <span class="report-cta">Acessar relatório</span>
                 </a>
             </div>
-        </section>
-    </main>
+            </section>
+        </main>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-text">
-                Dados gerados a partir de queries SOQL de <a href="#" class="footer-link">Salesforce Cases</a>.
-                Atualização automática diária às 06:00 UTC.
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-text">
+                    Dados gerados a partir de queries SOQL de <a href="#" class="footer-link">Salesforce Cases</a>.
+                    Atualização automática diária às 06:00 UTC.
+                </div>
+                <div class="footer-text">
+                    v1.0 — Fase 1, 2 e 3
+                </div>
             </div>
-            <div class="footer-text">
-                v1.0 — Fase 1, 2 e 3
-            </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <script>
         // Set current date in header
