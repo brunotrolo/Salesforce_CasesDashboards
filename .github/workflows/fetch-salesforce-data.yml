@@ -5,6 +5,9 @@ on:
     - cron: '0 * * * *'  # A cada 1 hora
   workflow_dispatch:      # Manual trigger
 
+permissions:
+  contents: write  # Permite que o workflow faça commit e push
+
 jobs:
   sync-salesforce:
     runs-on: ubuntu-latest
