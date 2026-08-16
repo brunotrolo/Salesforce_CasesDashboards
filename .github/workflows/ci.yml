@@ -19,13 +19,20 @@ jobs:
           node-version: '18'
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: |
+          python --version
+          pip --version
+          pip install -r requirements.txt
+          pip list | grep -E "pytest|coverage"
 
       - name: Install Node dependencies
         run: |
           npm install --prefix frontends/dashboard-fe || true
           npm install --prefix frontends/builder-fe || true
           npm install --prefix frontends/analytics-fe || true
+
+      - name: Collect tests
+        run: pytest --collect-only -v
 
       - name: Run Python tests
         run: pytest -v --cov=services/api-gateway --cov-report=xml
@@ -46,6 +53,7 @@ jobs:
           npm run lint --prefix frontends/analytics-fe || true
 
       - name: Upload coverage
+        continue-on-error: true
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.xml
