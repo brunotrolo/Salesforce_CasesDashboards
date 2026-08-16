@@ -132,7 +132,7 @@ async def lifespan(app: FastAPI):
     # Startup
     global _report_manager, _auth_manager, _salesforce_connector
 
-    logger.info("Initializing services", extra={"service": "api-gateway"})
+    logger.info("Initializing services")
 
     _auth_manager = AuthManager()
 
@@ -143,21 +143,21 @@ async def lifespan(app: FastAPI):
             refresh_token=os.getenv("SF_REFRESH_TOKEN"),
         )
         await _salesforce_connector.authenticate()
-        logger.info("Salesforce authenticated successfully", extra={"service": "api-gateway"})
+        logger.info("Salesforce authenticated successfully")
     except Exception as e:
-        logger.error("Failed to authenticate with Salesforce", extra={"error": str(e)})
+        logger.error("Failed to authenticate with Salesforce")
         _salesforce_connector = None
 
     # Initialize report manager with Salesforce connector
     _report_manager = ReportManager(salesforce_connector=_salesforce_connector)
-    logger.info("ReportManager initialized", extra={"has_salesforce": _salesforce_connector is not None})
+    logger.info("ReportManager initialized")
 
     yield
 
     # Shutdown
     if _salesforce_connector:
         await _salesforce_connector.close()
-    logger.info("Services shutdown complete", extra={"service": "api-gateway"})
+    logger.info("Services shutdown complete")
 
 
 # Initialize FastAPI
@@ -251,14 +251,7 @@ async def login(request: LoginRequest):
     # In production: validate against LDAP, database, OAuth, etc.
     token = create_access_token(data={"sub": request.username})
 
-    logger.info(
-        "User logged in",
-        extra={
-            "action": "login",
-            "username": request.username,
-            "timestamp": datetime.utcnow().isoformat()
-        }
-    )
+    logger.info("User logged in")
 
     return TokenResponse(access_token=token)
 
@@ -301,28 +294,10 @@ async def list_reports(
         cache_key = get_cache_key("reports", status or "all", limit, offset)
         cached_result = cache.get(cache_key)
         if cached_result:
-            logger.info(
-                "Listing reports (from cache)",
-                extra={
-                    "action": "list_reports",
-                    "status": status,
-                    "limit": limit,
-                    "offset": offset,
-                    "cache": "hit",
-                },
-            )
+            logger.info("Listing reports (from cache)")
             return cached_result
 
-        logger.info(
-            "Listing reports",
-            extra={
-                "action": "list_reports",
-                "status": status,
-                "limit": limit,
-                "offset": offset,
-                "cache": "miss",
-            },
-        )
+        logger.info("Listing reports")
 
         report_status = None
         if status:
@@ -341,7 +316,7 @@ async def list_reports(
     except KeyError:
         raise HTTPException(status_code=400, detail="Invalid report status")
     except Exception as e:
-        logger.error("Error listing reports", extra={"error": str(e)})
+        logger.error("Error listing reports")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -352,7 +327,7 @@ async def create_report(
 ):
     """Create a new report."""
     try:
-        logger.info("Creating report", extra={"action": "create_report", "name": request.name})
+        logger.info("Creating report")
 
         report = Report(
             id=f"r:{datetime.utcnow().timestamp()}",
@@ -371,7 +346,7 @@ async def create_report(
 
         return result
     except Exception as e:
-        logger.error("Error creating report", extra={"error": str(e)})
+        logger.error("Error creating report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -382,7 +357,7 @@ async def get_report(
 ):
     """Get a specific report by ID."""
     try:
-        logger.info("Getting report", extra={"action": "get_report", "report_id": report_id})
+        logger.info("Getting report")
 
         report = await report_manager.get_report(report_id)
         if not report:
@@ -390,7 +365,7 @@ async def get_report(
 
         return report.model_dump()
     except Exception as e:
-        logger.error("Error getting report", extra={"error": str(e)})
+        logger.error("Error getting report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -402,7 +377,7 @@ async def update_report(
 ):
     """Update a report."""
     try:
-        logger.info("Updating report", extra={"action": "update_report", "report_id": report_id})
+        logger.info("Updating report")
 
         updates = request.model_dump(exclude_none=True)
         result = await report_manager.update_report(
@@ -413,7 +388,7 @@ async def update_report(
 
         return result
     except Exception as e:
-        logger.error("Error updating report", extra={"error": str(e)})
+        logger.error("Error updating report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -424,12 +399,12 @@ async def delete_report(
 ):
     """Delete a report (soft delete - archives it)."""
     try:
-        logger.info("Deleting report", extra={"action": "delete_report", "report_id": report_id})
+        logger.info("Deleting report")
 
         result = await report_manager.delete_report(report_id)
         return result
     except Exception as e:
-        logger.error("Error deleting report", extra={"error": str(e)})
+        logger.error("Error deleting report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -441,7 +416,7 @@ async def execute_report(
 ):
     """Execute a report and return results."""
     try:
-        logger.info("Executing report", extra={"action": "execute_report", "report_id": report_id})
+        logger.info("Executing report")
 
         # For now, use simulated execution
         # TODO: Integrate with Salesforce MCP for real data
@@ -457,7 +432,7 @@ async def execute_report(
             "error": result.error,
         }
     except Exception as e:
-        logger.error("Error executing report", extra={"error": str(e)})
+        logger.error("Error executing report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -468,12 +443,12 @@ async def activate_report(
 ):
     """Activate a report."""
     try:
-        logger.info("Activating report", extra={"action": "activate_report", "report_id": report_id})
+        logger.info("Activating report")
 
         result = await report_manager.activate_report(report_id, user_id="system")
         return result
     except Exception as e:
-        logger.error("Error activating report", extra={"error": str(e)})
+        logger.error("Error activating report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -485,15 +460,12 @@ async def schedule_report(
 ):
     """Schedule a report for regular execution."""
     try:
-        logger.info(
-            "Scheduling report",
-            extra={"action": "schedule_report", "report_id": report_id, "cron": cron},
-        )
+        logger.info("Scheduling report")
 
         result = await report_manager.schedule_report(report_id, cron, user_id="system")
         return result
     except Exception as e:
-        logger.error("Error scheduling report", extra={"error": str(e)})
+        logger.error("Error scheduling report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -504,12 +476,12 @@ async def pause_report(
 ):
     """Pause a scheduled report."""
     try:
-        logger.info("Pausing report", extra={"action": "pause_report", "report_id": report_id})
+        logger.info("Pausing report")
 
         result = await report_manager.pause_report(report_id, user_id="system")
         return result
     except Exception as e:
-        logger.error("Error pausing report", extra={"error": str(e)})
+        logger.error("Error pausing report")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
