@@ -22,14 +22,20 @@ jobs:
         run: |
           python --version
           pip --version
-          pip install -r requirements.txt
-          pip list | grep -E "pytest|coverage"
+          pip install --upgrade pip setuptools wheel
+          pip install -r requirements.txt --verbose
+          pip list | grep -E "pytest|coverage|fastapi"
 
       - name: Install Node dependencies
         run: |
           npm install --prefix frontends/dashboard-fe || true
           npm install --prefix frontends/builder-fe || true
           npm install --prefix frontends/analytics-fe || true
+
+      - name: Test app import
+        run: |
+          cd services/api-gateway
+          python -c "from src.main import app; print('App imported successfully')"
 
       - name: Collect tests
         run: pytest --collect-only -v
