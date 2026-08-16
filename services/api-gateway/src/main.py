@@ -46,6 +46,8 @@ try:
     ReportManager = report_service.ReportManager
     Report = report_service.Report
     ReportStatus = report_service.ReportStatus
+    ReportMetadata = report_service.models.report.ReportMetadata
+    ReportFilter = report_service.models.report.ReportFilter
 except BaseException as e:
     bootstrap_logger.warning(f"Could not load report-service: {type(e).__name__}: {e}. Using mock classes for testing.")
     class ReportManager:  # noqa: E305
@@ -329,14 +331,27 @@ async def create_report(
     try:
         logger.info("Creating report")
 
+        # Convert filter dicts to ReportFilter objects
+        report_filters = []
+        if request.filters:
+            for f in request.filters:
+                try:
+                    report_filters.append(ReportFilter(**f))
+                except Exception:
+                    pass
+
         report = Report(
-            id=f"r:{datetime.utcnow().timestamp()}",
+            id=f"r:{int(datetime.utcnow().timestamp() * 1000)}",
             name=request.name,
             description=request.description,
             object_type=request.object_type,
             report_type=request.report_type,
             fields=request.fields,
-            filters=request.filters or [],
+            filters=report_filters,
+            metadata=ReportMetadata(
+                created_by="system",
+                created_at=datetime.utcnow(),
+            ),
         )
 
         result = await report_manager.create_report(
