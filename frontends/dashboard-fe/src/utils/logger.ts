@@ -1,5 +1,5 @@
 interface LogContext {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 interface LogEntry {
@@ -12,7 +12,7 @@ interface LogEntry {
 }
 
 class Logger {
-  private isDev = import.meta.env.DEV
+  private isDev = (import.meta as any).env?.DEV === true
 
   private log(level: string, message: string, context?: LogContext, error?: Error) {
     const entry: LogEntry = {
@@ -31,7 +31,8 @@ class Logger {
     }
 
     if (this.isDev) {
-      console[level.toLowerCase() as keyof Console](entry)
+      const method = level.toLowerCase() as 'log' | 'info' | 'warn' | 'error' | 'debug'
+      console[method](entry)
     }
 
     // In production, send to logging service

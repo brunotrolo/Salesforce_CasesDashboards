@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ReportsList } from '@components/ReportsList'
-import { useReports } from '@hooks/useReports'
-import { ReportStatus } from '@types/report'
+import { ReportsList } from '../components/ReportsList'
+import { useReports } from '../hooks/useReports'
+import type { ReportStatus } from '../types/report'
 
 export const DashboardPage: React.FC = () => {
   const navigate = useNavigate()

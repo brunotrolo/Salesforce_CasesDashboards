@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
-import { Report, ReportStatus, ListReportsResponse } from '@types/report'
-import { reportApi } from '@api/reportApi'
+import type { Report, ReportStatus } from '../types/report'
+import { reportApi } from '../api/reportApi'
 
 export interface UseReportsState {
   reports: Report[]
