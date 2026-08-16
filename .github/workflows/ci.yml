@@ -23,27 +23,27 @@ jobs:
 
       - name: Install Node dependencies
         run: |
-          cd frontends/dashboard-fe && npm install
-          cd ../builder-fe && npm install
-          cd ../analytics-fe && npm install
+          npm install --prefix frontends/dashboard-fe
+          npm install --prefix frontends/builder-fe
+          npm install --prefix frontends/analytics-fe
 
       - name: Run Python tests
         run: pytest -v --cov=services/api-gateway --cov-report=xml
 
       - name: Run Frontend tests
         run: |
-          cd frontends/dashboard-fe && npm run test || true
-          cd ../builder-fe && npm run test || true
-          cd ../analytics-fe && npm run test || true
+          npm test --prefix frontends/dashboard-fe || true
+          npm test --prefix frontends/builder-fe || true
+          npm test --prefix frontends/analytics-fe || true
 
       - name: Lint Python
         run: pylint services/ || true
 
       - name: Lint Frontend
         run: |
-          cd frontends/dashboard-fe && npm run lint || true
-          cd ../builder-fe && npm run lint || true
-          cd ../analytics-fe && npm run lint || true
+          npm run lint --prefix frontends/dashboard-fe || true
+          npm run lint --prefix frontends/builder-fe || true
+          npm run lint --prefix frontends/analytics-fe || true
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
