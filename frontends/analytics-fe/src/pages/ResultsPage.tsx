@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { BarChart } from '@components/BarChart'
 import { DataTable } from '@components/DataTable'
 import { ReportExecutionResult, Report } from '@types/report'
 import { AnalyticsResult, TableData, ChartData } from '@types/analytics'
 import { formatDuration, formatNumber } from '@utils/formatters'
+import { exportToPDF, exportToExcel, exportToCSV, copyToClipboard } from '@utils/exporters'
 
 interface LocationState {
   result: ReportExecutionResult
@@ -16,10 +17,88 @@ export const ResultsPage: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [view, setView] = useState<'table' | 'charts'>('table')
+  const [exportLoading, setExportLoading] = useState<string | null>(null)
+  const [exportMessage, setExportMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const chartRef = useRef<HTMLDivElement>(null)
 
   const result = (location.state as LocationState)?.result
   const report = (location.state as LocationState)?.report
 
+  const handleExportPDF = async () => {
+    setExportLoading('pdf')
+    try {
+      const analyticsResult: AnalyticsResult = {
+        rows: result.rows_returned,
+        execution_time: result.execution_time_ms,
+        status: result.status,
+        data: result.data
+      }
+      await exportToPDF(report?.name || 'Report', analyticsResult, chartRef.current || undefined)
+      setExportMessage({ type: 'success', text: 'PDF exportado com sucesso' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } catch (error) {
+      console.error('Export PDF error:', error)
+      setExportMessage({ type: 'error', text: 'Erro ao exportar PDF' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } finally {
+      setExportLoading(null)
+    }
+  }
+
+  const handleExportExcel = () => {
+    setExportLoading('excel')
+    try {
+      const analyticsResult: AnalyticsResult = {
+        rows: result.rows_returned,
+        execution_time: result.execution_time_ms,
+        status: result.status,
+        data: result.data
+      }
+      exportToExcel(report?.name || 'Report', analyticsResult, {
+        execution_time_ms: result.execution_time_ms,
+        rows_returned: result.rows_returned,
+        executed_at: result.executed_at
+      })
+      setExportMessage({ type: 'success', text: 'Excel exportado com sucesso' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } catch (error) {
+      console.error('Export Excel error:', error)
+      setExportMessage({ type: 'error', text: 'Erro ao exportar Excel' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } finally {
+      setExportLoading(null)
+    }
+  }
+
+  const handleExportCSV = () => {
+    setExportLoading('csv')
+    try {
+      exportToCSV(report?.name || 'Report', result.data)
+      setExportMessage({ type: 'success', text: 'CSV exportado com sucesso' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } catch (error) {
+      console.error('Export CSV error:', error)
+      setExportMessage({ type: 'error', text: 'Erro ao exportar CSV' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } finally {
+      setExportLoading(null)
+    }
+  }
+
+  const handleCopyToClipboard = async () => {
+    setExportLoading('clipboard')
+    try {
+      await copyToClipboard(result.data)
+      setExportMessage({ type: 'success', text: 'Dados copiados para a área de transferência' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } catch (error) {
+      console.error('Copy to clipboard error:', error)
+      setExportMessage({ type: 'error', text: 'Erro ao copiar dados' })
+      setTimeout(() => setExportMessage(null), 3000)
+    } finally {
+      setExportLoading(null)
+    }
+  }
   if (!result) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -106,34 +185,82 @@ export const ResultsPage: React.FC = () => {
         </div>
 
         {/* View toggle */}
-        <div className="mb-6 flex gap-2">
-          <button
-            onClick={() => setView('table')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              view === 'table'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-            }`}
-          >
-            Tabela
-          </button>
-          <button
-            onClick={() => setView('charts')}
-            className={`px-4 py-2 rounded-lg font-medium transition ${
-              view === 'charts'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-            }`}
-          >
-            Gráficos
-          </button>
+        <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setView('table')}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                view === 'table'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+              }`}
+            >
+              Tabela
+            </button>
+            <button
+              onClick={() => setView('charts')}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                view === 'charts'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+              }`}
+            >
+              Gráficos
+            </button>
+          </div>
+
+          {/* Export buttons */}
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={handleExportPDF}
+              disabled={exportLoading !== null}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center gap-2"
+            >
+              {exportLoading === 'pdf' ? '⏳' : '📄'}
+              PDF
+            </button>
+            <button
+              onClick={handleExportExcel}
+              disabled={exportLoading !== null}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center gap-2"
+            >
+              {exportLoading === 'excel' ? '⏳' : '📊'}
+              Excel
+            </button>
+            <button
+              onClick={handleExportCSV}
+              disabled={exportLoading !== null}
+              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center gap-2"
+            >
+              {exportLoading === 'csv' ? '⏳' : '📋'}
+              CSV
+            </button>
+            <button
+              onClick={handleCopyToClipboard}
+              disabled={exportLoading !== null}
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium flex items-center gap-2"
+            >
+              {exportLoading === 'clipboard' ? '⏳' : '📋'}
+              Copiar
+            </button>
+          </div>
         </div>
 
+        {/* Export message */}
+        {exportMessage && (
+          <div className={`mb-6 p-4 rounded-lg ${
+            exportMessage.type === 'success'
+              ? 'bg-green-100 text-green-800 border border-green-300'
+              : 'bg-red-100 text-red-800 border border-red-300'
+          }`}>
+            {exportMessage.text}
+          </div>
+        )}
         {/* Content */}
         {view === 'table' ? (
           <DataTable data={tableData} maxRows={50} />
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-8" ref={chartRef}>
             <BarChart
               data={chartData.slice(0, 10)}
               config={{
