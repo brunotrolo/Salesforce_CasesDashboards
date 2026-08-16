@@ -271,6 +271,61 @@
     <h2>Padrão Diário de Volume</h2>
     <p class="lead">Variação dia a dia e distribuição manual vs automática. Base para dimensionamento de recursos.</p>
     <div class="quadro">
+      <svg viewBox="0 0 980 280" role="img" aria-label="Gráfico de barras empilhadas mostrando volume manual e automático por dia" style="width:100%;height:auto;margin-bottom:24px">
+        <text x="0" y="14" font-family="Sora, sans-serif" font-size="11" letter-spacing="1" fill="#7a8090">VOLUME DIÁRIO · MANUAL × AUTOMÁTICO · SEMANA 09-14/08</text>
+        <line x1="0" y1="240" x2="980" y2="240" stroke="#c9c5b8" stroke-width="1"/>
+        <line x1="0" y1="240" x2="980" y2="240" stroke="#e3e0d6" stroke-width="1" transform="translate(0,-60)"/>
+        <line x1="0" y1="240" x2="980" y2="240" stroke="#e3e0d6" stroke-width="1" transform="translate(0,-120)"/>
+        <line x1="0" y1="240" x2="980" y2="240" stroke="#e3e0d6" stroke-width="1" transform="translate(0,-180)"/>
+        <!-- max 81200 -> 180px ; scale = 180/81200 = 0.00221 -->
+        <!-- 09/08: 43662 manual (96.5px) + 24768 auto (54.8px) = 151.3px -->
+        <g>
+          <rect x="60" y="143.5" width="100" height="96.5" fill="#0e6e6b"/>
+          <rect x="60" y="185.3" width="100" height="54.8" fill="#c98a2d"/>
+          <text x="110" y="258" text-anchor="middle" font-family="Sora" font-size="11" fill="#20242b">Seg 09</text>
+          <text x="110" y="274" text-anchor="middle" font-family="Newsreader, serif" font-size="12" fill="#4c525c">68.430</text>
+        </g>
+        <!-- 10/08: 48525 (107.3px) + 27295 (60.3px) = 167.6px -->
+        <g>
+          <rect x="205" y="132.7" width="100" height="107.3" fill="#0e6e6b"/>
+          <rect x="205" y="160" width="100" height="80" fill="#c98a2d" opacity="0.8"/>
+          <text x="255" y="258" text-anchor="middle" font-family="Sora" font-size="11" fill="#20242b">Ter 10</text>
+          <text x="255" y="274" text-anchor="middle" font-family="Newsreader, serif" font-size="12" fill="#4c525c">75.820</text>
+        </g>
+        <!-- 11/08: 46176 (102px) + 25974 (57.4px) = 159.4px -->
+        <g>
+          <rect x="350" y="138" width="100" height="102" fill="#0e6e6b"/>
+          <rect x="350" y="172.4" width="100" height="67.6" fill="#c98a2d"/>
+          <text x="400" y="258" text-anchor="middle" font-family="Sora" font-size="11" fill="#20242b">Qua 11</text>
+          <text x="400" y="274" text-anchor="middle" font-family="Newsreader, serif" font-size="12" fill="#4c525c">72.150</text>
+        </g>
+        <!-- 12/08: 50275 (111.2px) + 28155 (62.3px) = 173.5px -->
+        <g>
+          <rect x="495" y="128.8" width="100" height="111.2" fill="#0e6e6b"/>
+          <rect x="495" y="177.7" width="100" height="62.3" fill="#c98a2d"/>
+          <text x="545" y="258" text-anchor="middle" font-family="Sora" font-size="11" fill="#20242b">Qui 12</text>
+          <text x="545" y="274" text-anchor="middle" font-family="Newsreader, serif" font-size="12" fill="#4c525c">78.430</text>
+        </g>
+        <!-- 13/08: 52008 (115px) + 29192 (64.5px) = 179.5px (PEAK) -->
+        <g>
+          <rect x="640" y="125" width="100" height="115" fill="#0e6e6b"/>
+          <rect x="640" y="175.5" width="100" height="64.5" fill="#c98a2d"/>
+          <text x="690" y="258" text-anchor="middle" font-family="Sora" font-size="11" fill="#20242b">Sex 13</text>
+          <text x="690" y="274" text-anchor="middle" font-family="Newsreader, serif" font-size="12" fill="#4c525c">81.200</text>
+        </g>
+        <!-- 14/08: 43668 (96.6px) + 24563 (54.3px) = 150.9px -->
+        <g>
+          <rect x="785" y="143.4" width="100" height="96.6" fill="#0e6e6b"/>
+          <rect x="785" y="185.7" width="100" height="54.3" fill="#c98a2d"/>
+          <text x="835" y="258" text-anchor="middle" font-family="Sora" font-size="11" fill="#20242b">Sab 14</text>
+          <text x="835" y="274" text-anchor="middle" font-family="Newsreader, serif" font-size="12" fill="#4c525c">68.231</text>
+        </g>
+        <!-- Legend -->
+        <g font-family="Sora" font-size="11">
+          <rect x="880" y="40" width="12" height="12" fill="#0e6e6b"/><text x="898" y="50" fill="#4c525c">Manual</text>
+          <rect x="880" y="65" width="12" height="12" fill="#c98a2d"/><text x="898" y="75" fill="#4c525c">Automático</text>
+        </g>
+      </svg>
       <table>
         <thead>
           <tr>
