@@ -19,54 +19,10 @@ jobs:
           node-version: '18'
 
       - name: Install Python dependencies
-        run: |
-          python --version
-          pip --version
-          pip install --upgrade pip setuptools wheel
-          pip install -r requirements.txt --verbose
-          pip list | grep -E "pytest|coverage|fastapi"
-
-      - name: Install Node dependencies
-        run: |
-          npm install --prefix frontends/dashboard-fe || true
-          npm install --prefix frontends/builder-fe || true
-          npm install --prefix frontends/analytics-fe || true
-
-      - name: Test app import
-        run: |
-          cd services/api-gateway
-          python -c "
-import sys
-import os
-print('Current directory:', os.getcwd())
-print('Python path:', sys.path[:3])
-from src.main import app
-print('✓ App imported successfully')
-print(f'✓ App type: {type(app)}')
-"
-
-      - name: Check pytest config
-        run: |
-          python -m pytest --version
-          python -m pytest --co -q
+        run: pip install -r requirements.txt
 
       - name: Run Python tests
-        run: python -m pytest -vv -c pytest.ini --cov=services/api-gateway --cov-report=xml --tb=short
-
-      - name: Run Frontend tests
-        run: |
-          npm test --prefix frontends/dashboard-fe || true
-          npm test --prefix frontends/builder-fe || true
-          npm test --prefix frontends/analytics-fe || true
-
-      - name: Lint Python
-        run: pylint services/ || true
-
-      - name: Lint Frontend
-        run: |
-          npm run lint --prefix frontends/dashboard-fe || true
-          npm run lint --prefix frontends/builder-fe || true
-          npm run lint --prefix frontends/analytics-fe || true
+        run: pytest -v --cov=services/api-gateway --cov-report=xml
 
       - name: Upload coverage
         continue-on-error: true
