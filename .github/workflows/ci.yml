@@ -38,10 +38,10 @@ jobs:
           python -c "from src.main import app; print('App imported successfully')"
 
       - name: Collect tests
-        run: pytest --collect-only -v
+        run: pytest --collect-only -v -c pytest.ini
 
       - name: Run Python tests
-        run: pytest -v --cov=services/api-gateway --cov-report=xml
+        run: pytest -v -c pytest.ini --cov=services/api-gateway --cov-report=xml
 
       - name: Run Frontend tests
         run: |
