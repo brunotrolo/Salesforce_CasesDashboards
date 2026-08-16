@@ -1,97 +1,776 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Salesforce Cases Dashboard</title>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background: #f4f2ec;
-    color: #20242b;
-  }
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    background: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  }
-  h1 {
-    color: #0e6e6b;
-    margin-bottom: 20px;
-  }
-  .links {
-    margin: 30px 0;
-  }
-  .links a {
-    display: inline-block;
-    margin: 10px 10px 10px 0;
-    padding: 12px 24px;
-    background: #0e6e6b;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-  .links a:hover {
-    background: #0a524f;
-  }
-  .info {
-    background: #e7f0ee;
-    border-left: 4px solid #0e6e6b;
-    padding: 16px;
-    margin: 20px 0;
-    border-radius: 4px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios Estratégicos — Salesforce Cases</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════════ */
+        /* TOKENS: Design System */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        :root {
+            /* Semantic Colors — Light Theme */
+            --color-manual: #0e6e6b;
+            --color-automation: #c98a2d;
+            --color-critical: #b3482f;
+            --color-success: #3d7a4e;
+
+            /* Neutrals — Light */
+            --bg-page: #f9f7f4;
+            --bg-surface: #ffffff;
+            --bg-muted: #f2ede7;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-muted: #999999;
+            --border-color: #e5dfd7;
+
+            /* Typography */
+            --font-display: Garamond, Georgia, serif;
+            --font-body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            --font-mono: "Courier New", monospace;
+
+            /* Scale */
+            --font-xs: 0.75rem;
+            --font-sm: 0.875rem;
+            --font-base: 1rem;
+            --font-lg: 1.125rem;
+            --font-xl: 1.5rem;
+            --font-2xl: 2rem;
+            --font-3xl: 2.625rem;
+
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 0.875rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+
+            /* Effects */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                /* Semantic Colors — Dark Theme */
+                --color-manual: #4ec7c1;
+                --color-automation: #e8b857;
+                --color-critical: #e67d68;
+                --color-success: #6ba876;
+
+                /* Neutrals — Dark */
+                --bg-page: #0f0d0b;
+                --bg-surface: #1a1a1a;
+                --bg-muted: #2a2a2a;
+                --text-primary: #f4f1ea;
+                --text-secondary: #b0a89f;
+                --text-muted: #7a7370;
+                --border-color: #3a3530;
+            }
+        }
+
+        :root[data-theme="dark"] {
+            /* Semantic Colors — Dark Theme (explicit) */
+            --color-manual: #4ec7c1;
+            --color-automation: #e8b857;
+            --color-critical: #e67d68;
+            --color-success: #6ba876;
+
+            /* Neutrals — Dark */
+            --bg-page: #0f0d0b;
+            --bg-surface: #1a1a1a;
+            --bg-muted: #2a2a2a;
+            --text-primary: #f4f1ea;
+            --text-secondary: #b0a89f;
+            --text-muted: #7a7370;
+            --border-color: #3a3530;
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* RESET & BASE */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: var(--font-base);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: var(--color-manual);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--color-automation);
+        }
+
+        a:focus-visible {
+            outline: 2px solid var(--color-manual);
+            outline-offset: 2px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* LAYOUT STRUCTURE */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        .container {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* HEADER / MASTHEAD */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        .header {
+            background-color: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--space-lg) var(--space-md);
+            margin-bottom: var(--space-xl);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-branding {
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-md);
+        }
+
+        .header-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--color-manual) 0%, var(--color-automation) 100%);
+            border-radius: 2px;
+        }
+
+        .header-title {
+            font-family: var(--font-display);
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-wrap: balance;
+        }
+
+        .header-subtitle {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-weight: 400;
+            margin-top: var(--space-xs);
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* KPI RULER */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        .kpi-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .kpi-label {
+            font-family: var(--font-body);
+            font-size: var(--font-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: var(--space-md);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .kpi-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: var(--space-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .kpi-label-card {
+            font-family: var(--font-body);
+            font-size: var(--font-xs);
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .kpi-value {
+            font-family: var(--font-display);
+            font-size: var(--font-3xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .kpi-unit {
+            font-family: var(--font-body);
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .kpi-card.manual {
+            border-left: 4px solid var(--color-manual);
+        }
+
+        .kpi-card.automation {
+            border-left: 4px solid var(--color-automation);
+        }
+
+        .kpi-card.critical {
+            border-left: 4px solid var(--color-critical);
+        }
+
+        .kpi-card.success {
+            border-left: 4px solid var(--color-success);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* NAVIGATION: REPORT CARDS */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        .phase-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .phase-title {
+            font-family: var(--font-display);
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .phase-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 2px;
+            font-family: var(--font-display);
+            font-size: var(--font-base);
+            font-weight: 700;
+            color: white;
+        }
+
+        .phase-badge.phase-1 {
+            background-color: var(--color-manual);
+        }
+
+        .phase-badge.phase-2 {
+            background: linear-gradient(135deg, var(--color-manual) 0%, var(--color-automation) 100%);
+        }
+
+        .phase-badge.phase-3 {
+            background-color: var(--color-automation);
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .report-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--color-manual);
+        }
+
+        .report-card:focus-visible {
+            outline: 2px solid var(--color-manual);
+            outline-offset: -2px;
+        }
+
+        .report-icon {
+            width: 48px;
+            height: 48px;
+            background-color: var(--bg-muted);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-2xl);
+        }
+
+        .report-title {
+            font-family: var(--font-display);
+            font-size: var(--font-lg);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .report-description {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .report-chart-preview {
+            width: 100%;
+            height: 140px;
+            background-color: var(--bg-muted);
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            overflow: hidden;
+        }
+
+        .report-chart-preview img,
+        .report-chart-preview svg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .report-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-family: var(--font-body);
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--color-manual);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .report-cta::after {
+            content: "→";
+            transition: transform 0.2s ease;
+        }
+
+        .report-card:hover .report-cta::after {
+            transform: translateX(4px);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* FOOTER */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        .footer {
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--border-color);
+            padding: var(--space-lg) var(--space-md);
+            margin-top: var(--space-xl);
+        }
+
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .footer-text {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+        }
+
+        .footer-link {
+            font-size: var(--font-xs);
+            color: var(--color-manual);
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* RESPONSIVE ADJUSTMENTS */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: var(--font-xl);
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: var(--space-sm);
+            }
+
+            .kpi-value {
+                font-size: var(--font-2xl);
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .phase-title {
+                font-size: var(--font-lg);
+            }
+
+            .container {
+                padding: 0 var(--space-sm);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <h1>Salesforce Cases Dashboard</h1>
-  <p>Briefing executivo com análise gerencial de Cases do Salesforce em tempo real.</p>
-  
-  <div class="links">
-    <a href="./dashboard.html">📊 Visão Diária</a>
-    <a href="./dashboard-weekly.html">📈 Visão Semanal</a>
-    <a href="./reports-index.html">📋 Relatórios (7 fases)</a>
-    <a href="./OPPORTUNITIES.md">💡 Análise Completa</a>
-  </div>
+    <!-- MASTHEAD -->
+    <header class="header">
+        <div class="container">
+            <div class="header-branding">
+                <div class="header-logo"></div>
+                <div>
+                    <h1 class="header-title">Relatórios Estratégicos</h1>
+                    <p class="header-subtitle">Sistema de análise de Cases do Salesforce</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div>Atualizado hoje</div>
+                <div id="current-date"></div>
+            </div>
+        </div>
+    </header>
 
-  <div class="info">
-    <strong>ℹ️ Dados em tempo real via MCP</strong><br>
-    Dashboard consome dados reais do Salesforce via MCP SalesforceRead (SOQL queries somente leitura).
-    <br><br>
-    <strong>Visão Diária:</strong> Análise granular de hoje (volume, categorias, status, qualidade de dados)<br>
-    <strong>Visão Semanal:</strong> Tendências e padrões (produtos, automação, SLA, oportunidades)<br>
-    <strong>Oportunidades:</strong> 7 novos relatórios estratégicos identificados (SLA por categoria, Product Scorecard, RPA Expansion, etc)
-  </div>
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <!-- KPI RULER -->
+        <section class="kpi-section">
+            <h2 class="kpi-label">Métricas Principais</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card manual">
+                    <span class="kpi-label-card">Total de Cases</span>
+                    <div>
+                        <span class="kpi-value">68.2k</span>
+                        <span class="kpi-unit">diário</span>
+                    </div>
+                </div>
+                <div class="kpi-card manual">
+                    <span class="kpi-label-card">Manual vs Automático</span>
+                    <div>
+                        <span class="kpi-value">64.6%</span>
+                        <span class="kpi-unit">manual</span>
+                    </div>
+                </div>
+                <div class="kpi-card success">
+                    <span class="kpi-label-card">SLA de Conformidade</span>
+                    <div>
+                        <span class="kpi-value">87.4%</span>
+                        <span class="kpi-unit">atendimento</span>
+                    </div>
+                </div>
+                <div class="kpi-card success">
+                    <span class="kpi-label-card">Qualidade Média</span>
+                    <div>
+                        <span class="kpi-value">62.4%</span>
+                        <span class="kpi-unit">categorização</span>
+                    </div>
+                </div>
+                <div class="kpi-card automation">
+                    <span class="kpi-label-card">ROI Automação</span>
+                    <div>
+                        <span class="kpi-value">9.2</span>
+                        <span class="kpi-unit">score agregado</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-  <h2>Como usar</h2>
-  <ol>
-    <li>Clique em "Ver Dashboard" acima</li>
-    <li>O dashboard é autossuficiente (HTML + CSS + dados embutidos)</li>
-    <li>Compartilhe o link ou exporte como PDF</li>
-    <li>Integre em relatórios automáticos via GitHub Actions</li>
-  </ol>
+        <!-- PHASE 1: ENTRY LEVEL -->
+        <section class="phase-section">
+            <h2 class="phase-title">
+                <span class="phase-badge phase-1">1</span>
+                Fundação — SLA e Composição de Produtos
+            </h2>
+            <div class="report-grid">
+                <!-- Report: SLA -->
+                <a href="report-sla.html" class="report-card">
+                    <div class="report-icon">📊</div>
+                    <h3 class="report-title">SLA por Categoria</h3>
+                    <p class="report-description">Análise de conformidade de SLA ao longo de 2 semanas, segregado por categoria manual e automática.</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <defs>
+                                <linearGradient id="sla-manual" x1="0" y1="0" x1="0" y2="1">
+                                    <stop offset="0%" style="stop-color:#0e6e6b;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#0e6e6b;stop-opacity:0.3"/>
+                                </linearGradient>
+                                <linearGradient id="sla-auto" x1="0" y1="0" x1="0" y2="1">
+                                    <stop offset="0%" style="stop-color:#c98a2d;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#c98a2d;stop-opacity:0.3"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="20" y="80" width="12" height="30" fill="url(#sla-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="35" y="75" width="12" height="35" fill="url(#sla-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="50" y="78" width="12" height="32" fill="url(#sla-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="65" y="72" width="12" height="38" fill="url(#sla-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="80" y="76" width="12" height="34" fill="url(#sla-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="95" y="70" width="12" height="40" fill="url(#sla-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <line x1="10" y1="110" x2="280" y2="110" stroke="#e5dfd7" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
 
-  <h2>Regenerar dashboard</h2>
-  <pre><code>python3 scripts/generate_dashboard.py</code></pre>
+                <!-- Report: Product Scorecard -->
+                <a href="report-product-scorecard.html" class="report-card">
+                    <div class="report-icon">🎯</div>
+                    <h3 class="report-title">Scorecard de Produtos</h3>
+                    <p class="report-description">Distribuição de volume e composição manual/automática por cada produto.</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <defs>
+                                <linearGradient id="prod-manual" x1="0" y1="0" x1="0" y2="1">
+                                    <stop offset="0%" style="stop-color:#0e6e6b;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#0e6e6b;stop-opacity:0.3"/>
+                                </linearGradient>
+                                <linearGradient id="prod-auto" x1="0" y1="0" x1="0" y2="1">
+                                    <stop offset="0%" style="stop-color:#c98a2d;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#c98a2d;stop-opacity:0.3"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="15" y="55" width="18" height="50" fill="url(#prod-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="35" y="55" height="25" width="18" fill="url(#prod-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="55" y="40" width="18" height="65" fill="url(#prod-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="75" y="40" height="35" width="18" fill="url(#prod-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="95" y="60" width="18" height="45" fill="url(#prod-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="115" y="60" height="25" width="18" fill="url(#prod-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="135" y="50" width="18" height="55" fill="url(#prod-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="155" y="50" height="30" width="18" fill="url(#prod-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <line x1="10" y1="105" x2="280" y2="105" stroke="#e5dfd7" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
+            </div>
+        </section>
 
-  <h2>Configuração</h2>
-  <p>Variáveis de ambiente necessárias:</p>
-  <ul>
-    <li><code>SF_CLIENT_ID</code> - Salesforce OAuth Client ID</li>
-    <li><code>SF_CLIENT_SECRET</code> - Salesforce OAuth Client Secret</li>
-    <li><code>SF_REFRESH_TOKEN</code> - Salesforce OAuth Refresh Token</li>
-  </ul>
+        <!-- PHASE 2: PERFORMANCE & OPERATIONS -->
+        <section class="phase-section">
+            <h2 class="phase-title">
+                <span class="phase-badge phase-2">2</span>
+                Performance — Efetividade, Qualidade e Capacidade
+            </h2>
+            <div class="report-grid">
+                <!-- Report: Effectiveness -->
+                <a href="report-effectiveness.html" class="report-card">
+                    <div class="report-icon">⚡</div>
+                    <h3 class="report-title">Análise de Efetividade</h3>
+                    <p class="report-description">Composição de efetividade entre processos manuais e automáticos.</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <circle cx="80" cy="60" r="45" fill="none" stroke="#0e6e6b" stroke-width="15" stroke-dasharray="212 320" opacity="0.8"/>
+                            <circle cx="80" cy="60" r="45" fill="none" stroke="#c98a2d" stroke-width="15" stroke-dasharray="107 320" stroke-dashoffset="-212" opacity="0.8"/>
+                            <text x="80" y="65" text-anchor="middle" font-family="Georgia, serif" font-size="18" font-weight="bold" fill="#1a1a1a">64.6%</text>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
 
-  <p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e3e0d6; color: #7a8090; font-size: 14px;">
-    Gerado via MCP SalesforceRead · <a href="https://github.com/brunotrolo/Salesforce_CasesDashboards" style="color: #7a8090;">GitHub</a>
-  </p>
-</div>
+                <!-- Report: Quality Tracker -->
+                <a href="report-quality-tracker.html" class="report-card">
+                    <div class="report-icon">✓</div>
+                    <h3 class="report-title">Qualidade Semanal</h3>
+                    <p class="report-description">Tendência de categorização correta ao longo das últimas 4 semanas.</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <defs>
+                                <linearGradient id="quality-grad" x1="0" y1="1" x2="0" y2="0">
+                                    <stop offset="0%" style="stop-color:#3d7a4e;stop-opacity:0.3"/>
+                                    <stop offset="100%" style="stop-color:#3d7a4e;stop-opacity:0.8"/>
+                                </linearGradient>
+                            </defs>
+                            <polyline points="30,65 80,50 130,58 180,48 230,40" fill="none" stroke="#3d7a4e" stroke-width="2" stroke-linejoin="round"/>
+                            <polygon points="30,65 80,50 130,58 180,48 230,40 230,110 30,110" fill="url(#quality-grad)"/>
+                            <line x1="10" y1="110" x2="280" y2="110" stroke="#e5dfd7" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
+
+                <!-- Report: Capacity -->
+                <a href="report-capacity.html" class="report-card">
+                    <div class="report-icon">📈</div>
+                    <h3 class="report-title">Capacidade Diária</h3>
+                    <p class="report-description">Distribuição de volume de cases por dia, segregado em manual e automático.</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <defs>
+                                <linearGradient id="cap-manual" x1="0" y1="0" x1="0" y2="1">
+                                    <stop offset="0%" style="stop-color:#0e6e6b;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#0e6e6b;stop-opacity:0.3"/>
+                                </linearGradient>
+                                <linearGradient id="cap-auto" x1="0" y1="0" x1="0" y2="1">
+                                    <stop offset="0%" style="stop-color:#c98a2d;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#c98a2d;stop-opacity:0.3"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="20" y="60" width="8" height="40" fill="url(#cap-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="30" y="50" width="8" height="50" fill="url(#cap-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="40" y="55" width="8" height="45" fill="url(#cap-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="50" y="48" width="8" height="52" fill="url(#cap-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="60" y="58" width="8" height="42" fill="url(#cap-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="70" y="52" width="8" height="48" fill="url(#cap-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="80" y="62" width="8" height="38" fill="url(#cap-manual)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="90" y="54" width="8" height="46" fill="url(#cap-auto)" stroke="#c98a2d" stroke-width="1"/>
+                            <line x1="10" y1="100" x2="150" y2="100" stroke="#e5dfd7" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- PHASE 3: OPTIMIZATION & STRATEGY -->
+        <section class="phase-section">
+            <h2 class="phase-title">
+                <span class="phase-badge phase-3">3</span>
+                Estratégia — Matriz de Automação e Hierarquia
+            </h2>
+            <div class="report-grid">
+                <!-- Report: Automation Matrix -->
+                <a href="report-automation-matrix.html" class="report-card">
+                    <div class="report-icon">🤖</div>
+                    <h3 class="report-title">Matriz de Automação</h3>
+                    <p class="report-description">ROI de automação por categoria, mostrando oportunidades de otimização.</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <defs>
+                                <linearGradient id="roi-grad" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" style="stop-color:#c98a2d;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#0e6e6b;stop-opacity:0.8"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="20" y="90" width="40" height="15" fill="url(#roi-grad)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="65" y="80" width="40" height="25" fill="url(#roi-grad)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="110" y="70" width="40" height="35" fill="url(#roi-grad)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="155" y="75" width="40" height="30" fill="url(#roi-grad)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="200" y="85" width="40" height="20" fill="url(#roi-grad)" stroke="#c98a2d" stroke-width="1"/>
+                            <line x1="10" y1="105" x2="280" y2="105" stroke="#e5dfd7" stroke-width="1"/>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
+
+                <!-- Report: Hierarchy -->
+                <a href="report-hierarchy.html" class="report-card">
+                    <div class="report-icon">📊</div>
+                    <h3 class="report-title">Hierarquia de Categorias</h3>
+                    <p class="report-description">Completude de dados na hierarquia de categorização (categoria → subcategoria → detalhe).</p>
+                    <div class="report-chart-preview">
+                        <svg viewBox="0 0 300 120" style="width:100%;height:100%;">
+                            <defs>
+                                <linearGradient id="hier-grad" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" style="stop-color:#0e6e6b;stop-opacity:0.8"/>
+                                    <stop offset="50%" style="stop-color:#c98a2d;stop-opacity:0.8"/>
+                                    <stop offset="100%" style="stop-color:#b3482f;stop-opacity:0.8"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="20" y="50" width="55" height="30" fill="url(#hier-grad)" stroke="#0e6e6b" stroke-width="1"/>
+                            <rect x="80" y="60" width="50" height="20" fill="url(#hier-grad)" stroke="#c98a2d" stroke-width="1"/>
+                            <rect x="135" y="70" width="45" height="10" fill="url(#hier-grad)" stroke="#b3482f" stroke-width="1"/>
+                            <text x="25" y="105" font-family="system-ui, sans-serif" font-size="10" fill="#666">Categoria</text>
+                            <text x="85" y="105" font-family="system-ui, sans-serif" font-size="10" fill="#666">Subcategoria</text>
+                            <text x="135" y="105" font-family="system-ui, sans-serif" font-size="10" fill="#666">Detalhe</text>
+                        </svg>
+                    </div>
+                    <span class="report-cta">Acessar relatório</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-text">
+                Dados gerados a partir de queries SOQL de <a href="#" class="footer-link">Salesforce Cases</a>.
+                Atualização automática diária às 06:00 UTC.
+            </div>
+            <div class="footer-text">
+                v1.0 — Fase 1, 2 e 3
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Set current date in header
+        const now = new Date();
+        const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        document.getElementById('current-date').textContent = dateFormatter.format(now);
+
+        // Theme toggle (optional - for development)
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
 </body>
 </html>
