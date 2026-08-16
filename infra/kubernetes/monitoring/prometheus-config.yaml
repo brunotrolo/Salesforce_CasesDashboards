@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: salesforce-reports
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s
+    scrape_configs:
+    - job_name: 'report-service'
+      static_configs:
+      - targets: ['report-service:9090']
+    - job_name: 'kubernetes'
+      kubernetes_sd_configs:
+      - role: node

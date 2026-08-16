@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alert-rules
+  namespace: salesforce-reports
+data:
+  alerts.yml: |
+    groups:
+    - name: salesforce_reports
+      rules:
+      - alert: ReportServiceDown
+        expr: up{job="report-service"} == 0
+        for: 2m
+        annotations:
+          summary: "Report Service is down"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        annotations:
+          summary: "High error rate detected"

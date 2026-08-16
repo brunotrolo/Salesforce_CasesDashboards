@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: salesforce-reports-ingress
+  namespace: salesforce-reports
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - reports.example.com
+    secretName: reports-tls-cert
+  rules:
+  - host: reports.example.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 3000
+      - path: /dashboard
+        pathType: Prefix
+        backend:
+          service:
+            name: dashboard-fe
+            port:
+              number: 3001
+      - path: /builder
+        pathType: Prefix
+        backend:
+          service:
+            name: builder-fe
+            port:
+              number: 3002
+      - path: /analytics
+        pathType: Prefix
+        backend:
+          service:
+            name: analytics-fe
+            port:
+              number: 3003
