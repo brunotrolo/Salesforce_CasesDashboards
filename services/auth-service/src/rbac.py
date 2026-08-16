@@ -1,120 +1,133 @@
-"""
-Role-Based Access Control (RBAC).
-"""
-
-from typing import List, Set
-from enum import Enum
-import logging
-
-logger = logging.getLogger(__name__)
-
-
-class Role(str, Enum):
-    """Roles disponíveis."""
-    ADMIN = "admin"
-    USER = "user"
-    VIEWER = "viewer"
-    ANALYST = "analyst"
-
-
-class Permission(str, Enum):
-    """Permissões disponíveis."""
-    # Report operations
-    CREATE_REPORT = "create_report"
-    READ_REPORT = "read_report"
-    UPDATE_REPORT = "update_report"
-    DELETE_REPORT = "delete_report"
-    
-    # User management
-    MANAGE_USERS = "manage_users"
-    VIEW_LOGS = "view_logs"
-    MANAGE_ROLES = "manage_roles"
-
-
-# Mapeamento Role -> Permissions
-ROLE_PERMISSIONS: dict = {
-    Role.ADMIN: {
-        Permission.CREATE_REPORT,
-        Permission.READ_REPORT,
-        Permission.UPDATE_REPORT,
-        Permission.DELETE_REPORT,
-        Permission.MANAGE_USERS,
-        Permission.VIEW_LOGS,
-        Permission.MANAGE_ROLES,
-    },
-    Role.ANALYST: {
-        Permission.CREATE_REPORT,
-        Permission.READ_REPORT,
-        Permission.UPDATE_REPORT,
-        Permission.DELETE_REPORT,
-        Permission.VIEW_LOGS,
-    },
-    Role.USER: {
-        Permission.CREATE_REPORT,
-        Permission.READ_REPORT,
-        Permission.UPDATE_REPORT,
-    },
-    Role.VIEWER: {
-        Permission.READ_REPORT,
-    },
-}
-
+from typing import List, Optional
+from src.models import UserRole, ROLES_PERMISSIONS, RESOURCE_ACTIONS
 
 class RBAC:
-    """Role-Based Access Control."""
-
+    """Sistema de controle de acesso baseado em roles (RBAC)."""
+    
     @staticmethod
-    def get_permissions(roles: List[str]) -> Set[str]:
+    def get_role_permissions(role: UserRole) -> List[str]:
         """
-        Obter permissões para um conjunto de roles.
+        Retorna as permissões de um role.
         
         Args:
-            roles: Lista de roles
+            role: UserRole
+            
+        Returns:
+            Lista de permissões
+        """
+        return ROLES_PERMISSIONS.get(role, [])
+    
+    @staticmethod
+    def get_all_roles() -> List[dict]:
+        """
+        Retorna informações de todos os roles.
+        
+        Returns:
+            Lista de dicts com informações dos roles
+        """
+        roles_info = []
+        role_descriptions = {
+            UserRole.ADMIN: "Administrador - Acesso total",
+            UserRole.MANAGER: "Gerente - Acesso a gerenciamento",
+            UserRole.USER: "Usuário - Acesso básico",
+            UserRole.GUEST: "Convidado - Acesso limitado",
+        }
+        
+        for role in UserRole:
+            roles_info.append({
+                "name": role.value,
+                "description": role_descriptions.get(role, ""),
+                "permissions": RBAC.get_role_permissions(role),
+            })
+        
+        return roles_info
+    
+    @staticmethod
+    def has_permission(
+        user_roles: List[UserRole],
+        resource: str,
+        action: str,
+    ) -> bool:
+        """
+        Verifica se o usuário tem permissão para uma ação em um recurso.
+        
+        Args:
+            user_roles: Lista de roles do usuário
+            resource: Nome do recurso (ex: 'reports')
+            action: Nome da ação (ex: 'create')
+            
+        Returns:
+            True se tem permissão
+        """
+        # Validar recurso
+        if resource not in RESOURCE_ACTIONS:
+            return False
+        
+        # Validar ação
+        if action not in RESOURCE_ACTIONS[resource]:
+            return False
+        
+        # Verificar se algum role tem permissão
+        required_permission = f"{resource}:{action}"
+        
+        for role in user_roles:
+            permissions = RBAC.get_role_permissions(role)
+            if required_permission in permissions:
+                return True
+        
+        return False
+    
+    @staticmethod
+    def check_admin_only(user_roles: List[UserRole]) -> bool:
+        """Verifica se é admin."""
+        return UserRole.ADMIN in user_roles
+    
+    @staticmethod
+    def check_manager_or_admin(user_roles: List[UserRole]) -> bool:
+        """Verifica se é manager ou admin."""
+        return UserRole.MANAGER in user_roles or UserRole.ADMIN in user_roles
+    
+    @staticmethod
+    def get_user_permissions(user_roles: List[UserRole]) -> List[str]:
+        """
+        Retorna todas as permissões de um usuário com vários roles.
+        
+        Args:
+            user_roles: Lista de roles do usuário
             
         Returns:
             Set de permissões
         """
         permissions = set()
         
-        for role_name in roles:
-            try:
-                role = Role[role_name.upper()]
-                permissions.update(ROLE_PERMISSIONS.get(role, set()))
-            except KeyError:
-                logger.warning(f"Unknown role: {role_name}")
+        for role in user_roles:
+            role_perms = RBAC.get_role_permissions(role)
+            permissions.update(role_perms)
+        
+        return list(permissions)
 
-        return permissions
-
+class ResourcePermission:
+    """Gerencia permissões por recurso."""
+    
     @staticmethod
-    def has_permission(roles: List[str], permission: str) -> bool:
+    def is_action_allowed(
+        user_roles: List[UserRole],
+        resource: str,
+        action: str,
+    ) -> tuple[bool, Optional[str]]:
         """
-        Verificar se roles têm permissão específica.
+        Verifica se uma ação é permitida e retorna razão se negada.
         
         Args:
-            roles: Lista de roles do usuário
-            permission: Permissão a verificar
+            user_roles: Roles do usuário
+            resource: Recurso
+            action: Ação
             
         Returns:
-            True se tem permissão
+            (allowed, reason) tuple
         """
-        permissions = RBAC.get_permissions(roles)
-        return permission in permissions
-
-    @staticmethod
-    def require_permission(roles: List[str], permission: str) -> None:
-        """
-        Exigir permissão, lançar exceção se não tiver.
+        if not RBAC.has_permission(user_roles, resource, action):
+            required_perm = f"{resource}:{action}"
+            return False, f"Permissão necessária: {required_perm}"
         
-        Args:
-            roles: Lista de roles
-            permission: Permissão requerida
-            
-        Raises:
-            PermissionError: Se não tem permissão
-        """
-        if not RBAC.has_permission(roles, permission):
-            logger.warning(
-                f"Permission denied",
-                extra={"required": permission, "roles": roles}
-            )
-            raise PermissionError(f"Permission denied: {permission}")
+        return True, None

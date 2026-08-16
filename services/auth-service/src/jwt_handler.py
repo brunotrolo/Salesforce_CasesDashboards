@@ -1,168 +1,186 @@
-"""
-JWT token generation and validation.
-"""
-
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
-import os
+from typing import Dict, Optional
 from jose import JWTError, jwt
-from pydantic import BaseModel
-import logging
-
-logger = logging.getLogger(__name__)
-
-
-class TokenPayload(BaseModel):
-    """Payload do JWT token."""
-    sub: str  # user_id
-    email: str
-    roles: list = []
-    exp: datetime
-    iat: datetime
-
+from src.config import settings
+from src.models import TokenPayload, TokenType, UserRole
 
 class JWTHandler:
-    """Gerenciador de JWT tokens."""
-
-    def __init__(self, secret_key: str = None, algorithm: str = "HS256"):
-        """
-        Inicializar handler.
-        
-        Args:
-            secret_key: Chave secreta para assinar tokens
-            algorithm: Algoritmo de assinatura (HS256, RS256, etc)
-        """
-        self.secret_key = secret_key or os.getenv("JWT_SECRET_KEY", "change_me")
-        self.algorithm = algorithm
-
+    """Gerencia criação e validação de JWT tokens."""
+    
+    def __init__(self):
+        self.secret_key = settings.JWT_SECRET_KEY
+        self.algorithm = settings.JWT_ALGORITHM
+        self.access_token_expire_hours = settings.JWT_EXPIRATION_HOURS
+        self.refresh_token_expire_days = settings.REFRESH_TOKEN_EXPIRATION_DAYS
+    
     def create_access_token(
         self,
         user_id: str,
-        email: str,
-        roles: list = None,
-        expires_delta: Optional[timedelta] = None
+        role: UserRole,
+        permissions: list = None,
     ) -> str:
         """
-        Criar access token.
+        Cria um novo access token.
         
         Args:
             user_id: ID do usuário
-            email: Email do usuário
-            roles: Lista de roles
-            expires_delta: Tempo até expiração
+            role: Role do usuário
+            permissions: Lista de permissões
             
         Returns:
-            JWT token string
+            JWT access token
         """
-        roles = roles or []
+        if permissions is None:
+            permissions = []
         
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(hours=1)
-
+        now = datetime.utcnow()
+        expires = now + timedelta(hours=self.access_token_expire_hours)
+        
         payload = {
             "sub": user_id,
-            "email": email,
-            "roles": roles,
-            "exp": expire,
-            "iat": datetime.utcnow()
+            "exp": int(expires.timestamp()),
+            "iat": int(now.timestamp()),
+            "type": TokenType.ACCESS.value,
+            "role": role.value,
+            "permissions": permissions,
         }
-
-        encoded_jwt = jwt.encode(
-            payload,
-            self.secret_key,
-            algorithm=self.algorithm
-        )
-
-        logger.info(
-            "Access token created",
-            extra={"user_id": user_id, "expires_at": expire}
-        )
-
-        return encoded_jwt
-
-    def create_refresh_token(
-        self,
-        user_id: str,
-        email: str,
-        expires_delta: Optional[timedelta] = None
-    ) -> str:
+        
+        return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
+    
+    def create_refresh_token(self, user_id: str) -> str:
         """
-        Criar refresh token.
+        Cria um novo refresh token.
         
         Args:
             user_id: ID do usuário
-            email: Email do usuário
-            expires_delta: Tempo até expiração (default: 7 dias)
             
         Returns:
             JWT refresh token
         """
-        if expires_delta:
-            expire = datetime.utcnow() + expires_delta
-        else:
-            expire = datetime.utcnow() + timedelta(days=7)
-
+        now = datetime.utcnow()
+        expires = now + timedelta(days=self.refresh_token_expire_days)
+        
         payload = {
             "sub": user_id,
-            "email": email,
-            "type": "refresh",
-            "exp": expire,
-            "iat": datetime.utcnow()
+            "exp": int(expires.timestamp()),
+            "iat": int(now.timestamp()),
+            "type": TokenType.REFRESH.value,
         }
-
-        encoded_jwt = jwt.encode(
-            payload,
-            self.secret_key,
-            algorithm=self.algorithm
-        )
-
-        logger.info(
-            "Refresh token created",
-            extra={"user_id": user_id, "expires_at": expire}
-        )
-
-        return encoded_jwt
-
-    def verify_token(self, token: str) -> TokenPayload:
+        
+        return jwt.encode(payload, self.secret_key, algorithm=self.algorithm)
+    
+    def create_token_pair(
+        self,
+        user_id: str,
+        role: UserRole,
+        permissions: list = None,
+    ) -> Dict[str, str]:
         """
-        Verificar e decodificar token.
+        Cria um par de tokens (access + refresh).
+        
+        Args:
+            user_id: ID do usuário
+            role: Role do usuário
+            permissions: Lista de permissões
+            
+        Returns:
+            Dict com access_token e refresh_token
+        """
+        access_token = self.create_access_token(user_id, role, permissions)
+        refresh_token = self.create_refresh_token(user_id)
+        
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "Bearer",
+            "expires_in": self.access_token_expire_hours * 3600,
+        }
+    
+    def validate_token(self, token: str) -> Optional[TokenPayload]:
+        """
+        Valida um JWT token.
+        
+        Args:
+            token: JWT token para validar
+            
+        Returns:
+            TokenPayload se válido, None se inválido
+        """
+        try:
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            
+            token_data = TokenPayload(
+                sub=payload.get("sub"),
+                exp=payload.get("exp"),
+                iat=payload.get("iat"),
+                type=TokenType(payload.get("type")),
+                role=UserRole(payload.get("role")),
+                permissions=payload.get("permissions", []),
+            )
+            
+            return token_data
+        
+        except JWTError:
+            return None
+    
+    def validate_access_token(self, token: str) -> Optional[TokenPayload]:
+        """
+        Valida um access token especificamente.
         
         Args:
             token: JWT token
             
         Returns:
-            TokenPayload com dados do usuário
-            
-        Raises:
-            JWTError: Se token é inválido ou expirou
+            TokenPayload se válido e é access token
         """
+        token_data = self.validate_token(token)
+        
+        if token_data and token_data.type == TokenType.ACCESS:
+            return token_data
+        
+        return None
+    
+    def validate_refresh_token(self, token: str) -> Optional[str]:
+        """
+        Valida um refresh token e retorna o user_id.
+        
+        Args:
+            token: Refresh token
+            
+        Returns:
+            User ID se válido
+        """
+        token_data = self.validate_token(token)
+        
+        if token_data and token_data.type == TokenType.REFRESH:
+            return token_data.sub
+        
+        return None
+    
+    def is_token_expired(self, token: str) -> bool:
+        """Verifica se um token está expirado."""
         try:
-            payload = jwt.decode(
-                token,
-                self.secret_key,
-                algorithms=[self.algorithm]
-            )
-
-            user_id = payload.get("sub")
-            email = payload.get("email")
-            roles = payload.get("roles", [])
-
-            if not user_id:
-                raise JWTError("Token payload invalid")
-
-            return TokenPayload(
-                sub=user_id,
-                email=email,
-                roles=roles,
-                exp=datetime.fromtimestamp(payload.get("exp")),
-                iat=datetime.fromtimestamp(payload.get("iat"))
-            )
-
-        except JWTError as e:
-            logger.warning(
-                "Token verification failed",
-                extra={"error": str(e)}
-            )
-            raise
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            exp = payload.get("exp")
+            
+            if exp is None:
+                return True
+            
+            return datetime.utcnow().timestamp() > exp
+        
+        except JWTError:
+            return True
+    
+    def get_expiration_time(self, token: str) -> Optional[datetime]:
+        """Retorna o tempo de expiração de um token."""
+        try:
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            exp = payload.get("exp")
+            
+            if exp:
+                return datetime.utcfromtimestamp(exp)
+            
+            return None
+        
+        except JWTError:
+            return None
