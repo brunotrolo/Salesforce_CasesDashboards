@@ -5,44 +5,57 @@ from fastapi.testclient import TestClient
 import sys
 import os
 from pathlib import Path
+from unittest.mock import MagicMock, patch
+import json
+from datetime import datetime, timedelta, timezone
 
 # Ensure services directory is in path for relative imports
-# This is needed because the API Gateway imports from other services
 services_dir = Path(__file__).parent.parent.parent
 if str(services_dir) not in sys.path:
     sys.path.insert(0, str(services_dir))
 
-# Also add the api-gateway src directory for direct imports
 api_gateway_src = Path(__file__).parent.parent / "src"
 if str(api_gateway_src) not in sys.path:
     sys.path.insert(0, str(api_gateway_src))
+
+# Set environment variables BEFORE any imports
+os.environ.setdefault("SF_CLIENT_ID", "test")
+os.environ.setdefault("SF_CLIENT_SECRET", "test")
+os.environ.setdefault("SF_REFRESH_TOKEN", "test")
+os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key")
+os.environ.setdefault("TOKEN_EXPIRE_MINUTES", "60")
+os.environ.setdefault("REDIS_URL", "")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mock_jwt_globally():
+    """Mock jwt module globally before any imports."""
+    mock_jwt = MagicMock()
+
+    def mock_encode(payload, key, algorithm="HS256"):
+        # Simulate JWT encoding
+        import base64
+        token_data = base64.b64encode(json.dumps(payload).encode()).decode()
+        return f"test.{token_data}.signature"
+
+    def mock_decode(token, key, algorithms=None):
+        # Simulate JWT decoding
+        return {
+            "sub": "testuser",
+            "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp())
+        }
+
+    mock_jwt.encode = mock_encode
+    mock_jwt.decode = mock_decode
+    mock_jwt.ExpiredSignatureError = Exception
+    mock_jwt.InvalidTokenError = Exception
+
+    with patch.dict('sys.modules', {'jwt': mock_jwt}):
+        yield
 
 
 @pytest.fixture
 def client():
     """Create a test client for the API."""
-    print(f"\n[CONFTEST] Current dir: {os.getcwd()}", flush=True)
-    print(f"[CONFTEST] sys.path[0]: {sys.path[0]}", flush=True)
-
-    # Set environment variables to prevent auth errors during testing
-    os.environ.setdefault("SF_CLIENT_ID", "test")
-    os.environ.setdefault("SF_CLIENT_SECRET", "test")
-    os.environ.setdefault("SF_REFRESH_TOKEN", "test")
-
-    # Import main after environment is set
-    try:
-        print("[CONFTEST] Attempting to import main...", flush=True)
-        from main import app
-        print("[CONFTEST] Successfully imported app", flush=True)
-    except Exception as e:
-        print(f"[CONFTEST] Failed to import app: {type(e).__name__}: {e}", flush=True)
-        raise
-
-    try:
-        print("[CONFTEST] Creating TestClient...", flush=True)
-        client = TestClient(app)
-        print("[CONFTEST] Successfully created TestClient", flush=True)
-        return client
-    except Exception as e:
-        print(f"[CONFTEST] Failed to create TestClient: {type(e).__name__}: {e}", flush=True)
-        raise
+    from main import app
+    return TestClient(app)
