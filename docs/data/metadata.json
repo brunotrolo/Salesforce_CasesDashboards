@@ -1,10 +1,12 @@
 {
-  "lastSync": "2026-08-16T18:43:35.986234Z",
-  "recordsCount": {
-    "cases": 25,
-    "reports": 15,
-    "accounts": 15
-  },
+  "lastSync": "2026-08-16T19:09:55.565251Z",
   "status": "fallback",
-  "isLive": false
+  "isLive": false,
+  "summary": {
+    "total_cases": 68222,
+    "manual_cases": 44063,
+    "automatic_cases": 24159,
+    "closed_cases": 41775,
+    "no_category": 25505
+  }
 }

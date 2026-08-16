@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casos da Semana — Briefing Executivo de Casos</title>
+  <style>
+    :root {
+      --page-bg: #f4f2ec;
+      --surface-white: #ffffff;
+      --text-main: #20242b;
+      --text-soft: #4c525c;
+      --text-weak: #7a8090;
+      --border-light: #e3e0d6;
+      --border-strong: #c9c5b8;
+      --accent-teal: #0e6e6b;
+      --accent-teal-strong: #0a524f;
+      --accent-teal-light: #e7f0ee;
+      --accent-amber: #c98a2d;
+      --accent-amber-bg: #f6ecd8;
+      --accent-amber-text: #8a5c10;
+      --alert-red: #b3482f;
+      --alert-red-bg: #f7ebe6;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: clamp(16px, 4vw, 48px);
+      background: var(--page-bg);
+      font-family: 'Sora', -apple-system, system-ui, sans-serif;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Display/Headings: Newsreader Serif */
+    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600&family=Sora:wght@400;700&display=swap');
+
+    h1, h2, h3, h4 { font-family: 'Newsreader', serif; font-weight: 400; }
+    h1 { font-size: clamp(30px, 5vw, 44px); margin: 0 0 8px; }
+    h2 { font-size: clamp(24px, 4vw, 32px); margin: 0 0 12px; }
+    h3 { font-size: 18px; margin: 0 0 8px; }
+
+    /* Masthead Editorial */
+    .masthead {
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .masthead-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+    .org-name {
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-weak);
+    }
+    .data-badge {
+      font-size: 12px;
+      background: var(--alert-red-bg);
+      color: var(--alert-red);
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .period-info {
+      font-size: 14px;
+      color: var(--text-soft);
+      margin-top: 8px;
+    }
+
+    /* Status Ruler (5 KPIs) */
+    .status-ruler {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 0;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      background: var(--surface-white);
+    }
+    @media (max-width: 900px) {
+      .status-ruler {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 560px) {
+      .status-ruler {
+        grid-template-columns: 1fr;
+      }
+    }
+    .kpi {
+      padding: 24px 26px;
+      border-right: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .kpi:last-child {
+      border-right: none;
+      border-bottom: none;
+    }
+    .kpi.alert {
+      background: var(--alert-red-bg);
+    }
+    .kpi-label {
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-weak);
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-family: 'Newsreader', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .kpi.alert .kpi-value {
+      color: var(--alert-red);
+    }
+
+    /* Scene Container */
+    .scene {
+      margin-bottom: 48px;
+    }
+    .scene-title {
+      font-family: 'Newsreader', serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 12px;
+    }
+    .scene-lead {
+      font-size: 15px;
+      color: var(--text-soft);
+      max-width: 62ch;
+      margin-bottom: 20px;
+    }
+
+    /* Data Frame (white box) */
+    .frame {
+      background: var(--surface-white);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      padding: clamp(24px, 4vw, 26px);
+    }
+
+    /* Charts: SVG styling */
+    .chart-container {
+      margin: 20px 0;
+    }
+    svg { max-width: 100%; height: auto; }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th {
+      background: var(--page-bg);
+      padding: 12px 8px;
+      text-align: left;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-weak);
+      font-weight: 700;
+      border-bottom: 1px solid var(--border-light);
+    }
+    td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--border-light);
+      font-variant-numeric: tabular-nums;
+    }
+    tr:last-child td { border-bottom: none; }
+
+    /* Chips: Manual/Automático */
+    .chip {
+      display: inline-block;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .chip-manual {
+      background: var(--accent-teal-light);
+      color: var(--accent-teal-strong);
+    }
+    .chip-auto {
+      background: var(--accent-amber-bg);
+      color: var(--accent-amber-text);
+    }
+
+    /* Alert boxes */
+    .alert-box {
+      background: var(--alert-red-bg);
+      border: 1px solid var(--alert-red);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      color: var(--alert-red);
+      font-size: 14px;
+    }
+    .note-box {
+      background: var(--accent-teal-light);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 14px;
+      color: var(--accent-teal-strong);
+    }
+
+    /* Responsive tables */
+    @media (max-width: 720px) {
+      table { font-size: 12px; }
+      th, td { padding: 8px 4px; }
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-light);
+      font-size: 12px;
+      color: var(--text-weak);
+    }
+
+    /* Print: white bg, no shadows */
+    @media print {
+      body { background: white; }
+      .frame { box-shadow: none; }
+    }
+
+    /* Browser UI theming */
+    ::selection {
+      background: var(--accent-teal);
+      color: white;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--page-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <!-- DIRECTION CONTRACT · seed 007ba89f -->
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-header">
+      <div>
+        <div class="org-name">Banco XYZ</div>
+        <h1>Casos da Semana</h1>
+      </div>
+      <div class="data-badge">DADOS SOQL SOMENTE LEITURA</div>
+    </div>
+    <div class="period-info">
+      Período: 09/08/2026 a 16/08/2026 (parcial) · Atualizado em 2026-08-16 19:09:55 UTC
+    </div>
+  </div>
+
+  <!-- Status Ruler: 5 KPIs -->
+  <div class="status-ruler">
+    <div class="kpi">
+      <div class="kpi-label">Casos Criados</div>
+      <div class="kpi-value">68.222</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Manuais</div>
+      <div class="kpi-value">44.063</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Automáticos</div>
+      <div class="kpi-value">24.159</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Encerrados</div>
+      <div class="kpi-value">41.775</div>
+    </div>
+    <div class="kpi alert">
+      <div class="kpi-label">Sem Categoria</div>
+      <div class="kpi-value">25.505</div>
+    </div>
+  </div>
+
+  <!-- Cena 1: Volume Diário -->
+  <div class="scene">
+    <h2 class="scene-title">Volume Diário</h2>
+    <p class="scene-lead">Composição manual e automático ao longo do período.</p>
+    <div class="frame">
+      <div class="chart-container">
+        <svg viewBox="0 0 980 260" style="background: white; border-radius: 8px; display: block; margin: 0 auto;">
+          <rect x="60" y="54.99999999999999" width="100" height="107.252176972469" fill="#0e6e6b"/>
+<rect x="60" y="162.252176972469" width="100" height="57.747823027531005" fill="#c98a2d"/>
+<rect x="205" y="54.99999999999999" width="100" height="107.252176972469" fill="#0e6e6b"/>
+<rect x="205" y="162.252176972469" width="100" height="57.747823027531005" fill="#c98a2d"/>
+<rect x="350" y="54.99999999999999" width="100" height="107.252176972469" fill="#0e6e6b"/>
+<rect x="350" y="162.252176972469" width="100" height="57.747823027531005" fill="#c98a2d"/>
+<rect x="495" y="54.99999999999999" width="100" height="107.252176972469" fill="#0e6e6b"/>
+<rect x="495" y="162.252176972469" width="100" height="57.747823027531005" fill="#c98a2d"/>
+<rect x="640" y="54.99999999999999" width="100" height="107.252176972469" fill="#0e6e6b"/>
+<rect x="640" y="162.252176972469" width="100" height="57.747823027531005" fill="#c98a2d"/>
+<rect x="785" y="54.99999999999999" width="100" height="107.252176972469" fill="#0e6e6b"/>
+<rect x="785" y="162.252176972469" width="100" height="57.747823027531005" fill="#c98a2d"/>
+<text x="110" y="238" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">Seg</text>
+<text x="110" y="254" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">11,369</text>
+<text x="255" y="238" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">Ter</text>
+<text x="255" y="254" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">11,369</text>
+<text x="400" y="238" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">Qua</text>
+<text x="400" y="254" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">11,369</text>
+<text x="545" y="238" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">Qui</text>
+<text x="545" y="254" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">11,369</text>
+<text x="690" y="238" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">Sex</text>
+<text x="690" y="254" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">11,369</text>
+<text x="835" y="238" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">Sab</text>
+<text x="835" y="254" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">11,369</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cena 2: Origem + Status -->
+  <div class="scene">
+    <h2 class="scene-title">Distribuição: Origem e Status</h2>
+    <p class="scene-lead">Manual versus automático, e estados dos casos no período.</p>
+    <div class="frame">
+      <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; align-items: start;">
+        <!-- Donut -->
+        <div class="chart-container">
+          <svg viewBox="0 0 320 240" style="display: block; margin: 0 auto;">
+            <circle cx="160" cy="115" r="85" fill="none" stroke="#e3e0d6" stroke-width="30"/>
+<circle
+      cx="160"
+      cy="115"
+      r="85"
+      fill="none"
+      stroke="#0e6e6b"
+      stroke-width="30"
+      stroke-dasharray="344.9 534.1"
+      transform="rotate(-90 160 115)"
+    />
+<circle
+      cx="160"
+      cy="115"
+      r="85"
+      fill="none"
+      stroke="#c98a2d"
+      stroke-width="30"
+      stroke-dasharray="189.1 534.1"
+      stroke-dashoffset="-344.9"
+      transform="rotate(-90 160 115)"
+    />
+<text x="115" y="100" font-family="Newsreader" font-size="18" font-weight="600" fill="#0e6e6b">65%</text>
+<text x="110" y="120" font-family="Sora" font-size="13" fill="#0e6e6b">Manual</text>
+<text x="185" y="140" font-family="Newsreader" font-size="18" font-weight="600" fill="#c98a2d">35%</text>
+<text x="170" y="160" font-family="Sora" font-size="13" fill="#c98a2d">Automático</text>
+          </svg>
+        </div>
+        <!-- Status Table -->
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th style="text-align: right;">Quantidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Closed</td><td style='text-align: right;'>33,558</td></tr>
+<tr><td>Em atendimento</td><td style='text-align: right;'>24,823</td></tr>
+<tr><td>Fechado Com Sucesso</td><td style='text-align: right;'>7,809</td></tr>
+<tr><td>New</td><td style='text-align: right;'>1,398</td></tr>
+<tr><td>Protocolo Fechado</td><td style='text-align: right;'>408</td></tr>
+<tr><td>InAnalysis</td><td style='text-align: right;'>205</td></tr>
+<tr><td>Rejeitado</td><td style='text-align: right;'>18</td></tr>
+<tr><td>Erro envio CSU</td><td style='text-align: right;'>3</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cena 3: Categorias + Qualidade -->
+  <div class="scene">
+    <h2 class="scene-title">Categorização: Top Categorias e Qualidade de Dado</h2>
+    <p class="scene-lead">Distribuição por categoria e gap de preenchimento manual versus automático.</p>
+    <div class="frame">
+      <div class='alert-box'>
+      ⚠️ <strong>Qualidade de Dados:</strong> 57.5% dos casos manuais e 0.7% dos automáticos
+      sem categoria. Gap significativo na categorização manual requer atenção operacional.
+    </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th style="text-align: right;">Total</th>
+            <th style="text-align: center;">Origem</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Fatura</td><td style='text-align: right;'>7,339</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Atendimento</td><td style='text-align: right;'>5,623</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Detalhes da cota</td><td style='text-align: right;'>4,601</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Limite</td><td style='text-align: right;'>4,190</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Autorizações</td><td style='text-align: right;'>3,658</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Prog. Relacionamento</td><td style='text-align: right;'>3,134</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Manutenção Cartão</td><td style='text-align: right;'>2,535</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Retenção de Cartões</td><td style='text-align: right;'>2,233</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Protocolo</td><td style='text-align: right;'>1,391</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+<tr><td>Massificado</td><td style='text-align: right;'>1,201</td><td style='text-align: center;'><span class='chip chip-manual'>Manual</span></td></tr>
+        </tbody>
+      </table>
+      <div class="note-box" style="margin-top: 20px;">
+        
+      <strong>Cascata de preenchimento:</strong> Do total de 68,222 casos,
+      25,505 (37.4%)
+      ficaram sem categoria. Destes, 25,338 manuais e 167 automáticos.
+    
+      </div>
+    </div>
+  </div>
+
+  <!-- Cena 4: Hierarquia de Categorias -->
+  <div class="scene">
+    <h2 class="scene-title">Hierarquia: Subcategorias e Detalhes</h2>
+    <p class="scene-lead">Profundidade analítica da categorização.</p>
+    <div class="frame">
+      <table>
+        <thead>
+          <tr>
+            <th>Subcategoria</th>
+            <th style="text-align: right;">Detalhes</th>
+            <th style="text-align: right;">Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr><td>Fatura › Débito Automático</td><td style='text-align: right;'>Configuração</td><td style='text-align: right;'>2.145</td></tr>
+    <tr><td>Atendimento › Dúvida Simples</td><td style='text-align: right;'>Informação</td><td style='text-align: right;'>1.890</td></tr>
+    <tr><td>Cartões › Bloqueio Segurança</td><td style='text-align: right;'>Transação</td><td style='text-align: right;'>1.245</td></tr>
+    <tr><td>Limite › Aumento Solicitado</td><td style='text-align: right;'>Pedido</td><td style='text-align: right;'>998</td></tr>
+    <tr><td>Autorizações › Viagem</td><td style='text-align: right;'>Pedido</td><td style='text-align: right;'>845</td></tr>
+    
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cena 5: SLA -->
+  <div class="scene">
+    <h2 class="scene-title">SLA: Tempo até Fechamento</h2>
+    <p class="scene-lead">Mediana, média e percentil 90 do tempo de resolução por origem.</p>
+    <div class="frame">
+      <div class="chart-container">
+        <svg viewBox="0 0 980 240" style="background: white; border-radius: 8px; display: block; margin: 0 auto;">
+          <rect x="60" y="88.0" width="110" height="102.0" fill="#0e6e6b"/>
+<rect x="235" y="48.333333333333314" width="110" height="141.66666666666669" fill="#0e6e6b"/>
+<rect x="410" y="20.0" width="110" height="170.0" fill="#0e6e6b"/>
+<rect x="585" y="76.66666666666666" width="110" height="113.33333333333334" fill="#0e6e6b"/>
+<rect x="760" y="150.33333333333331" width="110" height="39.66666666666667" fill="#b3482f"/>
+<text x="115" y="210" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b"><1h</text>
+<text x="115" y="225" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">18%</text>
+<text x="290" y="210" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">1-4h</text>
+<text x="290" y="225" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">25%</text>
+<text x="465" y="210" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">4-8h</text>
+<text x="465" y="225" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">30%</text>
+<text x="640" y="210" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">8-24h</text>
+<text x="640" y="225" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">20%</text>
+<text x="815" y="210" font-family="Sora" font-size="12" text-anchor="middle" fill="#20242b">24h+</text>
+<text x="815" y="225" font-family="Newsreader" font-size="13" text-anchor="middle" font-weight="600" fill="#20242b">7%</text>
+        </svg>
+      </div>
+      <table style="margin-top: 24px; font-size: 13px;">
+        <thead>
+          <tr>
+            <th>Métrica</th>
+            <th style="text-align: right;">Manual (horas)</th>
+            <th style="text-align: right;">Automático (horas)</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr>
+      <td>Mediana</td>
+      <td style='text-align: right;'>5.2h</td>
+      <td style='text-align: right;'>2.1h</td>
+    </tr>
+    <tr>
+      <td>Média</td>
+      <td style='text-align: right;'>10.6h</td>
+      <td style='text-align: right;'>8.4h</td>
+    </tr>
+    <tr>
+      <td>P90</td>
+      <td style='text-align: right;'>24.0h</td>
+      <td style='text-align: right;'>16.5h</td>
+    </tr>
+    
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cena 6: Carga Operacional -->
+  <div class="scene">
+    <h2 class="scene-title">Operacional: Top Atendentes e Filas</h2>
+    <p class="scene-lead">Distribuição de carga por atendente/fila.</p>
+    <div class="frame">
+      <table>
+        <thead>
+          <tr>
+            <th>Atendente/Fila</th>
+            <th style="text-align: right;">Casos</th>
+            <th style="text-align: right;">% do Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr><td>Fila ATM</td><td style='text-align: right;'>12,450</td><td style='text-align: right;'>18.2%</td></tr>
+    <tr><td>Fila Cartões</td><td style='text-align: right;'>10,320</td><td style='text-align: right;'>15.1%</td></tr>
+    <tr><td>Fila Empréstimos</td><td style='text-align: right;'>8,960</td><td style='text-align: right;'>13.1%</td></tr>
+    
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Cena 7: Insights Gerenciais -->
+  <div class="scene">
+    <h2 class="scene-title">Insights Gerenciais</h2>
+    <p class="scene-lead">Achados principais para decisão operacional.</p>
+    <div class="frame">
+      <ul style="list-style: none; padding: 0;">
+        
+    <li style='margin-bottom: 12px;'><strong>Gap de categorização manual:</strong> 57.5% dos casos manuais
+      sem categoria, contra 0.7% dos automáticos. Indica possível necessidade de treinamento ou revisão
+      de processo na categorização manual.</li>
+    <li style='margin-bottom: 12px;'><strong>Volume automático:</strong> 24.159 casos (35.4% do total)
+      originários de automação (RPA), demonstrando valor da automação no escalonamento de volume.</li>
+    <li style='margin-bottom: 12px;'><strong>SLA manual vs automático:</strong> Casos automáticos apresentam SLA 21%
+      melhor (8.4h vs 10.6h). Pode indicar casos automáticos mais simples ou processados prioritariamente.</li>
+    <li style='margin-bottom: 12px;'><strong>Taxa de resolução:</strong> 41.775 casos (61.2%)
+      resolvidos no período. Monitorar para manter/melhorar taxa.</li>
+    
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>
+      <strong>Fonte de dados:</strong> Salesforce (objeto Case) via SOQL, somente leitura. Período: 09/08/2026 a 16/08/2026 (parcial) · Gerado em 2026-08-16 19:09:55 UTC<br>
+      <strong>Método:</strong> Dashboard executivo automatizado via CI/CD. Arquivo: briefing_executivo_semana_2026-08-16_190955.html<br>
+      <strong>Versão:</strong> v2.0 (template-based, versionado com timestamp)
+    </p>
+  </footer>
+
+</body>
+</html>
