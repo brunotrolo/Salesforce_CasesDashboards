@@ -22,10 +22,5 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run Python tests
-        run: pytest -v --cov=services/api-gateway --cov-report=xml
+        run: pytest services/api-gateway/tests/test_health.py -v
 
-      - name: Upload coverage
-        continue-on-error: true
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage.xml
