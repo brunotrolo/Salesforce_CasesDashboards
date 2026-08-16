@@ -2,12 +2,11 @@
 
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Any, Optional
 
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer
-from starlette.security.http import HTTPAuthCredentials
 
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-change-in-production")
@@ -47,7 +46,7 @@ def verify_token(token: str) -> dict:
         )
 
 
-async def get_current_user(credentials: HTTPAuthCredentials = Depends(security)) -> dict:
+async def get_current_user(credentials: Any = Depends(security)) -> dict:
     """Get current authenticated user from token."""
     token = credentials.credentials
     payload = verify_token(token)
@@ -60,7 +59,7 @@ async def get_current_user(credentials: HTTPAuthCredentials = Depends(security))
     return {"user_id": user_id, "payload": payload}
 
 
-async def get_optional_user(credentials: Optional[HTTPAuthCredentials] = Depends(security)) -> Optional[dict]:
+async def get_optional_user(credentials: Optional[Any] = Depends(security)) -> Optional[dict]:
     """Get optional authenticated user (doesn't fail if no token)."""
     if not credentials:
         return None
