@@ -3,14 +3,29 @@
 import pytest
 from fastapi.testclient import TestClient
 import sys
+import os
 from pathlib import Path
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Ensure services directory is in path for relative imports
+# This is needed because the API Gateway imports from other services
+services_dir = Path(__file__).parent.parent.parent
+if str(services_dir) not in sys.path:
+    sys.path.insert(0, str(services_dir))
+
+# Also add the api-gateway src directory for direct imports
+api_gateway_src = Path(__file__).parent.parent / "src"
+if str(api_gateway_src) not in sys.path:
+    sys.path.insert(0, str(api_gateway_src))
 
 
 @pytest.fixture
 def client():
     """Create a test client for the API."""
-    from src.main import app
+    # Set environment variables to prevent auth errors during testing
+    os.environ.setdefault("SF_CLIENT_ID", "test")
+    os.environ.setdefault("SF_CLIENT_SECRET", "test")
+    os.environ.setdefault("SF_REFRESH_TOKEN", "test")
+
+    # Import main after environment is set
+    from main import app
     return TestClient(app)
