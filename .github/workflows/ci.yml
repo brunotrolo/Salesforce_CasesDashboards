@@ -35,13 +35,23 @@ jobs:
       - name: Test app import
         run: |
           cd services/api-gateway
-          python -c "from src.main import app; print('App imported successfully')"
+          python -c "
+import sys
+import os
+print('Current directory:', os.getcwd())
+print('Python path:', sys.path[:3])
+from src.main import app
+print('✓ App imported successfully')
+print(f'✓ App type: {type(app)}')
+"
 
-      - name: Collect tests
-        run: pytest --collect-only -v -c pytest.ini
+      - name: Check pytest config
+        run: |
+          python -m pytest --version
+          python -m pytest --co -q
 
       - name: Run Python tests
-        run: pytest -v -c pytest.ini --cov=services/api-gateway --cov-report=xml
+        run: python -m pytest -vv -c pytest.ini --cov=services/api-gateway --cov-report=xml --tb=short
 
       - name: Run Frontend tests
         run: |
