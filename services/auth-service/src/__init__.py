@@ -1,16 +1,10 @@
+"""Auth Service - Autenticação e Autorização
+
+Este serviço fornece:
+- Gerenciamento de JWT (criação, validação, refresh)
+- Implementação OAuth 2.0
+- Sistema de Controle de Acesso Baseado em Papéis (RBAC)
+- Gerenciamento de sessões
 """
-Auth Service
-Gerenciamento centralizado de autenticação e autorização.
-"""
 
-from .auth_manager import AuthManager
-from .jwt_handler import JWTHandler
-from .rbac import RBACManager
-
-__version__ = "0.1.0"
-
-__all__ = [
-    "AuthManager",
-    "JWTHandler",
-    "RBACManager",
-]
+__version__ = "1.0.0"

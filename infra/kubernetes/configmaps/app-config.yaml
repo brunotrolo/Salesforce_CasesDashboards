@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: salesforce-reports
+data:
+  LOG_LEVEL: "INFO"
+  ENVIRONMENT: "production"
+  API_PORT: "3000"
+  CACHE_TTL: "3600"
+  CACHE_REDIS_URL: "redis://redis:6379"
+  DB_HOST: "postgres"
+  DB_PORT: "5432"
+  DB_NAME: "reports_db"
+  ELASTICSEARCH_HOST: "elasticsearch:9200"
+  ELASTICSEARCH_INDEX_PREFIX: "reports"
+  TRACE_SAMPLE_RATE: "0.1"
+  ENABLE_METRICS: "true"
+  ENABLE_PROFILING: "false"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: salesforce-reports
+type: Opaque
+stringData:
+  DB_USER: "reports_user"
+  DB_PASSWORD: "change_me_in_production"
+  SF_CLIENT_ID: "your_salesforce_client_id"
+  SF_CLIENT_SECRET: "your_salesforce_client_secret"
+  SF_REFRESH_TOKEN: "your_salesforce_refresh_token"
+  JWT_SECRET: "change_me_with_a_strong_secret_key"
+  API_KEY: "change_me_with_a_strong_api_key"
