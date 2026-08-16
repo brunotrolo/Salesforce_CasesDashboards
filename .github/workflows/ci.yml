@@ -28,7 +28,7 @@ jobs:
           cd ../analytics-fe && npm install
 
       - name: Run Python tests
-        run: pytest services/ -v --cov=services/ --cov-report=xml
+        run: pytest -v --cov=services/api-gateway --cov-report=xml
 
       - name: Run Frontend tests
         run: npm run test --workspaces
