@@ -1,10 +1,10 @@
 {
-  "lastSync": "2026-08-16T18:38:43.597570Z",
+  "lastSync": "2026-08-16T18:43:35.986234Z",
   "recordsCount": {
-    "cases": 100,
-    "reports": 50,
-    "accounts": 20
+    "cases": 25,
+    "reports": 15,
+    "accounts": 15
   },
-  "status": "success",
-  "isLive": true
+  "status": "fallback",
+  "isLive": false
 }

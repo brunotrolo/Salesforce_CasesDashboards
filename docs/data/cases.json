@@ -1,907 +1,232 @@
 {
-  "total": 100,
+  "total": 25,
   "records": [
     {
-      "id": "500bL00000hWp31QAC",
-      "number": "20260078502190",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:34.000+0000",
-      "owner": "ANA LUIZA SILVA CAVALCANTE"
-    },
-    {
-      "id": "500bL00000hX1JfQAK",
-      "number": "20260078502188",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:30.000+0000",
-      "owner": "YANE BRENDA DE MEDEIROS DA SILVA"
-    },
-    {
-      "id": "500bL00000hWyzjQAC",
-      "number": "20260078502189",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:38:30.000+0000",
-      "owner": "FABIO SILVA"
-    },
-    {
-      "id": "500bL00000hWck2QAC",
-      "number": "20260078502187",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:24.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hX1ERQA0",
-      "number": "20260078502185",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:15.000+0000",
-      "owner": "YANE BRENDA DE MEDEIROS DA SILVA"
-    },
-    {
-      "id": "500bL00000hWutRQAS",
-      "number": "20260078502186",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:15.000+0000",
-      "owner": "GRAZIELA DE ASSIS AYRES RIBEIRO"
-    },
-    {
-      "id": "500bL00000hWy6wQAC",
-      "number": "20260078502184",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:11.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWw0OQAS",
-      "number": "20260078502183",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:38:06.000+0000",
-      "owner": "LUAN NASCIMENTO DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hX3wCQAS",
-      "number": "20260078502182",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:59.000+0000",
-      "owner": "FABIO SILVA"
-    },
-    {
-      "id": "500bL00000hWtM6QAK",
-      "number": "20260078502181",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:55.000+0000",
-      "owner": "SAMUEL NOAH FIDELIS ABDON"
-    },
-    {
-      "id": "500bL00000hX4P8QAK",
-      "number": "20260078502180",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:49.000+0000",
-      "owner": "JORGE AQUILES PEREIRA SANTOS MATOS"
-    },
-    {
-      "id": "500bL00000hWyS3QAK",
-      "number": "20260078502179",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:39.000+0000",
-      "owner": "YANE BRENDA DE MEDEIROS DA SILVA"
-    },
-    {
-      "id": "500bL00000hX3EaQAK",
-      "number": "20260078502178",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:37.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hX2daQAC",
-      "number": "20260078502174",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:36.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hX14kQAC",
-      "number": "20260078502176",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:36.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hWuckQAC",
-      "number": "20260078502175",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:36.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hWuWbQAK",
-      "number": "20260078502177",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:36.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hWz1MQAS",
-      "number": "20260078502173",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:25.000+0000",
-      "owner": "ALICE CONCEIÇÃO DOS ANJOS"
-    },
-    {
-      "id": "500bL00000hX36nQAC",
-      "number": "20260078502172",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:24.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWueiQAC",
-      "number": "20260078502171",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:23.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
-    },
-    {
-      "id": "500bL00000hWvNvQAK",
-      "number": "20260078502170",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:21.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hWucjQAC",
-      "number": "20260078502169",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:37:12.000+0000",
-      "owner": "RUBSON EMANUEL SANTOS GOMES"
-    },
-    {
-      "id": "500bL00000hWyenQAC",
-      "number": "20260078502168",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:09.000+0000",
-      "owner": "SAMUEL NOAH FIDELIS ABDON"
-    },
-    {
-      "id": "500bL00000hX4fGQAS",
-      "number": "20260078502167",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:37:07.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
-    },
-    {
-      "id": "500bL00000hWiQwQAK",
-      "number": "20260078502166",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:59.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWuhlQAC",
-      "number": "20260078502165",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:58.000+0000",
-      "owner": "LUAN NASCIMENTO DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hX1PmQAK",
-      "number": "20260078502164",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:36:56.000+0000",
-      "owner": "Kawantha Nearie Da Silva"
-    },
-    {
-      "id": "500bL00000hX58EQAS",
-      "number": "20260078502163",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:36:50.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
-    },
-    {
-      "id": "500bL00000hWiKWQA0",
-      "number": "20260078502162",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:50.000+0000",
-      "owner": "ANA LUIZA SILVA CAVALCANTE"
-    },
-    {
-      "id": "500bL00000hX4LuQAK",
-      "number": "20260078502161",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:48.000+0000",
-      "owner": "RPA Sales"
-    },
-    {
-      "id": "500bL00000hWxKtQAK",
-      "number": "20260078502160",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:36:45.000+0000",
-      "owner": "IARA SOARES DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWie4QAC",
-      "number": "20260078502159",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:31.000+0000",
-      "owner": "JOAO VICTOR DA SILVA"
-    },
-    {
-      "id": "500bL00000hWx7jQAC",
-      "number": "20260078502158",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:27.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWs5BQAS",
-      "number": "20260078502157",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:07.000+0000",
-      "owner": "RAFAEL CARVALHO DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hX3ZaQAK",
-      "number": "20260078502156",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:36:05.000+0000",
-      "owner": "VANESSA DE OLIVEIRA COUTINHO"
-    },
-    {
-      "id": "500bL00000hWjYAQA0",
-      "number": "20260078502155",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:35:56.000+0000",
-      "owner": "Kawantha Nearie Da Silva"
-    },
-    {
-      "id": "500bL00000hWiXoQAK",
-      "number": "20260078502154",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:50.000+0000",
-      "owner": "SAMUEL BARBOSA DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hX4yYQAS",
-      "number": "20260078502152",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:43.000+0000",
-      "owner": "SAMUEL BARBOSA DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWiXnQAK",
-      "number": "20260078502153",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:43.000+0000",
-      "owner": "Fabiola Nogueira Ribeiro"
-    },
-    {
-      "id": "500bL00000hX2bkQAC",
-      "number": "20260078502151",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:35.000+0000",
-      "owner": "MARIA EDUARDA SOUZA MESSIAS"
-    },
-    {
-      "id": "500bL00000hWpf1QAC",
-      "number": "20260078502150",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:35.000+0000",
-      "owner": "SAMUEL BARBOSA DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWsrpQAC",
-      "number": "20260078502149",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:35:34.000+0000",
-      "owner": "ALICE CONCEIÇÃO DOS ANJOS"
-    },
-    {
-      "id": "500bL00000hWqOMQA0",
-      "number": "20260078502148",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:35:24.000+0000",
-      "owner": "ROGERIO FERREIRA DA SILVA"
-    },
-    {
-      "id": "500bL00000hX2s1QAC",
-      "number": "20260078502147",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:23.000+0000",
-      "owner": "GABRIELA JESUS DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWlNNQA0",
-      "number": "20260078502146",
-      "subject": null,
+      "id": "5001Q00000Ir000",
+      "number": "001001",
+      "subject": "Suporte Técnico - Caso #1",
       "status": "New",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:35:19.000+0000",
-      "owner": "Reativação Bloq J ou Z - Casos em aberto"
+      "priority": "High",
+      "created": "2026-08-16T10:30:00.000Z",
+      "owner": "João Silva"
     },
     {
-      "id": "500bL00000hX4IlQAK",
-      "number": "20260078502145",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:16.000+0000",
-      "owner": "RPA CotA"
+      "id": "5001Q00000Ir001",
+      "number": "001002",
+      "subject": "Suporte Técnico - Caso #2",
+      "status": "In Progress",
+      "priority": "Medium",
+      "created": "2026-08-15T10:30:00.000Z",
+      "owner": "Maria Santos"
     },
     {
-      "id": "500bL00000hX0vDQAS",
-      "number": "20260078502144",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:35:13.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
+      "id": "5001Q00000Ir002",
+      "number": "001003",
+      "subject": "Suporte Técnico - Caso #3",
+      "status": "On Hold",
+      "priority": "Low",
+      "created": "2026-08-14T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
     },
     {
-      "id": "500bL00000hX0F7QAK",
-      "number": "20260078502143",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:35:10.000+0000",
-      "owner": "GABRIELA JESUS DOS SANTOS"
+      "id": "5001Q00000Ir003",
+      "number": "001004",
+      "subject": "Suporte Técnico - Caso #4",
+      "status": "Resolved",
+      "priority": "High",
+      "created": "2026-08-13T10:30:00.000Z",
+      "owner": "João Silva"
     },
     {
-      "id": "500bL00000hWs6xQAC",
-      "number": "20260078502142",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:35:06.000+0000",
-      "owner": "Robson Chagas De Lima"
-    },
-    {
-      "id": "500bL00000hX4SKQA0",
-      "number": "20260078502141",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:34:56.000+0000",
-      "owner": "ALICE CONCEIÇÃO DOS ANJOS"
-    },
-    {
-      "id": "500bL00000hWz9GQAS",
-      "number": "20260078502140",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:53.000+0000",
-      "owner": "LIDIANE SANTOS SANTIAGO"
-    },
-    {
-      "id": "500bL00000hX1chQAC",
-      "number": "20260078502138",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:34:49.000+0000",
-      "owner": "Robson Chagas De Lima"
-    },
-    {
-      "id": "500bL00000hWoGWQA0",
-      "number": "20260078502137",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:34:49.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
-    },
-    {
-      "id": "500bL00000hWiC7QAK",
-      "number": "20260078502139",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:49.000+0000",
-      "owner": "JOSILANDIA ZILDA MIGUEL"
-    },
-    {
-      "id": "500bL00000hX1mJQAS",
-      "number": "20260078502136",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:43.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hX3xfQAC",
-      "number": "20260078502134",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:40.000+0000",
-      "owner": "HEVERTON MIKAEL COSTA ARAUJO"
-    },
-    {
-      "id": "500bL00000hWlWgQAK",
-      "number": "20260078502135",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:40.000+0000",
-      "owner": "VANESSA DE OLIVEIRA COUTINHO"
-    },
-    {
-      "id": "500bL00000hWywPQAS",
-      "number": "20260078502133",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:31.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWv1eQAC",
-      "number": "20260078502132",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:21.000+0000",
-      "owner": "Thayna Aparecida Do Nascimento Santos"
-    },
-    {
-      "id": "500bL00000hWzj0QAC",
-      "number": "20260078502131",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:20.000+0000",
-      "owner": "JOAO BRENO GOMES LEAL"
-    },
-    {
-      "id": "500bL00000hX3XsQAK",
-      "number": "20260078502130",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:15.000+0000",
-      "owner": "GABRIELA JESUS DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWwgBQAS",
-      "number": "20260078502129",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:34:12.000+0000",
-      "owner": "JOAO VICTOR DA SILVA PEREIRA"
-    },
-    {
-      "id": "500bL00000hWt2xQAC",
-      "number": "20260078502128",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:11.000+0000",
-      "owner": "HEVERTON MIKAEL COSTA ARAUJO"
-    },
-    {
-      "id": "500bL00000hX1YCQA0",
-      "number": "20260078502127",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:34:10.000+0000",
-      "owner": "ROGERIO FERREIRA DA SILVA"
-    },
-    {
-      "id": "500bL00000hWxXeQAK",
-      "number": "20260078502126",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:34:02.000+0000",
-      "owner": "Rodrigo Farias Henrique"
-    },
-    {
-      "id": "500bL00000hWxXdQAK",
-      "number": "20260078502125",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:59.000+0000",
-      "owner": "ANA LUZIA DOS SANTOS BARRETO"
-    },
-    {
-      "id": "500bL00000hWyTYQA0",
-      "number": "20260078502124",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:56.000+0000",
-      "owner": "Thayna Aparecida Do Nascimento Santos"
-    },
-    {
-      "id": "500bL00000hWlmmQAC",
-      "number": "20260078502123",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:33:51.000+0000",
-      "owner": "JOAO VICTOR DA SILVA PEREIRA"
-    },
-    {
-      "id": "500bL00000hWwoCQAS",
-      "number": "20260078502121",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:44.000+0000",
-      "owner": "HEVERTON MIKAEL COSTA ARAUJO"
-    },
-    {
-      "id": "500bL00000hWuA2QAK",
-      "number": "20260078502120",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:44.000+0000",
-      "owner": "ANA LUZIA DOS SANTOS BARRETO"
-    },
-    {
-      "id": "500bL00000hWoEsQAK",
-      "number": "20260078502122",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:33:44.000+0000",
-      "owner": "LEONI BORGES DA SILVEIRA"
-    },
-    {
-      "id": "500bL00000hWxh4QAC",
-      "number": "20260078502119",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:37.000+0000",
-      "owner": "SAMUEL BARBOSA DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWvp7QAC",
-      "number": "20260078502117",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:33:33.000+0000",
-      "owner": "FABIO SILVA"
-    },
-    {
-      "id": "500bL00000hWiKUQA0",
-      "number": "20260078502118",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:33:33.000+0000",
-      "owner": "LEONI BORGES DA SILVEIRA"
-    },
-    {
-      "id": "500bL00000hWyDMQA0",
-      "number": "20260078502116",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:33:32.000+0000",
-      "owner": "LEONI BORGES DA SILVEIRA"
-    },
-    {
-      "id": "500bL00000hWsJVQA0",
-      "number": "20260078502115",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:21.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWsRUQA0",
-      "number": "20260078502114",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:33:07.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hWxymQAC",
-      "number": "20260078502113",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:33:02.000+0000",
-      "owner": "FABIO SILVA"
-    },
-    {
-      "id": "500bL00000hX4LsQAK",
-      "number": "20260078502112",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:44.000+0000",
-      "owner": "JOAO VICTOR DA SILVA"
-    },
-    {
-      "id": "500bL00000hWrSpQAK",
-      "number": "20260078502111",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:32:44.000+0000",
-      "owner": "SAMUEL NOAH FIDELIS ABDON"
-    },
-    {
-      "id": "500bL00000hWvqiQAC",
-      "number": "20260078502110",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:32:29.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
-    },
-    {
-      "id": "500bL00000hWqT0QAK",
-      "number": "20260078502109",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:24.000+0000",
-      "owner": "JOAO BRENO GOMES LEAL"
-    },
-    {
-      "id": "500bL00000hWjeWQAS",
-      "number": "20260078502108",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:23.000+0000",
-      "owner": "GRAZIELA DE ASSIS AYRES RIBEIRO"
-    },
-    {
-      "id": "500bL00000hWrylQAC",
-      "number": "20260078502107",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:19.000+0000",
-      "owner": "GABRIELA JESUS DOS SANTOS"
-    },
-    {
-      "id": "500bL00000hWjeVQAS",
-      "number": "20260078502106",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:18.000+0000",
-      "owner": "JOSILANDIA ZILDA MIGUEL"
-    },
-    {
-      "id": "500bL00000hWtkGQAS",
-      "number": "20260078502105",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:12.000+0000",
-      "owner": "JOAO BRENO GOMES LEAL"
-    },
-    {
-      "id": "500bL00000hX49vQAC",
-      "number": "20260078502104",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:32:00.000+0000",
-      "owner": "DANIEL KENAE DE OLIVEIRA PONCIANO"
-    },
-    {
-      "id": "500bL00000hWvvfQAC",
-      "number": "20260078502103",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:58.000+0000",
-      "owner": "SAMUEL NOAH FIDELIS ABDON"
-    },
-    {
-      "id": "500bL00000hX4fDQAS",
-      "number": "20260078502102",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:31:53.000+0000",
-      "owner": "RPA CotA"
-    },
-    {
-      "id": "500bL00000hX3pbQAC",
-      "number": "20260078502101",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:48.000+0000",
-      "owner": "ROGERIO FERREIRA DA SILVA"
-    },
-    {
-      "id": "500bL00000hX2AZQA0",
-      "number": "20260078502100",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Normal",
-      "created": "2026-08-16T18:31:46.000+0000",
-      "owner": "ANA LUIZA SILVA CAVALCANTE"
-    },
-    {
-      "id": "500bL00000hWns6QAC",
-      "number": "20260078502099",
-      "subject": null,
+      "id": "5001Q00000Ir004",
+      "number": "001005",
+      "subject": "Suporte Técnico - Caso #5",
       "status": "New",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:37.000+0000",
-      "owner": "Intercâmbio - Casos em aberto"
+      "priority": "Medium",
+      "created": "2026-08-12T10:30:00.000Z",
+      "owner": "Maria Santos"
     },
     {
-      "id": "500bL00000hWy6vQAC",
-      "number": "20260078502098",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:31:35.000+0000",
-      "owner": "RPA CotA"
+      "id": "5001Q00000Ir005",
+      "number": "001006",
+      "subject": "Suporte Técnico - Caso #6",
+      "status": "In Progress",
+      "priority": "Low",
+      "created": "2026-08-11T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
     },
     {
-      "id": "500bL00000hWtNWQA0",
-      "number": "20260078502097",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:29.000+0000",
-      "owner": "EMILLY FERREIRA DA SILVA TOMAZ"
+      "id": "5001Q00000Ir006",
+      "number": "001007",
+      "subject": "Suporte Técnico - Caso #7",
+      "status": "On Hold",
+      "priority": "High",
+      "created": "2026-08-10T10:30:00.000Z",
+      "owner": "João Silva"
     },
     {
-      "id": "500bL00000hX1B8QAK",
-      "number": "20260078502096",
-      "subject": null,
-      "status": "Fechado Com Sucesso",
-      "priority": "Normal",
-      "created": "2026-08-16T18:31:27.000+0000",
-      "owner": "GRAZIELA DE ASSIS AYRES RIBEIRO"
+      "id": "5001Q00000Ir007",
+      "number": "001008",
+      "subject": "Suporte Técnico - Caso #8",
+      "status": "Resolved",
+      "priority": "Medium",
+      "created": "2026-08-09T10:30:00.000Z",
+      "owner": "Maria Santos"
     },
     {
-      "id": "500bL00000hWiXmQAK",
-      "number": "20260078502095",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:23.000+0000",
-      "owner": "SAMUEL NOAH FIDELIS ABDON"
+      "id": "5001Q00000Ir008",
+      "number": "001009",
+      "subject": "Suporte Técnico - Caso #9",
+      "status": "New",
+      "priority": "Low",
+      "created": "2026-08-08T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
     },
     {
-      "id": "500bL00000hWyBfQAK",
-      "number": "20260078502093",
-      "subject": null,
-      "status": "Em atendimento",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:19.000+0000",
-      "owner": "ROGERIO FERREIRA DA SILVA"
+      "id": "5001Q00000Ir009",
+      "number": "001010",
+      "subject": "Suporte Técnico - Caso #10",
+      "status": "In Progress",
+      "priority": "High",
+      "created": "2026-08-07T10:30:00.000Z",
+      "owner": "João Silva"
     },
     {
-      "id": "500bL00000hWtpTQAS",
-      "number": "20260078502094",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Ultra",
-      "created": "2026-08-16T18:31:19.000+0000",
-      "owner": "SAMUEL NOAH FIDELIS ABDON"
+      "id": "5001Q00000Ir010",
+      "number": "001011",
+      "subject": "Suporte Técnico - Caso #11",
+      "status": "On Hold",
+      "priority": "Medium",
+      "created": "2026-08-06T10:30:00.000Z",
+      "owner": "Maria Santos"
     },
     {
-      "id": "500bL00000hWlwUQAS",
-      "number": "20260078502092",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:31:05.000+0000",
-      "owner": "GABRIELA JESUS DOS SANTOS"
+      "id": "5001Q00000Ir011",
+      "number": "001012",
+      "subject": "Suporte Técnico - Caso #12",
+      "status": "Resolved",
+      "priority": "Low",
+      "created": "2026-08-05T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
     },
     {
-      "id": "500bL00000hX4yXQAS",
-      "number": "20260078502091",
-      "subject": null,
-      "status": "Closed",
-      "priority": "Normal",
-      "created": "2026-08-16T18:30:59.000+0000",
-      "owner": "GABRIELA JESUS DOS SANTOS"
+      "id": "5001Q00000Ir012",
+      "number": "001013",
+      "subject": "Suporte Técnico - Caso #13",
+      "status": "New",
+      "priority": "High",
+      "created": "2026-08-04T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir013",
+      "number": "001014",
+      "subject": "Suporte Técnico - Caso #14",
+      "status": "In Progress",
+      "priority": "Medium",
+      "created": "2026-08-03T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir014",
+      "number": "001015",
+      "subject": "Suporte Técnico - Caso #15",
+      "status": "On Hold",
+      "priority": "Low",
+      "created": "2026-08-02T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir015",
+      "number": "001016",
+      "subject": "Suporte Técnico - Caso #16",
+      "status": "Resolved",
+      "priority": "High",
+      "created": "2026-08-16T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir016",
+      "number": "001017",
+      "subject": "Suporte Técnico - Caso #17",
+      "status": "New",
+      "priority": "Medium",
+      "created": "2026-08-15T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir017",
+      "number": "001018",
+      "subject": "Suporte Técnico - Caso #18",
+      "status": "In Progress",
+      "priority": "Low",
+      "created": "2026-08-14T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir018",
+      "number": "001019",
+      "subject": "Suporte Técnico - Caso #19",
+      "status": "On Hold",
+      "priority": "High",
+      "created": "2026-08-13T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir019",
+      "number": "001020",
+      "subject": "Suporte Técnico - Caso #20",
+      "status": "Resolved",
+      "priority": "Medium",
+      "created": "2026-08-12T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir020",
+      "number": "001021",
+      "subject": "Suporte Técnico - Caso #21",
+      "status": "New",
+      "priority": "Low",
+      "created": "2026-08-11T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir021",
+      "number": "001022",
+      "subject": "Suporte Técnico - Caso #22",
+      "status": "In Progress",
+      "priority": "High",
+      "created": "2026-08-10T10:30:00.000Z",
+      "owner": "João Silva"
+    },
+    {
+      "id": "5001Q00000Ir022",
+      "number": "001023",
+      "subject": "Suporte Técnico - Caso #23",
+      "status": "On Hold",
+      "priority": "Medium",
+      "created": "2026-08-09T10:30:00.000Z",
+      "owner": "Maria Santos"
+    },
+    {
+      "id": "5001Q00000Ir023",
+      "number": "001024",
+      "subject": "Suporte Técnico - Caso #24",
+      "status": "Resolved",
+      "priority": "Low",
+      "created": "2026-08-08T10:30:00.000Z",
+      "owner": "Carlos Oliveira"
+    },
+    {
+      "id": "5001Q00000Ir024",
+      "number": "001025",
+      "subject": "Suporte Técnico - Caso #25",
+      "status": "New",
+      "priority": "High",
+      "created": "2026-08-07T10:30:00.000Z",
+      "owner": "João Silva"
     }
   ],
-  "lastSync": "2026-08-16T18:38:43.595513Z",
-  "isLive": true
+  "lastSync": "2026-08-16T18:43:35.984759Z",
+  "isLive": false
 }

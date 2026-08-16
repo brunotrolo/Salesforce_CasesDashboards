@@ -1,357 +1,112 @@
 {
-  "total": 50,
+  "total": 15,
   "records": [
     {
-      "id": "00ObL000008dhlFUAQ",
-      "name": "Relatório PRIVILEGE",
-      "description": "Relatório de Registros de Atendimento PRIVILEGE (consta todos os casos).",
-      "created": "2026-08-10T21:06:13.000+0000",
-      "createdBy": "LAÍSA MODOLO RODRIGUES"
+      "id": "00P1Q00000Ir000",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-15T14:20:00.000Z",
+      "createdBy": "Admin"
     },
     {
-      "id": "00ObL000008X7FpUAK",
-      "name": "Cópia de Registro de Ocorrencias - SAC",
-      "description": null,
-      "created": "2026-07-28T14:25:59.000+0000",
-      "createdBy": "Felipe Santos Proença"
+      "id": "00P1Q00000Ir001",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-14T14:20:00.000Z",
+      "createdBy": "Gerente"
     },
     {
-      "id": "00ObL000008SFCPUA4",
-      "name": "Tratativas - Investimento Bank",
-      "description": "Refere-se a tratativa de casos do produto Investimento. Solicitação realizada em 13 de julho de 2026 por Eduardo Chavez.",
-      "created": "2026-07-17T20:43:46.000+0000",
-      "createdBy": "LAÍSA MODOLO RODRIGUES"
+      "id": "00P1Q00000Ir002",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-13T14:20:00.000Z",
+      "createdBy": "Analista"
     },
     {
-      "id": "00ObL000008SE1pUAG",
-      "name": "Tratativas - Caixinha",
-      "description": "Refere-se a tratativa de casos do produto Caixinha (Conta Digital PF). Solicitação realizada em 13 de julho de 2026 por Eduardo Chavez.",
-      "created": "2026-07-17T20:16:47.000+0000",
-      "createdBy": "LAÍSA MODOLO RODRIGUES"
+      "id": "00P1Q00000Ir003",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-12T14:20:00.000Z",
+      "createdBy": "Admin"
     },
     {
-      "id": "00ObL000008RJunUAG",
-      "name": "Retenção de Cartões - Score",
-      "description": null,
-      "created": "2026-07-16T15:08:09.000+0000",
-      "createdBy": "Jéssica Monique Cordeiro Sobral"
+      "id": "00P1Q00000Ir004",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-11T14:20:00.000Z",
+      "createdBy": "Gerente"
     },
     {
-      "id": "00ObL000008GuxhUAC",
-      "name": "Casos de SAC Generalista",
-      "description": null,
-      "created": "2026-06-26T18:10:33.000+0000",
-      "createdBy": "Francielle Thiezo Revesso Pinto"
+      "id": "00P1Q00000Ir005",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-10T14:20:00.000Z",
+      "createdBy": "Analista"
     },
     {
-      "id": "00ObL000008673rUAA",
-      "name": "Registro de Casos - Manutenção da Conta",
-      "description": "Relatório de Casos",
-      "created": "2026-06-03T14:27:14.000+0000",
-      "createdBy": "Leticia Rosa"
+      "id": "00P1Q00000Ir006",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-09T14:20:00.000Z",
+      "createdBy": "Admin"
     },
     {
-      "id": "00ObL0000083RS6UAM",
-      "name": "V2 tratativas BKO  financ - Estorno de A",
-      "description": "Relatório de Casos \nCategoria: Fatura\nSub Categoria: Estorno Anuidade.\nDeixar as colunas existentes e incluir número do cartão e Logo",
-      "created": "2026-05-27T21:39:30.000+0000",
-      "createdBy": "BEATRIZ SOARES"
+      "id": "00P1Q00000Ir007",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-08T14:20:00.000Z",
+      "createdBy": "Gerente"
     },
     {
-      "id": "00ObL0000083DP7UAM",
-      "name": "Registro de Caso (todos) - Investimento",
-      "description": "Relatório de Casos",
-      "created": "2026-05-27T15:04:16.000+0000",
-      "createdBy": "Leticia Rosa"
+      "id": "00P1Q00000Ir008",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-07T14:20:00.000Z",
+      "createdBy": "Analista"
     },
     {
-      "id": "00ObL0000080sqDUAQ",
-      "name": "Retenção de Cartões - Score 8",
-      "description": null,
-      "created": "2026-05-21T13:49:38.000+0000",
-      "createdBy": "Leticia Rosa"
+      "id": "00P1Q00000Ir009",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-06T14:20:00.000Z",
+      "createdBy": "Admin"
     },
     {
-      "id": "00ObL000007zpZRUAY",
-      "name": "Retenção de Massificados",
-      "description": "Relatório de retenção dos massificados com detalhes de motivos",
-      "created": "2026-05-19T13:42:58.000+0000",
-      "createdBy": "ROBSON BATISTA"
+      "id": "00P1Q00000Ir010",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-05T14:20:00.000Z",
+      "createdBy": "Gerente"
     },
     {
-      "id": "00ObL000007zpUbUAI",
-      "name": "Registro de Casos - Motiva",
-      "description": "Relatório de Casos - Retenção",
-      "created": "2026-05-19T13:41:48.000+0000",
-      "createdBy": "ROBSON BATISTA"
+      "id": "00P1Q00000Ir011",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-04T14:20:00.000Z",
+      "createdBy": "Analista"
     },
     {
-      "id": "00ObL000007zpG5UAI",
-      "name": "Retenção de Consórcio",
-      "description": "Relatório dedicado à exibição de casos da categoria Retenção.",
-      "created": "2026-05-19T13:39:00.000+0000",
-      "createdBy": "ROBSON BATISTA"
+      "id": "00P1Q00000Ir012",
+      "name": "Relatório de Vendas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-03T14:20:00.000Z",
+      "createdBy": "Admin"
     },
     {
-      "id": "00ObL000007wjyPUAQ",
-      "name": "Tratativa Itaú - Conta PF",
-      "description": "Relatório de Casos tratados pelo Itaú do Produto Conta Digital Pessoa Física",
-      "created": "2026-05-12T13:36:07.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
+      "id": "00P1Q00000Ir013",
+      "name": "Relatório de Casos - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-02T14:20:00.000Z",
+      "createdBy": "Gerente"
     },
     {
-      "id": "00ObL000007sRFJUA2",
-      "name": "Registro de Casos - Antecipação de parce",
-      "description": "Relatório de Casos",
-      "created": "2026-04-30T22:24:28.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000007pZu9UAE",
-      "name": "Registro de Casos - Conta Digital",
-      "description": "Relatório de Casos",
-      "created": "2026-04-24T15:46:22.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000007V9FtUAK",
-      "name": "Casos de Retenção Consórcio",
-      "description": "Relatório dedicado à exibição de casos da categoria Retenção.",
-      "created": "2026-03-09T21:08:56.000+0000",
-      "createdBy": "Francielle Thiezo Revesso Pinto"
-    },
-    {
-      "id": "00ObL000007RvuDUAS",
-      "name": "Atendimentos Shellbox",
-      "description": "Relatório de Casos sobre os atendimentos shellbox",
-      "created": "2026-03-03T18:49:43.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000007RddxUAC",
-      "name": "Resgate de pontos - Supervisão",
-      "description": "Relatório de Casos de resgate de pontos da Supervisão em exceção",
-      "created": "2026-03-03T13:49:59.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000007B9jtUAC",
-      "name": "Registro de Casos (perfil Corretor)",
-      "description": "Relatório de Casos do produto Cartão de Crédito, com a indicação do perfil Corretores",
-      "created": "2026-01-30T15:01:19.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL0000071lyXUAQ",
-      "name": "Retenção de Conta Digital - Manual e Aut",
-      "description": null,
-      "created": "2026-01-13T20:21:52.000+0000",
-      "createdBy": "Francielle Thiezo Revesso Pinto"
-    },
-    {
-      "id": "00ObL0000071ZkTUAU",
-      "name": "Relatório de casos Alterações de limite",
-      "description": "Relatório de Casos",
-      "created": "2026-01-13T18:24:33.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000006nZ9FUAU",
-      "name": "Registro de Casos - Conta PF",
-      "description": "Relatório de Casos",
-      "created": "2025-12-11T12:09:08.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000006WFi1UAG",
-      "name": "Tratativa - Troca de logo",
-      "description": "Relatório de Casos troca de logo",
-      "created": "2025-11-17T21:54:14.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000006SaxxUAC",
-      "name": "Registro de Casos",
-      "description": "Relatório de Casos",
-      "created": "2025-11-13T14:37:02.000+0000",
-      "createdBy": "Jéssica Monique Cordeiro Sobral"
-    },
-    {
-      "id": "00ObL000006QJBdUAO",
-      "name": "Estudo Registro de caso",
-      "description": "Relatório de Casos",
-      "created": "2025-11-11T13:25:58.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000006IJAPUA4",
-      "name": "06 - Venda 1 e 2 - Fechado recusado PIS",
-      "description": null,
-      "created": "2025-10-31T22:50:08.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IIz7UAG",
-      "name": "07 - Venda 1 e 2 - Fechado e recusa clie",
-      "description": null,
-      "created": "2025-10-31T22:48:03.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IIvtUAG",
-      "name": "05 - Venda 1 e 2 Band - Fechado e ganho",
-      "description": null,
-      "created": "2025-10-31T22:42:52.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IIuHUAW",
-      "name": "04 - Venda 1 e 2 Band - Negociação",
-      "description": null,
-      "created": "2025-10-31T22:42:01.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IIsfUAG",
-      "name": "03 - Venda 1 e 2 Band - Proposta",
-      "description": null,
-      "created": "2025-10-31T22:40:42.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IIe9UAG",
-      "name": "02 - Venda 1 e 2 Band - Análise das nece",
-      "description": null,
-      "created": "2025-10-31T22:39:06.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IHerUAG",
-      "name": "01 - Venda 1 e 2 Bandeira - Qualificação",
-      "description": null,
-      "created": "2025-10-31T22:04:10.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL000006IG7hUAG",
-      "name": "Consolidado Venda/Ofertas 1 e 2 Bandeira",
-      "description": null,
-      "created": "2025-10-31T21:25:31.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000006HCCbUAO",
-      "name": "Tratativa - troca de logo",
-      "description": "Relatório de Casos de troca de logo pendente de tratativa",
-      "created": "2025-10-30T19:33:08.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000006FCwfUAG",
-      "name": "Registro de Ocorrencias - SAC Preventivo",
-      "description": null,
-      "created": "2025-10-28T18:34:50.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000005q1unUAA",
-      "name": "V2 tratativas backoffice financeiro",
-      "description": "Relatório de Casos",
-      "created": "2025-10-01T20:55:06.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000005nFnqUAE",
-      "name": "Anl Envio IR Conta PF",
-      "description": "Relatório de Casos",
-      "created": "2025-09-29T14:53:33.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000005l9GIUAY",
-      "name": "PESQUISA CES - SERVIÇOS E APÓLICES",
-      "description": "Relatório de Casos",
-      "created": "2025-09-26T14:54:04.000+0000",
-      "createdBy": "SERGIO FONSECA JUNIOR"
-    },
-    {
-      "id": "00ObL000005UmAnUAK",
-      "name": "Tratativas do Backoffice PJ",
-      "description": null,
-      "created": "2025-09-09T12:39:39.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000005P7UrUAK",
-      "name": "Reativação Cta Expurgada",
-      "description": "Relatório de Casos referente às solicitações de conta expurgada via central de relacionamento. Processo descontinuado em 02/09",
-      "created": "2025-09-02T20:26:21.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000005Fdm9UAC",
-      "name": "Tratativas do Backoffice PJ",
-      "description": null,
-      "created": "2025-08-22T23:23:12.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
-    },
-    {
-      "id": "00ObL00000563oMUAQ",
-      "name": "Retenção da Conta Digital",
-      "description": "OS3745",
-      "created": "2025-08-13T03:30:54.000+0000",
-      "createdBy": "Gabriel Costa Datovo Inoue Maekawa"
-    },
-    {
-      "id": "00ObL00000563oLUAQ",
-      "name": "Ret da Conta Digital performance diária",
-      "description": "OS-3745",
-      "created": "2025-08-13T03:30:53.000+0000",
-      "createdBy": "Gabriel Costa Datovo Inoue Maekawa"
-    },
-    {
-      "id": "00ObL00000530LZUAY",
-      "name": "Tratativa Itaú - Conta PJ",
-      "description": "Relatório de Casos tratados pelo Itaú do Produto Conta Digital Pessoa Jurídica",
-      "created": "2025-08-08T22:36:23.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL0000052qkRUAQ",
-      "name": "Transferencias indevidas - Consórcio",
-      "description": "Relatório de Casos - Consórcio que foram transferidos indevidamente",
-      "created": "2025-08-08T19:32:01.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL00000518LdUAI",
-      "name": "Relatório vendas Massificado - AEC HSM",
-      "description": "Relatório de vendas de massificados do time AEC que atua na ação de transbordo HSM",
-      "created": "2025-08-07T13:34:29.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000004q2jNUAQ",
-      "name": "Consórcio - Tratativas do Backoffice",
-      "description": "Relatório de Unificação de Funis",
-      "created": "2025-07-24T23:13:16.000+0000",
-      "createdBy": "Francielle Thiezo Revesso Pinto"
-    },
-    {
-      "id": "00ObL000004iFdlUAE",
-      "name": "Registro de Casos - redução de limite",
-      "description": "Relatório de Casos",
-      "created": "2025-07-16T14:05:39.000+0000",
-      "createdBy": "Leticia Rosa"
-    },
-    {
-      "id": "00ObL000004YZM2UAO",
-      "name": "Incoming Prod-Categ-SubCateg-DetSubCateg",
-      "description": null,
-      "created": "2025-07-07T13:57:06.000+0000",
-      "createdBy": "Bruno Teixeira Rolo"
+      "id": "00P1Q00000Ir014",
+      "name": "Relatório de Contas - Q3",
+      "description": "Relatório automático gerado pelo dashboard",
+      "created": "2026-08-01T14:20:00.000Z",
+      "createdBy": "Analista"
     }
   ],
-  "lastSync": "2026-08-16T18:38:43.595566Z",
-  "isLive": true
+  "lastSync": "2026-08-16T18:43:35.984781Z",
+  "isLive": false
 }
