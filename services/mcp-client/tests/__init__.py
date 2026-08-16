@@ -1,1 +1,1 @@
-"""Tests for MCP Client"""
+"""Testes do MCP Client Service"""

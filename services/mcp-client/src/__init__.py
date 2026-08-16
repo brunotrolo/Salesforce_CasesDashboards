@@ -1,14 +1,9 @@
-"""
-MCP Salesforce Client
-Integração com Salesforce via MCP para operações CRUD de relatórios.
-"""
+"""MCP Client Service - Integração com Salesforce"""
 
-from .salesforce_connector import SalesforceConnector
-from .data_models import SalesforceResponse
+__version__ = "1.0.0"
+__author__ = "Salesforce Reports Team"
 
-__version__ = "0.1.0"
+from src.logger import log
+from src.config import settings
 
-__all__ = [
-    "SalesforceConnector",
-    "SalesforceResponse",
-]
+__all__ = ["log", "settings"]
