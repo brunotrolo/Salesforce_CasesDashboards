@@ -1,0 +1,359 @@
+<title>Dashboard de Casos</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page-plane:     #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --series-1:       #2a78d6;
+    --series-2:       #eb6834;
+    --series-3:       #1baf7a;
+    --series-4:       #eda100;
+    --series-5:       #e87ba4;
+    --series-6:       #008300;
+    --series-7:       #4a3aa7;
+    --series-8:       #e34948;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #d03b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page-plane:     #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --grid:           #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --series-1:       #3987e5;
+      --series-2:       #d95926;
+      --series-3:       #199e70;
+      --series-4:       #c98500;
+      --series-5:       #d55181;
+      --series-6:       #008300;
+      --series-7:       #9085e9;
+      --series-8:       #e66767;
+      --good:           #0ca30c;
+      --warning:        #fab219;
+      --critical:       #e66767;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --surface-1:      #1a1a19;
+    --page-plane:     #0d0d0d;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #898781;
+    --grid:           #2c2c2a;
+    --baseline:       #383835;
+    --border:         rgba(255,255,255,0.10);
+    --series-1:       #3987e5;
+    --series-2:       #d95926;
+    --series-3:       #199e70;
+    --series-4:       #c98500;
+    --series-5:       #d55181;
+    --series-6:       #008300;
+    --series-7:       #9085e9;
+    --series-8:       #e66767;
+    --good:           #0ca30c;
+    --warning:        #fab219;
+    --critical:       #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page-plane);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--text-primary);
+  }
+  .viz-root { padding: 32px 24px 64px; max-width: 1180px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .subtitle { color: var(--text-secondary); font-size: 14px; margin: 0 0 28px; }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .kpi {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .kpi .label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+  .kpi .value { font-size: 26px; font-weight: 600; font-variant-numeric: proportional-nums; }
+  .kpi .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 860px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 20px 16px;
+  }
+  .card h2 { font-size: 14px; margin: 0 0 4px; }
+  .card .desc { font-size: 12px; color: var(--text-secondary); margin: 0 0 16px; }
+
+  /* horizontal bar chart */
+  .hbar-row { display: grid; grid-template-columns: 150px 1fr 56px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 12.5px; }
+  .hbar-label { color: var(--text-secondary); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hbar-track { background: var(--grid); border-radius: 4px; height: 14px; position: relative; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 4px 0 0 4px; }
+  .hbar-value { color: var(--text-primary); font-variant-numeric: tabular-nums; text-align: right; }
+
+  /* donut via conic-gradient */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut {
+    width: 148px; height: 148px; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend { display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-item .name { color: var(--text-secondary); }
+  .legend-item .num { color: var(--text-primary); font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 12px; }
+
+  .note {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    border-left: 3px solid var(--warning);
+    padding: 10px 14px;
+    background: color-mix(in srgb, var(--warning) 10%, transparent);
+    border-radius: 0 6px 6px 0;
+    margin-top: 6px;
+  }
+  .note.critical { border-left-color: var(--critical); background: color-mix(in srgb, var(--critical) 10%, transparent); }
+  .note b { color: var(--text-primary); }
+
+  .footer-note { font-size: 11.5px; color: var(--text-muted); margin-top: 28px; line-height: 1.6; }
+</style>
+
+<div class="viz-root">
+  <h1>Dashboard de Casos — visão gerencial</h1>
+  <p class="subtitle">Casos criados hoje, 14/08/2026 · fonte: Salesforce (Case) · skill <code>salesforce-cases-insights</code></p>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="label">Casos criados hoje</div>
+      <div class="value">68.222</div>
+      <div class="sub">até o momento da consulta</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Criação manual</div>
+      <div class="value">44.063</div>
+      <div class="sub">64,6% do volume</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Criação automática</div>
+      <div class="value">24.159</div>
+      <div class="sub">35,4% do volume</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Encerrados</div>
+      <div class="value">41.775</div>
+      <div class="sub">61,2% (Closed + Fechado Com Sucesso + Protocolo Fechado)</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Sem categoria preenchida</div>
+      <div class="value" style="color: var(--critical);">25.505</div>
+      <div class="sub">37,4% do total — quase todo manual</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Top categorias (Category__c)</h2>
+      <p class="desc">Volume de casos criados hoje por categoria — top 10 preenchidas</p>
+      <div id="bar-cat"></div>
+    </div>
+    <div class="card">
+      <h2>Status dos casos</h2>
+      <p class="desc">Distribuição do dia por status</p>
+      <div class="donut-wrap">
+        <div class="donut" id="donut-status"></div>
+        <div class="legend" id="legend-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Manual vs. automático</h2>
+      <p class="desc">Origem da criação do caso (<code>CreatedAutomatically__c</code>)</p>
+      <div class="donut-wrap">
+        <div class="donut" id="donut-auto"></div>
+        <div class="legend" id="legend-auto"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Prioridade</h2>
+      <p class="desc">Distribuição por prioridade do caso</p>
+      <div id="bar-priority"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <h2>Qualidade de dado — categorização</h2>
+    <p class="desc">Casos sem <code>Category__c</code> preenchida, hoje, por origem de criação</p>
+    <div id="bar-quality"></div>
+    <div class="note critical">
+      <b>Achado:</b> 57,5% dos casos criados <b>manualmente</b> ficam sem categoria (25.338 de 44.063),
+      contra apenas 0,7% dos casos <b>automáticos</b> (167 de 24.159). O gap de categorização é quase
+      inteiramente um problema do fluxo manual, não da automação — sugere falha de processo/treinamento
+      na abertura manual de casos, não um problema técnico do robô.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>SLA de fechamento (amostra de hoje)</h2>
+    <p class="desc">Tempo entre criação e fechamento — amostra de 2.000 casos encerrados hoje, calculado fora do SOQL</p>
+    <div class="kpi-row" style="margin-bottom:0;">
+      <div class="kpi">
+        <div class="label">Mediana geral</div>
+        <div class="value">0 min</div>
+        <div class="sub">maioria fecha no mesmo minuto da criação</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Média — manual</div>
+        <div class="value">10,6 min</div>
+        <div class="sub">553 casos na amostra</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Média — automático</div>
+        <div class="value">0 min</div>
+        <div class="sub">1.447 casos na amostra</div>
+      </div>
+    </div>
+    <div class="note">
+      <b>Leitura:</b> a maior parte dos casos (inclusive manuais) fecha quase instantaneamente — típico de
+      fluxos de autoatendimento/consulta que abrem e encerram o caso no mesmo passo. O tempo médio de
+      10,6 min nos casos manuais é puxado por uma cauda de casos mais demorados (ex.: "Fatura", que
+      concentra volume e tempo de análise); recomenda-se aprofundar o p90 por categoria numa próxima
+      iteração se o interesse for identificar gargalos específicos.
+    </div>
+  </div>
+
+  <p class="footer-note">
+    Dashboard gerado via skill <code>salesforce-cases-insights</code> com SOQL agregado (GROUP BY/COUNT)
+    e amostra pontual para SLA — nenhuma extração de dados brutos em massa, dado o volume (~68 mil
+    casos/dia neste org). Números refletem o momento da consulta e podem variar ao longo do dia.
+  </p>
+</div>
+
+<script>
+  const isDark = () => {
+    const root = document.documentElement;
+    if (root.getAttribute('data-theme') === 'dark') return true;
+    if (root.getAttribute('data-theme') === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  };
+
+  function cssVar(name) {
+    return getComputedStyle(document.querySelector('.viz-root')).getPropertyValue(name).trim();
+  }
+
+  function renderHBar(containerId, data, color) {
+    const el = document.getElementById(containerId);
+    const max = Math.max(...data.map(d => d.value));
+    el.innerHTML = data.map(d => `
+      <div class="hbar-row">
+        <div class="hbar-label" title="${d.label}">${d.label}</div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${(d.value/max*100).toFixed(1)}%; background:${color};"></div>
+        </div>
+        <div class="hbar-value">${d.value.toLocaleString('pt-BR')}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderDonut(donutId, legendId, data, colors) {
+    const total = data.reduce((s, d) => s + d.value, 0);
+    let acc = 0;
+    const stops = data.map((d, i) => {
+      const start = acc / total * 360;
+      acc += d.value;
+      const end = acc / total * 360;
+      return `${colors[i]} ${start}deg ${end}deg`;
+    }).join(', ');
+    const donut = document.getElementById(donutId);
+    donut.style.background = `conic-gradient(${stops})`;
+    donut.style.setProperty('mask', 'radial-gradient(circle, transparent 58%, black 59%)');
+    donut.style.setProperty('-webkit-mask', 'radial-gradient(circle, transparent 58%, black 59%)');
+
+    const legend = document.getElementById(legendId);
+    legend.innerHTML = data.map((d, i) => `
+      <div class="legend-item">
+        <div class="swatch" style="background:${colors[i]};"></div>
+        <div class="name">${d.label}</div>
+        <div class="num">${d.value.toLocaleString('pt-BR')} (${(d.value/total*100).toFixed(1)}%)</div>
+      </div>
+    `).join('');
+  }
+
+  function render() {
+    const s1 = cssVar('--series-1');
+
+    renderHBar('bar-cat', [
+      { label: 'Fatura', value: 7339 },
+      { label: 'Atendimento', value: 5623 },
+      { label: 'Detalhes da cota', value: 4601 },
+      { label: 'Limite', value: 4190 },
+      { label: 'Autorizações', value: 3658 },
+      { label: 'Prog. Relacionamento', value: 3134 },
+      { label: 'Manutenção Cartão', value: 2535 },
+      { label: 'Retenção de Cartões', value: 2233 },
+      { label: 'Protocolo', value: 1391 },
+      { label: 'Massificado', value: 1201 },
+    ], s1);
+
+    renderHBar('bar-priority', [
+      { label: 'Normal', value: 52209 },
+      { label: 'Ultra', value: 16009 },
+      { label: 'UrgenteRechamada', value: 4 },
+    ], cssVar('--series-2'));
+
+    renderHBar('bar-quality', [
+      { label: 'Manual', value: 25338 },
+      { label: 'Automático', value: 167 },
+    ], cssVar('--critical'));
+
+    const statusColors = [cssVar('--series-1'), cssVar('--series-3'), cssVar('--series-4'), cssVar('--series-7'), cssVar('--series-5'), cssVar('--series-6'), cssVar('--series-8'), cssVar('--series-2')];
+    renderDonut('donut-status', 'legend-status', [
+      { label: 'Closed', value: 33558 },
+      { label: 'Em atendimento', value: 24823 },
+      { label: 'Fechado Com Sucesso', value: 7809 },
+      { label: 'New', value: 1398 },
+      { label: 'Protocolo Fechado', value: 408 },
+      { label: 'InAnalysis', value: 205 },
+      { label: 'Rejeitado', value: 18 },
+      { label: 'Erro envio CSU', value: 3 },
+    ], statusColors);
+
+    renderDonut('donut-auto', 'legend-auto', [
+      { label: 'Manual', value: 44063 },
+      { label: 'Automático', value: 24159 },
+    ], [cssVar('--series-2'), cssVar('--series-1')]);
+  }
+
+  render();
+</script>

@@ -58,4 +58,6 @@ def mock_jwt_globally():
 def client():
     """Create a test client for the API."""
     from main import app
-    return TestClient(app)
+    # Use context manager to ensure lifespan is properly called
+    with TestClient(app) as client:
+        yield client
