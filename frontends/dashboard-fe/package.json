@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
-    "test": "vitest",
+    "test": "vitest run",
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
@@ -16,7 +16,6 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
     "axios": "^1.6.0",
-    "zustand": "^4.4.0",
     "date-fns": "^2.30.0",
     "recharts": "^2.10.0"
   },

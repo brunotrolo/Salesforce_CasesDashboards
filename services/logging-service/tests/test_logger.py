@@ -20,6 +20,7 @@ def temp_log_file():
     with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.log') as f:
         path = f.name
     yield path
+    logging.shutdown()
     Path(path).unlink(missing_ok=True)
 
 

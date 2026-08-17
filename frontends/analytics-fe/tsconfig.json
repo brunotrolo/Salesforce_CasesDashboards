@@ -24,7 +24,7 @@
       "@pages/*": ["src/pages/*"],
       "@hooks/*": ["src/hooks/*"],
       "@api/*": ["src/api/*"],
-      "@types/*": ["src/types/*"],
+      "@typings/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"]
     }
   },

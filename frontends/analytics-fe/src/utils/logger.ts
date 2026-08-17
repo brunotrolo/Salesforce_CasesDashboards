@@ -31,7 +31,10 @@ class Logger {
     }
 
     if (this.isDev) {
-      console[level.toLowerCase() as keyof Console](entry)
+      const logFn = console[level.toLowerCase() as keyof typeof console]
+      if (typeof logFn === 'function') {
+        (logFn as (...args: unknown[]) => void)(entry)
+      }
     }
 
     // In production, send to logging service

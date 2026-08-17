@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.responses import JSONResponse
 from typing import Optional
 from datetime import datetime
+import os
+import secrets
 from src.config import settings
 from src.jwt_handler import JWTHandler
 from src.rbac import RBAC, ResourcePermission
@@ -72,22 +74,35 @@ async def login(request: LoginRequest):
     """
     Realiza login do usuário.
     
-    Nota: Implementação simplificada. Em produção, usar banco de dados.
+    Credenciais configuradas via ADMIN_USERNAME / ADMIN_PASSWORD (env).
+    Modo demo (flag ENABLE_DEMO_MODE=true): aceita usuario "test" com
+    qualquer senha, apenas para desenvolvimento local.
     """
-    # TODO: Verificar credenciais no banco de dados
-    # Para demo, aceitar qualquer usuário com "test" como username
-    
-    if request.username == "test":
-        # Criar tokens
+    demo_mode = os.getenv("ENABLE_DEMO_MODE", "false").lower() == "true"
+
+    if demo_mode and request.username == "test":
         tokens = jwt_handler.create_token_pair(
             user_id=f"u:{request.username}",
             role=UserRole.USER,
             permissions=RBAC.get_role_permissions(UserRole.USER),
         )
-        
         return LoginResponse(**tokens)
-    
-    raise HTTPException(status_code=401, detail="Credenciais inválidas")
+
+    admin_username = os.getenv("ADMIN_USERNAME", "")
+    admin_password = os.getenv("ADMIN_PASSWORD", "")
+
+    username_ok = secrets.compare_digest(request.username, admin_username)
+    password_ok = bool(admin_password) and secrets.compare_digest(request.password, admin_password)
+
+    if not (username_ok and password_ok):
+        raise HTTPException(status_code=401, detail="Credenciais inválidas")
+
+    tokens = jwt_handler.create_token_pair(
+        user_id=f"u:{request.username}",
+        role=UserRole.ADMIN,
+        permissions=RBAC.get_role_permissions(UserRole.ADMIN),
+    )
+    return LoginResponse(**tokens)
 
 @app.post("/auth/logout")
 async def logout(current_user: TokenPayload = Depends(get_current_user)):

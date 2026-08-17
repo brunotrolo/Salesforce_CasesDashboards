@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { BarChart } from '@components/BarChart'
 import { DataTable } from '@components/DataTable'
-import { ReportExecutionResult, Report } from '@types/report'
-import { AnalyticsResult, TableData, ChartData } from '@types/analytics'
+import { ReportExecutionResult, Report } from '@typings/report'
+import { AnalyticsResult, TableData, ChartData } from '@typings/analytics'
 import { formatDuration, formatNumber } from '@utils/formatters'
 import { exportToPDF, exportToExcel, exportToCSV, copyToClipboard } from '@utils/exporters'
 
@@ -13,7 +13,6 @@ interface LocationState {
 }
 
 export const ResultsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
   const [view, setView] = useState<'table' | 'charts'>('table')
@@ -28,9 +27,11 @@ export const ResultsPage: React.FC = () => {
     setExportLoading('pdf')
     try {
       const analyticsResult: AnalyticsResult = {
-        rows: result.rows_returned,
-        execution_time: result.execution_time_ms,
-        status: result.status,
+        report_id: result.report_id,
+        report_name: report?.name || 'Report',
+        executed_at: result.executed_at,
+        execution_time_ms: result.execution_time_ms,
+        rows_returned: result.rows_returned,
         data: result.data
       }
       await exportToPDF(report?.name || 'Report', analyticsResult, chartRef.current || undefined)
@@ -49,9 +50,11 @@ export const ResultsPage: React.FC = () => {
     setExportLoading('excel')
     try {
       const analyticsResult: AnalyticsResult = {
-        rows: result.rows_returned,
-        execution_time: result.execution_time_ms,
-        status: result.status,
+        report_id: result.report_id,
+        report_name: report?.name || 'Report',
+        executed_at: result.executed_at,
+        execution_time_ms: result.execution_time_ms,
+        rows_returned: result.rows_returned,
         data: result.data
       }
       exportToExcel(report?.name || 'Report', analyticsResult, {
@@ -107,7 +110,7 @@ export const ResultsPage: React.FC = () => {
             <p className="text-gray-600 mb-4">Nenhum resultado para exibir</p>
             <button
               onClick={() => navigate('/dashboard')}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark cursor-pointer"
             >
               Voltar ao Dashboard
             </button>
@@ -138,7 +141,7 @@ export const ResultsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
             <div>
@@ -160,21 +163,21 @@ export const ResultsPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Summary cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-card border border-border rounded-lg p-6">
             <p className="text-gray-600 text-sm">Total de Linhas</p>
             <p className="text-3xl font-bold text-gray-900 mt-2">
               {formatNumber(result.rows_returned)}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-card border border-border rounded-lg p-6">
             <p className="text-gray-600 text-sm">Tempo de Execução</p>
             <p className="text-3xl font-bold text-gray-900 mt-2">
               {formatDuration(result.execution_time_ms)}
             </p>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-card border border-border rounded-lg p-6">
             <p className="text-gray-600 text-sm">Status</p>
             <p className={`text-3xl font-bold mt-2 ${
               result.status === 'success' ? 'text-green-600' : 'text-red-600'
@@ -191,7 +194,7 @@ export const ResultsPage: React.FC = () => {
               onClick={() => setView('table')}
               className={`px-4 py-2 rounded-lg font-medium transition ${
                 view === 'table'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
               }`}
             >
@@ -201,7 +204,7 @@ export const ResultsPage: React.FC = () => {
               onClick={() => setView('charts')}
               className={`px-4 py-2 rounded-lg font-medium transition ${
                 view === 'charts'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary text-white'
                   : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
               }`}
             >

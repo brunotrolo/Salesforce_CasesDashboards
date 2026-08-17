@@ -7,22 +7,73 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-backend:
+    name: Test Backend
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api-gateway, auth-service, report-service, mcp-client, logging-service]
+
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ matrix.service }}-${{ hashFiles(format('services/{0}/requirements.txt', matrix.service)) }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx
+
+      - name: Run tests
+        env:
+          JWT_SECRET_KEY: ci-test-secret
+          ADMIN_USERNAME: admin
+          ADMIN_PASSWORD: ci-test-password
+          ENABLE_DEMO_MODE: "false"
+          SF_CLIENT_ID: ci-client-id
+          SF_CLIENT_SECRET: ci-client-secret
+        run: python -m pytest tests/ -q
+
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [dashboard-fe, builder-fe, analytics-fe]
+
+    defaults:
+      run:
+        working-directory: frontends/${{ matrix.app }}
+
+    steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontends/${{ matrix.app }}/package-lock.json
 
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run Python tests
-        run: |
-          cd services/api-gateway
-          python -m pytest tests/ -v
+      - name: Run tests
+        run: CI=true npm test
 
+      - name: Build
+        run: npm run build

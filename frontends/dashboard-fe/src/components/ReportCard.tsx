@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Report, ReportStatus } from '../types/report'
+import { Report, ReportStatus } from '../types/report'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -42,7 +42,7 @@ export const ReportCard: React.FC<ReportCardProps> = ({
   })
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+    <div className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors">
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900">{report.name}</h3>
@@ -88,21 +88,21 @@ export const ReportCard: React.FC<ReportCardProps> = ({
         <button
           onClick={() => onExecute(report.id)}
           disabled={loading || status === ReportStatus.DRAFT || status === ReportStatus.ARCHIVED}
-          className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+          className="flex-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark disabled:bg-gray-400 disabled:cursor-not-allowed transition cursor-pointer"
         >
           Executar
         </button>
         <button
           onClick={() => onEdit(report.id)}
           disabled={loading}
-          className="flex-1 px-4 py-2 bg-gray-200 text-gray-900 rounded hover:bg-gray-300 disabled:opacity-50 transition"
+          className="flex-1 px-4 py-2 bg-card border border-border text-gray-900 rounded-md hover:bg-muted disabled:opacity-50 transition cursor-pointer"
         >
           Editar
         </button>
         <button
           onClick={() => onDelete(report.id)}
           disabled={loading}
-          className="flex-1 px-4 py-2 bg-red-100 text-red-700 rounded hover:bg-red-200 disabled:opacity-50 transition"
+          className="flex-1 px-4 py-2 bg-card border border-border text-destructive rounded-md hover:bg-red-50 disabled:opacity-50 transition cursor-pointer"
         >
           Deletar
         </button>

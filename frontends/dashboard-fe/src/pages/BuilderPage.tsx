@@ -1,11 +1,19 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { reportApi } from '@api/reportApi'
+import type { Report, ReportType, ReportFilter } from '@types/report'
 
 interface ReportConfig {
   title: string
   description: string
   type: 'table' | 'chart' | 'summary'
   filters: Record<string, string>
+}
+
+const TYPE_MAP: Record<ReportConfig['type'], ReportType> = {
+  table: ReportType.TABULAR,
+  chart: ReportType.MATRIX,
+  summary: ReportType.SUMMARY,
 }
 
 export const BuilderPage: React.FC = () => {
@@ -17,91 +25,111 @@ export const BuilderPage: React.FC = () => {
     filters: {}
   })
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSave = async () => {
+    setError(null)
+    const filters: ReportFilter[] = Object.entries(config.filters).map(([field, value]) => ({
+      field,
+      operator: 'eq',
+      value,
+    }))
+    const report: Report = {
+      id: '',
+      name: config.title,
+      description: config.description,
+      report_type: TYPE_MAP[config.type],
+      object_type: 'Case',
+      fields: [],
+      filters,
+      aggregations: [],
+      metadata: {
+        created_by: 'user',
+        created_at: new Date().toISOString(),
+      },
+    }
     try {
-      const response = await fetch('/api/reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(config)
-      })
-
-      if (response.ok) {
-        setSaved(true)
-        setTimeout(() => navigate('/'), 2000)
-      }
-    } catch (error) {
-      console.error('Error saving report:', error)
+      await reportApi.createReport(report)
+      setSaved(true)
+      setTimeout(() => navigate('/'), 2000)
+    } catch (err) {
+      setError('Falha ao salvar o relatório. Tente novamente.')
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Criar Novo Relatório</h1>
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-4xl mx-auto bg-card border border-border rounded-lg p-8">
+        <h1 className="text-2xl font-bold text-primary-dark mb-6">Criar Novo Relatório</h1>
 
         <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
               Título do Relatório
             </label>
             <input
+              id="title"
               type="text"
               value={config.title}
               onChange={(e) => setConfig({ ...config, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="ex: Relatório de Vendas Q4"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
               Descrição
             </label>
             <textarea
+              id="description"
               value={config.description}
               onChange={(e) => setConfig({ ...config, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-transparent"
               rows={4}
               placeholder="Descreva o propósito do relatório..."
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <fieldset>
+            <legend className="block text-sm font-medium text-gray-700 mb-2">
               Tipo de Visualização
-            </label>
+            </legend>
             <div className="grid grid-cols-3 gap-4">
               {(['table', 'chart', 'summary'] as const).map((type) => (
                 <button
                   key={type}
+                  type="button"
                   onClick={() => setConfig({ ...config, type })}
-                  className={`p-4 rounded-lg border-2 font-semibold capitalize transition-all ${
+                  className={`p-4 rounded-md border-2 font-semibold capitalize transition-colors cursor-pointer ${
                     config.type === type
-                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-indigo-300'
+                      ? 'border-primary bg-primary text-white'
+                      : 'border-gray-300 bg-card text-gray-700 hover:border-primary'
                   }`}
                 >
                   {type}
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
+
+          {error && (
+            <p role="alert" className="text-sm text-destructive bg-red-50 border border-red-200 rounded-md p-2">
+              {error}
+            </p>
+          )}
 
           <div className="flex gap-4 pt-6">
             <button
               onClick={handleSave}
               disabled={!config.title || saved}
-              className="flex-1 bg-indigo-600 text-white font-semibold py-3 rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 transition-colors"
+              className="flex-1 bg-primary text-white font-semibold py-2.5 rounded-md hover:bg-primary-dark disabled:bg-gray-400 transition-colors cursor-pointer disabled:cursor-not-allowed"
             >
-              {saved ? '✓ Relatório Criado!' : 'Salvar Relatório'}
+              {saved ? 'Relatório Criado!' : 'Salvar Relatório'}
             </button>
             <button
               onClick={() => navigate('/')}
-              className="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 rounded-lg hover:bg-gray-300 transition-colors"
+              className="flex-1 bg-card border border-border text-gray-700 font-semibold py-2.5 rounded-md hover:bg-muted transition-colors cursor-pointer"
             >
               Cancelar
             </button>

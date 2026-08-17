@@ -1,5 +1,5 @@
 import React from 'react'
-import type { Report, ReportStatus } from '../types/report'
+import { Report, ReportStatus } from '../types/report'
 import { ReportCard } from './ReportCard'
 
 interface ReportsListProps {
@@ -9,6 +9,7 @@ interface ReportsListProps {
   total: number
   limit: number
   offset: number
+  currentStatus?: ReportStatus
   onExecute: (reportId: string) => void
   onEdit: (reportId: string) => void
   onDelete: (reportId: string) => void
@@ -23,6 +24,7 @@ export const ReportsList: React.FC<ReportsListProps> = ({
   total,
   limit,
   offset,
+  currentStatus,
   onExecute,
   onEdit,
   onDelete,
@@ -42,7 +44,7 @@ export const ReportsList: React.FC<ReportsListProps> = ({
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="bg-gray-200 rounded-lg h-40 animate-pulse" />
+          <div key={i} className="bg-muted rounded-lg h-40 animate-pulse" />
         ))}
       </div>
     )
@@ -51,7 +53,8 @@ export const ReportsList: React.FC<ReportsListProps> = ({
   if (reports.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 text-lg">Nenhum relatório encontrado</p>
+        <p className="text-muted-foreground text-lg">Nenhum relatório encontrado</p>
+        <p className="text-sm text-gray-500 mt-2">Crie seu primeiro relatório para começar.</p>
       </div>
     )
   }
@@ -63,25 +66,29 @@ export const ReportsList: React.FC<ReportsListProps> = ({
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => onStatusFilter(undefined)}
-          className="px-3 py-1 bg-gray-200 rounded-full text-sm hover:bg-gray-300 transition"
+          aria-pressed={currentStatus === undefined}
+          className="px-3 py-1 bg-muted text-gray-700 rounded-full text-sm hover:bg-gray-300 transition cursor-pointer"
         >
           Todos
         </button>
         <button
           onClick={() => onStatusFilter(ReportStatus.ACTIVE)}
-          className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm hover:bg-green-200 transition"
+          aria-pressed={currentStatus === ReportStatus.ACTIVE}
+          className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm hover:bg-green-200 transition cursor-pointer"
         >
           Ativos
         </button>
         <button
           onClick={() => onStatusFilter(ReportStatus.DRAFT)}
-          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition"
+          aria-pressed={currentStatus === ReportStatus.DRAFT}
+          className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm hover:bg-gray-200 transition cursor-pointer"
         >
           Rascunhos
         </button>
         <button
           onClick={() => onStatusFilter(ReportStatus.SCHEDULED)}
-          className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition"
+          aria-pressed={currentStatus === ReportStatus.SCHEDULED}
+          className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition cursor-pointer"
         >
           Agendados
         </button>
@@ -105,7 +112,7 @@ export const ReportsList: React.FC<ReportsListProps> = ({
           <button
             onClick={onLoadMore}
             disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition"
+            className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark disabled:bg-gray-400 transition cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? 'Carregando...' : 'Carregar mais'}
           </button>

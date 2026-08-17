@@ -2,9 +2,10 @@
  * Export utilities for reports (PDF, Excel)
  */
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
-import html2canvas from 'html-to-image';
-import { AnalyticsResult, TableData } from '../types/analytics';
+import { toPng } from 'html-to-image';
+import { AnalyticsResult } from '../types/analytics';
 
 /**
  * Export report to PDF with charts and data
@@ -28,22 +29,20 @@ export async function exportToPDF(
   pdf.setFontSize(10);
   let yPosition = 35;
 
-  pdf.text(`Total Rows: ${results.rows}`, 20, yPosition);
+  pdf.text(`Total Rows: ${results.rows_returned}`, 20, yPosition);
   yPosition += 8;
-  pdf.text(`Execution Time: ${results.execution_time}ms`, 20, yPosition);
-  yPosition += 8;
-  pdf.text(`Status: ${results.status}`, 20, yPosition);
+  pdf.text(`Execution Time: ${results.execution_time_ms}ms`, 20, yPosition);
   yPosition += 15;
 
   // Add chart if available
   if (chartElement) {
     try {
-      const imageData = await html2canvas(chartElement);
-      const imgDimensions = pdf.getImageProperties(imageData.toDataURL());
+      const imageData = await toPng(chartElement);
+      const imgDimensions = pdf.getImageProperties(imageData);
       const imgWidth = 170;
       const imgHeight = (imgDimensions.height * imgWidth) / imgDimensions.width;
 
-      pdf.addImage(imageData.toDataURL(), 'PNG', 20, yPosition, imgWidth, imgHeight);
+      pdf.addImage(imageData, 'PNG', 20, yPosition, imgWidth, imgHeight);
       yPosition += imgHeight + 15;
     } catch (error) {
       console.error('Error capturing chart:', error);
@@ -61,7 +60,7 @@ export async function exportToPDF(
       columns.map(col => String(row[col] || ''))
     );
 
-    pdf.autoTable({
+    autoTable(pdf, {
       head: [columns],
       body: rows,
       startY: yPosition,
@@ -100,9 +99,8 @@ export function exportToExcel(
     const summaryData = [
       ['Report Name', reportName],
       ['Execution Date', new Date().toISOString()],
-      ['Total Rows', results.rows],
-      ['Execution Time (ms)', results.execution_time],
-      ['Status', results.status]
+      ['Total Rows', results.rows_returned],
+      ['Execution Time (ms)', results.execution_time_ms]
     ];
 
     const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);

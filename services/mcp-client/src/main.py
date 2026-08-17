@@ -22,6 +22,7 @@ app = FastAPI(
 
 # Variáveis globais para gerenciar sessões OAuth
 oauth_states = {}
+OAUTH_STATE_TTL_SECONDS = 600
 oauth_handler = OAuthHandler()
 salesforce_connector = SalesforceConnector(oauth_handler)
 
@@ -47,12 +48,15 @@ async def authorize():
     """Inicia o fluxo de autorização OAuth."""
     try:
         auth_url, state = oauth_handler.get_authorization_url()
-        oauth_states[state] = {"created_at": datetime.utcnow().isoformat()}
+        oauth_states[state] = {
+            "created_at": datetime.utcnow().timestamp(),
+            "expires_at": datetime.utcnow().timestamp() + OAUTH_STATE_TTL_SECONDS,
+        }
         
         return OAuthAuthorizeResponse(
             authorization_url=auth_url,
             state=state,
-            expires_in=600,
+            expires_in=OAUTH_STATE_TTL_SECONDS,
         )
     except Exception as e:
         log.error("Erro ao gerar URL de autorização", error=e)
@@ -62,9 +66,23 @@ async def authorize():
 async def oauth_callback(request: OAuthCallbackRequest):
     """Processa callback do OAuth."""
     try:
-        if request.state not in oauth_states:
-            raise HTTPException(status_code=400, detail="Estado inválido")
-        
+        # Expira states antigos e remove do dict (evita crescimento infinito)
+        now = datetime.utcnow().timestamp()
+        expired_states = [
+            s for s, data in oauth_states.items()
+            if data.get("expires_at", 0) < now
+        ]
+        for s in expired_states:
+            del oauth_states[s]
+
+        state_data = oauth_states.get(request.state)
+        if state_data is None:
+            raise HTTPException(status_code=400, detail="Estado inválido ou expirado")
+
+        if state_data.get("expires_at", 0) < now:
+            del oauth_states[request.state]
+            raise HTTPException(status_code=400, detail="Estado expirado")
+
         token = oauth_handler.exchange_code_for_token(request.code)
         del oauth_states[request.state]
         
@@ -73,6 +91,8 @@ async def oauth_callback(request: OAuthCallbackRequest):
             "token_type": token.token_type,
             "expires_in": token.expires_in,
         }
+    except HTTPException:
+        raise
     except Exception as e:
         log.error("Erro no callback OAuth", error=e)
         raise HTTPException(status_code=500, detail=str(e))

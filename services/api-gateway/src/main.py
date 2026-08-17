@@ -172,9 +172,13 @@ app = FastAPI(
 
 # Add middleware (order matters - most specific first)
 app.add_middleware(RateLimitMiddleware)
+
+_cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:5174,http://localhost:5175")
+cors_origins = [origin.strip() for origin in _cors_origins.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure properly in production
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -242,15 +246,28 @@ class ReportExecuteResponse(BaseModel):
 @app.post("/auth/login", response_model=TokenResponse)
 async def login(request: LoginRequest):
     """Login endpoint - generate access token."""
-    # Simple validation - in production, validate against real user store
     if not request.username or not request.password:
         raise HTTPException(
             status_code=400,
             detail="Username and password required"
         )
 
-    # For demo: accept any non-empty credentials
-    # In production: validate against LDAP, database, OAuth, etc.
+    # Validate credentials against configured user store
+    # Credentials come from ADMIN_USERNAME / ADMIN_PASSWORD env vars.
+    # In production, validate against LDAP, database, OAuth, etc.
+    admin_username = os.getenv("ADMIN_USERNAME", "")
+    admin_password = os.getenv("ADMIN_PASSWORD", "")
+
+    username_ok = request.username == admin_username
+    password_ok = admin_password and request.password == admin_password
+
+    if not (username_ok and password_ok):
+        logger.warn("Failed login attempt", context={"user": request.username})
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid credentials"
+        )
+
     token = create_access_token(data={"sub": request.username})
 
     logger.info("User logged in")
@@ -289,6 +306,7 @@ async def list_reports(
     limit: int = Query(10, ge=1, le=100),
     offset: int = Query(0, ge=0),
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """List all reports with optional filtering by status."""
     try:
@@ -326,6 +344,7 @@ async def list_reports(
 async def create_report(
     request: ReportCreateRequest,
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Create a new report."""
     try:
@@ -349,14 +368,14 @@ async def create_report(
             fields=request.fields,
             filters=report_filters,
             metadata=ReportMetadata(
-                created_by="system",
+                created_by=current_user["user_id"],
                 created_at=datetime.utcnow(),
             ),
         )
 
         result = await report_manager.create_report(
             report=report,
-            user_id="system",
+            user_id=current_user["user_id"],
         )
 
         return result
@@ -369,6 +388,7 @@ async def create_report(
 async def get_report(
     report_id: str,
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Get a specific report by ID."""
     try:
@@ -389,6 +409,7 @@ async def update_report(
     report_id: str,
     request: ReportUpdateRequest,
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Update a report."""
     try:
@@ -398,7 +419,7 @@ async def update_report(
         result = await report_manager.update_report(
             report_id=report_id,
             updates=updates,
-            user_id="system",
+            user_id=current_user["user_id"],
         )
 
         return result
@@ -411,6 +432,7 @@ async def update_report(
 async def delete_report(
     report_id: str,
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Delete a report (soft delete - archives it)."""
     try:
@@ -428,6 +450,7 @@ async def execute_report(
     report_id: str,
     report_manager: ReportManager = Depends(get_report_manager),
     salesforce_connector: SalesforceConnector = Depends(get_salesforce_connector),
+    current_user: dict = Depends(get_current_user),
 ):
     """Execute a report and return results."""
     try:
@@ -455,12 +478,13 @@ async def execute_report(
 async def activate_report(
     report_id: str,
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Activate a report."""
     try:
         logger.info("Activating report")
 
-        result = await report_manager.activate_report(report_id, user_id="system")
+        result = await report_manager.activate_report(report_id, user_id=current_user["user_id"])
         return result
     except Exception as e:
         logger.error("Error activating report")
@@ -472,12 +496,13 @@ async def schedule_report(
     report_id: str,
     cron: str = Query(...),
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Schedule a report for regular execution."""
     try:
         logger.info("Scheduling report")
 
-        result = await report_manager.schedule_report(report_id, cron, user_id="system")
+        result = await report_manager.schedule_report(report_id, cron, user_id=current_user["user_id"])
         return result
     except Exception as e:
         logger.error("Error scheduling report")
@@ -488,12 +513,13 @@ async def schedule_report(
 async def pause_report(
     report_id: str,
     report_manager: ReportManager = Depends(get_report_manager),
+    current_user: dict = Depends(get_current_user),
 ):
     """Pause a scheduled report."""
     try:
         logger.info("Pausing report")
 
-        result = await report_manager.pause_report(report_id, user_id="system")
+        result = await report_manager.pause_report(report_id, user_id=current_user["user_id"])
         return result
     except Exception as e:
         logger.error("Error pausing report")

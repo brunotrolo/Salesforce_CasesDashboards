@@ -21,15 +21,21 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginRequest = error.config?.url?.includes('/auth/login')
+    if (error.response?.status === 401 && !isLoginRequest) {
       localStorage.removeItem('auth_token')
-      window.location.href = '/login'
+      window.location.href = '/'
     }
     return Promise.reject(error)
   }
 )
 
 export const reportApi = {
+  async login(username: string, password: string): Promise<{ access_token: string; token_type: string }> {
+    const response = await apiClient.post('/auth/login', { username, password })
+    return response.data
+  },
+
   async listReports(
     limit: number = 10,
     offset: number = 0,

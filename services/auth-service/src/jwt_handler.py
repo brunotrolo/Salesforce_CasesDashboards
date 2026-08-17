@@ -8,6 +8,11 @@ class JWTHandler:
     """Gerencia criação e validação de JWT tokens."""
     
     def __init__(self):
+        if not settings.JWT_SECRET_KEY:
+            raise RuntimeError(
+                "JWT_SECRET_KEY environment variable is required. "
+                "Set it before starting the auth service."
+            )
         self.secret_key = settings.JWT_SECRET_KEY
         self.algorithm = settings.JWT_ALGORITHM
         self.access_token_expire_hours = settings.JWT_EXPIRATION_HOURS
@@ -114,7 +119,7 @@ class JWTHandler:
                 exp=payload.get("exp"),
                 iat=payload.get("iat"),
                 type=TokenType(payload.get("type")),
-                role=UserRole(payload.get("role")),
+                role=UserRole(payload.get("role")) if payload.get("role") else None,
                 permissions=payload.get("permissions", []),
             )
             

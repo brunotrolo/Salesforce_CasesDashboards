@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts'
-import { ChartData, ChartConfig } from '@types/analytics'
+import { ChartData, ChartConfig } from '@typings/analytics'
 
 interface BarChartProps {
   data: ChartData[]
@@ -18,7 +18,7 @@ interface BarChartProps {
 
 export const BarChart: React.FC<BarChartProps> = ({ data, config }) => {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-card border border-border rounded-lg p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-6">{config.title}</h3>
       <ResponsiveContainer width="100%" height={300}>
         <RechartsBarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>

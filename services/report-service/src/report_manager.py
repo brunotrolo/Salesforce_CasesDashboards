@@ -67,9 +67,13 @@ class ReportManager:
         if not report:
             return {"success": False, "error": "Report not found"}
 
-        # Apply updates
+        # Apply updates (allowlist of updatable fields)
+        updatable_fields = {
+            "name", "description", "report_type", "object_type",
+            "fields", "filters", "aggregations", "sort_by", "limit", "schedule",
+        }
         for key, value in updates.items():
-            if hasattr(report, key) and key not in ["id", "metadata"]:
+            if key in updatable_fields:
                 setattr(report, key, value)
 
         # Update metadata

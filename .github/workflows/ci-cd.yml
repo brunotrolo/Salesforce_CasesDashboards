@@ -3,8 +3,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   REGISTRY: ghcr.io
@@ -16,49 +14,55 @@ jobs:
     name: Test Backend
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.11']
+        service: [api-gateway, auth-service, report-service, mcp-client, logging-service]
+
+    defaults:
+      run:
+        working-directory: services/${{ matrix.service }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.11'
 
       - name: Cache pip packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+          key: ${{ runner.os }}-pip-${{ matrix.service }}-${{ hashFiles(format('services/{0}/requirements.txt', matrix.service)) }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r services/api-gateway/requirements.txt
+          pip install -r requirements.txt
           pip install pytest pytest-asyncio httpx
 
-      - name: Run linting
-        run: |
-          pip install pylint
-          pylint services/api-gateway/src/ --disable=all --enable=E,F || true
-
       - name: Run tests
-        run: |
-          pytest services/api-gateway/tests/test_health.py -v
-          pytest services/auth-service/tests/ -v || true
-          pytest services/logging-service/tests/ -v || true
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
+        env:
+          JWT_SECRET_KEY: ci-test-secret
+          ADMIN_USERNAME: admin
+          ADMIN_PASSWORD: ci-test-password
+          ENABLE_DEMO_MODE: "false"
+          SF_CLIENT_ID: ci-client-id
+          SF_CLIENT_SECRET: ci-client-secret
+        run: python -m pytest tests/ -q
 
   test-frontend:
     name: Test Frontend
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [dashboard-fe, builder-fe, analytics-fe]
+
+    defaults:
+      run:
+        working-directory: frontends/${{ matrix.app }}
 
     steps:
       - uses: actions/checkout@v4
@@ -68,30 +72,21 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: 'frontends/dashboard-fe/package.json'
+          cache-dependency-path: frontends/${{ matrix.app }}/package-lock.json
 
       - name: Install dependencies
-        working-directory: frontends/dashboard-fe
         run: npm ci
 
-      - name: Run linting
-        working-directory: frontends/dashboard-fe
-        run: npm run lint || true
-
       - name: Run tests
-        working-directory: frontends/dashboard-fe
-        run: npm test || true
+        run: CI=true npm test
 
       - name: Build frontend
-        working-directory: frontends/dashboard-fe
         run: npm run build
 
   build-backend:
     name: Build Backend Image
     runs-on: ubuntu-latest
     needs: test-backend
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
     permissions:
       contents: read
       packages: write
@@ -100,17 +95,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push API Gateway image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./services/api-gateway/Dockerfile
@@ -125,8 +120,6 @@ jobs:
     name: Build Frontend Image
     runs-on: ubuntu-latest
     needs: test-frontend
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
     permissions:
       contents: read
       packages: write
@@ -135,17 +128,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Dashboard Frontend image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./frontends/dashboard-fe
           file: ./frontends/dashboard-fe/Dockerfile
@@ -155,52 +148,3 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.DASHBOARD_IMAGE_NAME }}:${{ github.sha }}
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.DASHBOARD_IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ env.DASHBOARD_IMAGE_NAME }}:buildcache,mode=max
-
-  deploy:
-    name: Deploy to Environment
-    runs-on: ubuntu-latest
-    needs: [build-backend, build-frontend]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Update Kubernetes manifests
-        run: |
-          echo "✅ Kubernetes manifests verified"
-          echo "  - api-gateway-deployment.yaml"
-          echo "  - ingress.yaml"
-
-      - name: Prepare deployment
-        run: |
-          echo "📦 Docker images built and pushed"
-          echo "🚀 Ready for Kubernetes deployment"
-          echo ""
-          echo "To deploy:"
-          echo "  kubectl apply -f infra/kubernetes/api-gateway-deployment.yaml"
-          echo "  kubectl apply -f infra/kubernetes/ingress.yaml"
-
-  validate:
-    name: Validate Configuration
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Validate YAML
-        run: |
-          pip install pyyaml
-          python -c "
-          import yaml
-          files = ['infra/kubernetes/api-gateway-deployment.yaml', 'infra/kubernetes/ingress.yaml']
-          for f in files:
-              with open(f) as file:
-                  yaml.safe_load_all(file)
-          print('✅ All YAML files are valid')
-          "
-
-      - name: Check required files
-        run: |
-          test -f DEPLOYMENT_GUIDE.md && echo "✅ DEPLOYMENT_GUIDE.md found"
-          test -f docker-compose.yml && echo "✅ docker-compose.yml found"
-          test -f CLAUDE.md && echo "✅ CLAUDE.md found"

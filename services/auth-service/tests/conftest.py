@@ -1,12 +1,20 @@
 """Fixtures para testes da Auth Service"""
 
+import os
+
+# Set required env vars BEFORE any src imports
+os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key")
+os.environ.setdefault("ADMIN_USERNAME", "admin@salesforce.com")
+os.environ.setdefault("ADMIN_PASSWORD", "secure_password_123")
+os.environ.setdefault("ENABLE_DEMO_MODE", "false")
+
 import pytest
 from datetime import datetime, timedelta
 from unittest.mock import Mock, AsyncMock
 
 from src.jwt_handler import JWTHandler
 from src.rbac import RBAC
-from src.models import OAuthToken, UserRole, TokenPayload
+from src.models import UserRole, TokenPayload
 
 
 @pytest.fixture

@@ -80,7 +80,7 @@ class ReportValidator:
         if not report.name or len(report.name.strip()) == 0:
             result.add_error("name", "Report name is required", "MISSING_NAME")
 
-        if len(report.name) > 255:
+        if report.name and len(report.name) > 255:
             result.add_error("name", "Report name must be <= 255 characters", "NAME_TOO_LONG")
 
         if not report.id or len(report.id.strip()) == 0:

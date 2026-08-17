@@ -10,14 +10,14 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM nginx:1.27-alpine
 
-WORKDIR /app
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-RUN npm install -g http-server
+EXPOSE 80
 
-COPY --from=builder /app/dist ./dist
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget -qO- http://localhost/ > /dev/null || exit 1
 
-EXPOSE 5173
-
-CMD ["http-server", "dist", "-p", "5173", "--cors"]
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,5 +1,5 @@
 import React from 'react'
-import { TableData } from '@types/analytics'
+import { TableData } from '@typings/analytics'
 import { formatNumber, formatCurrency, formatDate } from '@utils/formatters'
 
 interface DataTableProps {
@@ -26,7 +26,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data, maxRows = 10 }) => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-gray-700">
           <thead className="bg-gray-50 border-b border-gray-200">

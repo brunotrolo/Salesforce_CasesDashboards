@@ -1,14 +1,14 @@
 {
-  "name": "dashboard-fe",
+  "name": "builder-fe",
   "version": "1.0.0",
-  "description": "Salesforce Reports Dashboard Frontend",
+  "description": "Salesforce Reports Builder Frontend",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
-    "test": "vitest",
+    "test": "vitest run",
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
@@ -17,8 +17,7 @@
     "react-router-dom": "^6.20.0",
     "axios": "^1.6.0",
     "zustand": "^4.4.0",
-    "date-fns": "^2.30.0",
-    "recharts": "^2.10.0"
+    "date-fns": "^2.30.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

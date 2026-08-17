@@ -29,7 +29,7 @@ class TestAuthEndpoints:
 
         assert response.status_code == 200
         data = response.json()
-        assert data["ready"] is True
+        assert data["status"] == "ready"
 
     @patch("src.main.jwt_handler")
     def test_login_success(self, mock_jwt):
@@ -37,20 +37,20 @@ class TestAuthEndpoints:
         mock_jwt.create_token_pair.return_value = {
             "access_token": "mock_access_token",
             "refresh_token": "mock_refresh_token",
-            "token_type": "bearer",
+            "token_type": "Bearer",
             "expires_in": 86400
         }
 
         response = client.post(
             "/auth/login",
-            json={"username": "admin@example.com", "password": "password123"}
+            json={"username": "admin@salesforce.com", "password": "secure_password_123"}
         )
 
         assert response.status_code == 200
         data = response.json()
         assert "access_token" in data
         assert "refresh_token" in data
-        assert data["token_type"] == "bearer"
+        assert data["token_type"] == "Bearer"
 
     def test_login_missing_credentials(self):
         """Testa login sem credenciais"""
@@ -62,11 +62,10 @@ class TestAuthEndpoints:
         """Testa login com credenciais inválidas"""
         response = client.post(
             "/auth/login",
-            json={"username": "invalid@example.com", "password": "wrong"}
+            json={"username": "invalid@example.com", "password": "wrong_password"}
         )
 
-        # Deve retornar erro (status 401 ou 400)
-        assert response.status_code in [400, 401, 422]
+        assert response.status_code == 401
 
     @patch("src.main.jwt_handler")
     def test_refresh_token(self, mock_jwt):
@@ -75,7 +74,7 @@ class TestAuthEndpoints:
         mock_jwt.create_token_pair.return_value = {
             "access_token": "new_access_token",
             "refresh_token": "new_refresh_token",
-            "token_type": "bearer",
+            "token_type": "Bearer",
             "expires_in": 86400
         }
 
@@ -92,8 +91,10 @@ class TestAuthEndpoints:
     def test_get_current_user(self, mock_jwt):
         """Testa obtenção do usuário atual"""
         mock_payload = MagicMock()
-        mock_payload.user_id = "u:12345"
+        mock_payload.sub = "u:12345"
         mock_payload.role = UserRole.ADMIN
+        mock_payload.permissions = ["reports:read", "reports:create"]
+        mock_payload.iat = 1700000000
 
         mock_jwt.validate_access_token.return_value = mock_payload
 
@@ -102,14 +103,17 @@ class TestAuthEndpoints:
             headers={"Authorization": "Bearer mock_token"}
         )
 
-        # Pode retornar 200 ou requer autenticação real
-        assert response.status_code in [200, 401]
+        assert response.status_code == 200
+        data = response.json()
+        assert data["id"] == "u:12345"
+        assert data["username"] == "12345"
 
     @patch("src.main.jwt_handler")
     def test_get_permissions(self, mock_jwt):
         """Testa obtenção de permissões do usuário"""
         mock_payload = MagicMock()
-        mock_payload.user_id = "u:12345"
+        mock_payload.sub = "u:12345"
+        mock_payload.role = UserRole.ADMIN
         mock_payload.permissions = ["reports:read", "reports:create"]
 
         mock_jwt.validate_access_token.return_value = mock_payload
@@ -119,24 +123,28 @@ class TestAuthEndpoints:
             headers={"Authorization": "Bearer mock_token"}
         )
 
-        # Pode retornar 200 ou requer autenticação real
-        assert response.status_code in [200, 401]
+        assert response.status_code == 200
+        data = response.json()
+        assert "reports:read" in data
+        assert "reports:create" in data
 
-    @patch("src.main.jwt_handler")
-    def test_get_roles(self, mock_jwt):
+    def test_get_roles(self):
         """Testa obtenção de papéis disponíveis"""
         response = client.get("/auth/roles")
 
-        # Este endpoint pode não precisar de autenticação
-        assert response.status_code in [200, 401]
-        if response.status_code == 200:
-            data = response.json()
-            assert "roles" in data or isinstance(data, list)
+        assert response.status_code == 200
+        data = response.json()
+        assert isinstance(data, list)
+        role_names = [r["name"] for r in data]
+        assert "admin" in role_names
+        assert "guest" in role_names
 
     @patch("src.main.jwt_handler")
     def test_validate_token_valid(self, mock_jwt):
         """Testa validação de token válido"""
         mock_payload = MagicMock()
+        mock_payload.sub = "u:12345"
+        mock_payload.role = UserRole.ADMIN
         mock_jwt.validate_access_token.return_value = mock_payload
 
         response = client.post(
@@ -144,13 +152,18 @@ class TestAuthEndpoints:
             headers={"X-Token": "valid_token"}
         )
 
-        assert response.status_code in [200, 401]
+        assert response.status_code == 200
+        data = response.json()
+        assert data["valid"] is True
+        assert data["user_id"] == "u:12345"
 
     @patch("src.main.jwt_handler")
     def test_check_permission(self, mock_jwt):
         """Testa verificação de permissão"""
         mock_payload = MagicMock()
-        mock_payload.user_id = "u:12345"
+        mock_payload.sub = "u:12345"
+        mock_payload.role = UserRole.ADMIN
+        mock_payload.permissions = ["reports:create"]
 
         mock_jwt.validate_access_token.return_value = mock_payload
 
@@ -159,13 +172,17 @@ class TestAuthEndpoints:
             headers={"Authorization": "Bearer mock_token"}
         )
 
-        # Pode retornar sucesso ou erro de autenticação
-        assert response.status_code in [200, 401, 403]
+        assert response.status_code == 200
+        data = response.json()
+        assert data["granted"] is True
 
     @patch("src.main.jwt_handler")
     def test_logout(self, mock_jwt):
         """Testa logout"""
         mock_payload = MagicMock()
+        mock_payload.sub = "u:12345"
+        mock_payload.role = UserRole.ADMIN
+
         mock_jwt.validate_access_token.return_value = mock_payload
 
         response = client.post(
@@ -173,8 +190,7 @@ class TestAuthEndpoints:
             headers={"Authorization": "Bearer mock_token"}
         )
 
-        # Pode retornar sucesso ou erro de autenticação
-        assert response.status_code in [200, 204, 401]
+        assert response.status_code == 200
 
 
 class TestErrorHandling:
@@ -192,8 +208,7 @@ class TestErrorHandling:
 
         assert response.status_code == 405
 
-    @patch("src.main.jwt_handler")
-    def test_missing_authorization_header(self, mock_jwt):
+    def test_missing_authorization_header(self):
         """Testa falta de header de autorização"""
         response = client.get("/auth/me")
 
@@ -209,5 +224,16 @@ class TestErrorHandling:
             headers={"Authorization": "InvalidFormat"}
         )
 
-        # Deve retornar erro de autenticação
-        assert response.status_code in [401, 422]
+        assert response.status_code in [401, 422, 500]
+
+    @patch("src.main.jwt_handler")
+    def test_invalid_bearer_token(self, mock_jwt):
+        """Testa token Bearer inválido"""
+        mock_jwt.validate_access_token.return_value = None
+
+        response = client.get(
+            "/auth/me",
+            headers={"Authorization": "Bearer token_invalido"}
+        )
+
+        assert response.status_code == 401

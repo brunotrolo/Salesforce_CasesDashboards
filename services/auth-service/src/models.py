@@ -28,7 +28,7 @@ class TokenPayload(BaseModel):
     exp: int
     iat: int
     type: TokenType
-    role: UserRole
+    role: Optional[UserRole] = None
     permissions: List[str] = []
 
 class User(BaseModel):

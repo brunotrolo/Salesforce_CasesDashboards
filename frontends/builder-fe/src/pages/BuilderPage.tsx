@@ -77,7 +77,7 @@ export const BuilderPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
             <div>
@@ -117,7 +117,7 @@ export const BuilderPage: React.FC = () => {
 
           {/* Main content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg shadow p-8">
+            <div className="bg-card border border-border rounded-lg p-8">
               <div className="min-h-96">
                 <p className="text-gray-500 text-center py-12">
                   Passo {step} em desenvolvimento...
@@ -137,7 +137,7 @@ export const BuilderPage: React.FC = () => {
                 <button
                   onClick={handleSave}
                   disabled={loading || !dirty}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+                  className="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary-dark disabled:bg-gray-400 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   {loading ? 'Salvando...' : id ? 'Atualizar' : 'Criar'}
                 </button>

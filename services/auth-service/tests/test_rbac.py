@@ -15,7 +15,8 @@ class TestRBAC:
 
         assert permissions is not None
         assert len(permissions) > 0
-        assert "*" in permissions  # Admin tem todas as permissões
+        assert "reports:create" in permissions
+        assert "users:write" in permissions
 
     def test_get_role_permissions_manager(self, rbac):
         """Testa permissões do papel manager"""
@@ -62,7 +63,7 @@ class TestRBAC:
 
         assert rbac.has_permission(user_roles, "reports", "create")
         assert rbac.has_permission(user_roles, "users", "delete")
-        assert rbac.has_permission(user_roles, "any_resource", "any_action")
+        assert not rbac.has_permission(user_roles, "unknown_resource", "read")
 
     def test_has_permission_manager(self, rbac):
         """Testa se manager tem permissões esperadas"""
@@ -97,6 +98,12 @@ class TestRBAC:
         # Deve ter permissão se algum papel tiver
         assert rbac.has_permission(user_roles, "reports", "read")
         assert rbac.has_permission(user_roles, "reports", "execute")
+
+    def test_has_permission_invalid_action(self, rbac):
+        """Testa ação inválida para recurso válido"""
+        user_roles = [UserRole.ADMIN]
+
+        assert not rbac.has_permission(user_roles, "reports", "fly")
 
     def test_check_admin_only_true(self, rbac):
         """Testa se é admin"""
@@ -155,7 +162,7 @@ class TestRBAC:
         allowed, reason = resource_perm.is_action_allowed(user_roles, "reports", "create")
 
         assert allowed
-        assert reason == "Permission granted"
+        assert reason is None
 
     def test_resource_permission_is_action_denied(self, rbac):
         """Testa ResourcePermission.is_action_allowed negado"""
@@ -165,4 +172,4 @@ class TestRBAC:
         allowed, reason = resource_perm.is_action_allowed(user_roles, "reports", "create")
 
         assert not allowed
-        assert "denied" in reason.lower()
+        assert "reports:create" in reason

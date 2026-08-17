@@ -1,4 +1,6 @@
 import { defineConfig } from 'vite'
+
+const mode = process.env.NODE_ENV || 'development'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 
@@ -10,14 +12,13 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },
   build: {
     target: 'ES2020',
     outDir: 'dist',
-    sourcemap: true
+    sourcemap: mode === 'development'
   },
   resolve: {
     alias: {

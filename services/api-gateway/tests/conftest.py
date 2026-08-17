@@ -25,6 +25,8 @@ os.environ.setdefault("SF_REFRESH_TOKEN", "test")
 os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key")
 os.environ.setdefault("TOKEN_EXPIRE_MINUTES", "60")
 os.environ.setdefault("REDIS_URL", "")
+os.environ.setdefault("ADMIN_USERNAME", "admin")
+os.environ.setdefault("ADMIN_PASSWORD", "test-password")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -61,3 +63,9 @@ def client():
     # Use context manager to ensure lifespan is properly called
     with TestClient(app) as client:
         yield client
+
+
+@pytest.fixture
+def auth_headers():
+    """Headers with a valid (mocked) bearer token."""
+    return {"Authorization": "Bearer test-token"}

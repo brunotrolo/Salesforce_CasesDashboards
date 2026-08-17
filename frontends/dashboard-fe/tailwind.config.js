@@ -6,9 +6,21 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Fira Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['Fira Code', 'Courier New', 'monospace'],
+      },
       colors: {
-        primary: '#0070F3',
-        secondary: '#6366F1',
+        primary: '#1E40AF',
+        'primary-dark': '#1E3A8A',
+        secondary: '#3B82F6',
+        accent: '#D97706',
+        destructive: '#DC2626',
+        background: '#F8FAFC',
+        card: '#FFFFFF',
+        muted: '#E9EEF6',
+        'muted-foreground': '#475569',
+        border: '#DBEAFE',
         success: '#10B981',
         warning: '#F59E0B',
         error: '#EF4444',
