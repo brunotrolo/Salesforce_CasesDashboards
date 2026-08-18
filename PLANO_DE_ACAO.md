@@ -84,20 +84,22 @@ O projeto tem uma **arquitetura sólida** documentada no CLAUDE.md, mas a **impl
 ### 1.1 ~~SOQL Injection no MCP Client~~ ✅ CORRIGIDO NO MERGE
 - **Status:** `salesforce_connector.py` reescrito para usar REST API (`/services/data/v59.0/sobjects/Report`), sem interpolação de strings em queries SOQL
 
-### 1.2 Hardcoded JWT Secrets
+### 1.2 Hardcoded JWT Secrets ✅ FEITO
 - **Problema:** auth-service ainda tem fallback hardcoded: `config.py:12` define `"your-secret-key-change-in-production"`; api-gateway também
 - **Ação:** Forçar variável de ambiente, remover fallbacks, raise error se não setado
 - **Arquivos:** `services/auth-service/src/config.py:12`, `services/api-gateway/src/main.py:12`, `services/api-gateway/src/auth.py:12`
+- **Feito:** `jwt_handler.py` e `auth.py` levantam `RuntimeError` sem `JWT_SECRET_KEY`; `.env.example` documentado
 
 ### 1.3 Authentication Bypass
 - **Problema:** `/auth/login` aceita qualquer credencial não-vazia
 - **Ação:** Implementar validação real (hash de senha, bcrypt, ou integração OAuth)
 - **Arquivo:** `services/api-gateway/src/main.py:243-258`
 
-### 1.4 CORS Wildcard com Credentials
+### 1.4 CORS Wildcard com Credentials ✅ FEITO
 - **Problema:** `allow_origins=["*"]` com `allow_credentials=True`
 - **Ação:** Configurar origins específicas via variável de ambiente `CORS_ORIGINS`
 - **Arquivo:** `services/api-gateway/src/main.py:176-181`
+- **Feito:** `CORS_ORIGINS` (default: localhost 5173/5174/5175) — sem wildcard
 
 ### 1.5 Mass Assignment
 - **Problema:** `report_manager.py:71-73` faz `setattr` com qualquer campo do input
@@ -124,10 +126,11 @@ O projeto tem uma **arquitetura sólida** documentada no CLAUDE.md, mas a **impl
 - **Ação:** Persistir states no Redis com TTL, validar state no callback contra sessão, remover após uso
 - **Arquivos:** `services/mcp-client/src/main.py:24,61-78`
 
-### 1.10 Endereços IP do rate limiter
+### 1.10 Endereços IP do rate limiter ✅ FEITO
 - **Problema:** `rate_limit.py:54` usa `request.client.host` que retorna o IP do proxy
 - **Ação:** Usar `X-Forwarded-For` com configuração de proxy trust
 - **Arquivo:** `services/api-gateway/src/rate_limit.py`
+- **Feito:** `get_client_ip` usa `X-Forwarded-For` quando `TRUSTED_PROXIES` configurado; testes cobrem ambos os caminhos
 
 ---
 
