@@ -1,5 +1,5 @@
 import React, { useState, FormEvent, Suspense, lazy } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate, Link, NavLink } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, NavLink } from 'react-router-dom'
 import { reportApi } from '@api/reportApi'
 import './styles/globals.css'
 
@@ -94,7 +94,13 @@ export const App: React.FC = () => {
   return (
     <Router>
       <div className="min-h-screen bg-background">
-        <nav className="bg-card border-b border-border">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-md"
+        >
+          Pular para o conteúdo principal
+        </a>
+        <nav className="bg-card border-b border-border" aria-label="Navegação principal">
           <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <h1 className="text-xl font-bold text-primary">Reports</h1>
@@ -154,13 +160,15 @@ export const App: React.FC = () => {
             </div>
           }
         >
-          <Routes>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/builder" element={<BuilderPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <main id="main-content">
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/builder" element={<BuilderPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
         </Suspense>
       </div>
     </Router>

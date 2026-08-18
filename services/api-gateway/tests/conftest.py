@@ -41,11 +41,21 @@ def mock_jwt_globally():
         return f"test.{token_data}.signature"
 
     def mock_decode(token, key, algorithms=None):
-        # Simulate JWT decoding
-        return {
-            "sub": "testuser",
-            "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp())
-        }
+        # Simulate JWT decoding: reject tokens that don't match the
+        # mock format ("test.<payload>.signature") or the fixed test token.
+        if token in ("test-token",):
+            return {
+                "sub": "testuser",
+                "exp": int((datetime.now(timezone.utc) + timedelta(hours=1)).timestamp())
+            }
+        if not (token.startswith("test.") and token.endswith(".signature")):
+            raise Exception("Invalid token")
+        try:
+            payload_b64 = token.split(".")[1]
+            payload = json.loads(base64.b64decode(payload_b64).decode())
+        except Exception:
+            raise Exception("Invalid token")
+        return payload
 
     mock_jwt.encode = mock_encode
     mock_jwt.decode = mock_decode

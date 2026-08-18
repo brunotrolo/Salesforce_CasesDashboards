@@ -29,10 +29,13 @@ export const DataTable: React.FC<DataTableProps> = ({ data, maxRows = 10 }) => {
     <div className="bg-card border border-border rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-gray-700">
+          <caption className="sr-only">
+            Tabela de dados: {data.columns.map((c) => c.label).join(', ')}
+          </caption>
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               {data.columns.map((col) => (
-                <th key={col.key} className="px-6 py-3 text-left font-semibold text-gray-900">
+                <th key={col.key} scope="col" className="px-6 py-3 text-left font-semibold text-gray-900">
                   {col.label}
                 </th>
               ))}

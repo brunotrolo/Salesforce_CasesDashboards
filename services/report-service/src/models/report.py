@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 
 class ReportType(str, Enum):
@@ -75,8 +75,7 @@ class Report(BaseModel):
     # Metadata
     metadata: ReportMetadata
 
-    class Config:
-        use_enum_values = False
+    model_config = ConfigDict(use_enum_values=False)
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for Salesforce storage."""

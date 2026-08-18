@@ -1,8 +1,9 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
     # Service Configuration
     SERVICE_NAME: str = "auth-service"
     SERVICE_PORT: int = 3002
@@ -35,9 +36,5 @@ class Settings(BaseSettings):
     
     # RBAC
     ENABLE_RBAC: bool = True
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings()

@@ -8,6 +8,7 @@ SOQL_RESERVED_KEYWORDS = {
     "SELECT", "FROM", "WHERE", "AND", "OR", "NOT", "ORDER", "BY",
     "LIMIT", "OFFSET", "GROUP", "HAVING", "IN", "LIKE", "NULL",
     "UPDATE", "DELETE", "INSERT", "MERGE", "UPSERT", "CREATE",
+    "DROP", "ALTER", "TABLE", "TRUNCATE",
 }
 
 

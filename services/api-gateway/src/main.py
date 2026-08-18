@@ -5,13 +5,14 @@ import sys
 import logging
 from pathlib import Path
 from contextlib import asynccontextmanager
-from typing import Optional, List
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+import re
+from typing import Optional, List, ClassVar
 
 from auth import get_current_user, create_access_token
 from rate_limit import RateLimitMiddleware
@@ -226,6 +227,26 @@ class ReportCreateRequest(BaseModel):
     report_type: str
     fields: List[str]
     filters: Optional[List[dict]] = None
+
+    SOQL_FIELD_RE: ClassVar = re.compile(r"^[A-Za-z0-9_.]+$")
+    SOQL_OBJECT_RE: ClassVar = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+    @field_validator("fields")
+    @classmethod
+    def validate_fields(cls, v: List[str]) -> List[str]:
+        """Rejeita campos com caracteres de injeção SOQL."""
+        for field in v:
+            if not cls.SOQL_FIELD_RE.match(field):
+                raise ValueError(f"Invalid field: {field}")
+        return v
+
+    @field_validator("object_type")
+    @classmethod
+    def validate_object_type(cls, v: str) -> str:
+        """Rejeita object_type com payload malicioso."""
+        if not cls.SOQL_OBJECT_RE.match(v):
+            raise ValueError(f"Invalid object_type: {v}")
+        return v
 
 
 class ReportUpdateRequest(BaseModel):

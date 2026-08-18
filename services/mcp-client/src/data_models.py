@@ -30,7 +30,7 @@ class ReportConfig(BaseModel):
     def to_json(self) -> str:
         """Converter para JSON string."""
         import json
-        return json.dumps(self.dict(), default=str)
+        return json.dumps(self.model_dump(), default=str)
 
     @classmethod
     def from_json(cls, json_str: str) -> "ReportConfig":

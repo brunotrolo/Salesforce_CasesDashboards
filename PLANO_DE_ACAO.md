@@ -18,7 +18,7 @@ O projeto tem uma **arquitetura sólida** documentada no CLAUDE.md, mas a **impl
 | Vulnerabilidades CRÍTICAS | 3 (pendentes Fase 1.9/1.10 mitigadas; SOQL/import corrigidos) |
 | Código duplicado | ~1.200 linhas |
 | Skills importadas | 32 (.opencode) / 33 (.claude) |
-| Cobertura de testes real | ~45% (187 testes passando em 5 serviços) |
+| Cobertura de testes real | ~50% (213 testes backend + 13 frontend) |
 | CI/CD funcional | ✅ 5 serviços + 3 frontends testados; deploy fake removido |
 
 ### O que mudou com o merge
@@ -205,14 +205,14 @@ O projeto tem uma **arquitetura sólida** documentada no CLAUDE.md, mas a **impl
 - **Arquivo:** `frontends/dashboard-fe/src/App.tsx`
 - **Implementado:** `DashboardPage`, `BuilderPage`, `AnalyticsPage` em chunks separados (build: 220KB index + chunks por página)
 
-### 3.5 Accessibility (WCAG 2.1 AA) ⚠️ PARCIAL
+### 3.5 Accessibility (WCAG 2.1 AA) ✅ FEITO
 - **Ações:**
   - ✅ `htmlFor`/`id` em todos os forms (login, builder)
   - ✅ `role="alert"` em error messages
   - ✅ `aria-pressed` nos filter buttons + `aria-current="page"` (NavLink automático)
-  - ⚠️ `<caption>` e `scope="col"` nas tabelas
-  - ⚠️ Substituir emoji icons por SVG icons
-  - ⚠️ Adicionar skip-to-content link
+  - ✅ `<caption>` e `scope="col"` nas tabelas (DataTable analytics-fe)
+  - ✅ Emoji icons substituídos por SVG icons (ResultsPage export buttons)
+  - ✅ Skip-to-content link nos 3 frontends + `<main id="main-content">`
 - **Skill:** ui-ux-pro-max, domain `ux`
 
 ### 3.6 Loading States e Empty States ✅ FEITO
@@ -279,34 +279,37 @@ O projeto tem uma **arquitetura sólida** documentada no CLAUDE.md, mas a **impl
 
 **Objetivo:** Código backend confiável, testável, com error handling correto.
 
-### 5.1 Fix error handling pattern
+### 5.1 Fix error handling pattern ✅ FEITO
 - **Ação:** Trocar `except Exception as e` por tipos específicos, logar traceback em todos os endpoints
 - **Afeta:** `services/api-gateway/src/main.py`
+- **Feito:** `errors.py` com `GatewayError` + subclasses (404/422/400/502/401/403); `@app.exception_handler(GatewayError)`; endpoints usam erros tipados e logam `context={"error": str(e)}`
 
-### 5.2 Fix retry decorator
+### 5.2 Fix retry decorator ✅ FEITO
 - **Ação:** Usar `tenacity` ou implementar retry async, remover `retry_on_error` síncrono
 - **Arquivo:** `services/mcp-client/src/error_handler.py` (retry_on_error ainda usa sync sleep)
+- **Feito:** `retry_async()` decorator module-level com `asyncio.sleep` + backoff; `retry_on_error` síncrono removido; aplicado nos 6 métodos do conector
 
-### 5.3 ~~Fix session management no MCP client~~ ⚠️ PARCIAL
-- **Status:** Conector reescrito com `requests` síncrono (uma sessão por chamada)
-- **Pendência:** Em contexto async (FastAPI), chamadas `requests.get` bloqueiam o event loop — migrar para `httpx.AsyncClient` com sessão única
+### 5.3 ~~Fix session management no MCP client~~ ✅ FEITO
+- **Status:** Conector migrado para `httpx.AsyncClient` com sessão única (`close()`); `oauth_handler` usa `httpx` (síncrono, refresh raro); `requests` removido do mcp-client
 - **Arquivo:** `services/mcp-client/src/salesforce_connector.py`, `services/mcp-client/src/oauth_handler.py`
 
-### 5.4 Fix ContextVars para async
+### 5.4 Fix ContextVars para async ✅ FEITO
 - **Ação:** Usar `contextvars.ContextVar` em vez de class variables
-- **Arquivo:** `services/logging-service/src/middleware.py`
+- **Arquivo:** `services/logging-service/src/context.py` (novo `RequestContext`); middleware define/limpa por request; `ContextVars` mantido como alias
 
-### 5.5 Fix trace_id no logger
+### 5.5 Fix trace_id no logger ✅ FEITO
 - **Ação:** Não gerar novo UUID a cada log; manter trace_id da request
-- **Arquivo:** `services/logging-service/src/logger.py:83`
+- **Arquivo:** `services/logging-service/src/logger.py` — `_format_log` consome `RequestContext`; UUID só como fallback sem request
 
-### 5.6 Adicionar testes de segurança
+### 5.6 Adicionar testes de segurança ✅ FEITO
 - **Ação:** Testes para SOQL injection, auth bypass, mass assignment
 - **Afeta:** Novos testes em `services/mcp-client/tests/`, `services/api-gateway/tests/`
+- **Feito:** `soql.py` (sanitizer + `build_soql_query` seguro); `test_security.py` nos 2 serviços (17 testes); validators SOQL no api-gateway (`ReportCreateRequest`); mock JWT no conftest agora rejeita tokens inválidos
 
-### 5.7 Fix Pydantic v2 deprecations
+### 5.7 Fix Pydantic v2 deprecations ✅ FEITO
 - **Ação:** Trocar `.dict()` por `.model_dump()` em todos os serviços
 - **Afeta:** Múltiplos arquivos
+- **Feito:** `.dict()`→`.model_dump()` (mcp-client data_models); `class Config`→`model_config`/`ConfigDict` em auth-service, mcp-client, report-service
 
 ---
 

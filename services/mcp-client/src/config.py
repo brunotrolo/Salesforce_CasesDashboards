@@ -1,8 +1,9 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
     # Salesforce OAuth
     SF_CLIENT_ID: str
     SF_CLIENT_SECRET: str
@@ -41,9 +42,5 @@ class Settings(BaseSettings):
     OAUTH_TIMEOUT: int = 30
     OAUTH_RETRY_ATTEMPTS: int = 3
     OAUTH_RETRY_DELAY: int = 2
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings()
