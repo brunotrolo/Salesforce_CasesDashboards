@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { Report, ReportType, ReportStatus } from '@typings/report'
+import { Report, ReportType, ReportStatus } from '@shared/types/report'
 import { FormState, ValidationMessage } from '@typings/form'
 
 interface ReportFormStore extends FormState {

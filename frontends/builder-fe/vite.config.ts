@@ -30,7 +30,8 @@ export default defineConfig({
       '@api': path.resolve(__dirname, './src/api'),
       '@typings': path.resolve(__dirname, './src/types'),
       '@stores': path.resolve(__dirname, './src/stores'),
-      '@utils': path.resolve(__dirname, './src/utils')
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@shared': path.resolve(__dirname, '../shared/src'),
     }
   }
 })

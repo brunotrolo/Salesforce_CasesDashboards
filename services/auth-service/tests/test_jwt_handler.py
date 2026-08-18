@@ -1,8 +1,8 @@
 """Testes para JWT Handler"""
 
 import pytest
-from datetime import datetime, timedelta
-from jose import JWTError, jwt
+from datetime import datetime, timedelta, timezone
+import jwt
 
 from src.jwt_handler import JWTHandler
 from src.models import UserRole
@@ -135,7 +135,7 @@ class TestJWTHandler:
 
         assert exp_time is not None
         assert isinstance(exp_time, datetime)
-        assert exp_time > datetime.utcnow()
+        assert exp_time > datetime.now(timezone.utc)
 
     def test_token_contains_user_id(self, jwt_handler):
         """Testa se token contém user_id"""

@@ -14,15 +14,6 @@ from .rbac import RBAC
 logger = logging.getLogger(__name__)
 
 
-class User:
-    """Modelo de usuário."""
-    
-    def __init__(self, user_id: str, email: str, roles: list = None):
-        self.user_id = user_id
-        self.email = email
-        self.roles = roles or ["viewer"]
-
-
 class AuthManager:
     """Gerenciador centralizado de autenticação."""
 

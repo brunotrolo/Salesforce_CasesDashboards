@@ -8,7 +8,8 @@ from fastapi import FastAPI, Request
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.middleware import LoggingMiddleware, ContextVars
+from src.middleware import LoggingMiddleware
+from src.context import RequestContext as ContextVars
 from src.logger import StructuredLogger, LogLevel
 
 

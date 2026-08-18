@@ -45,9 +45,6 @@ class ReportValidator:
         "sum", "avg", "count", "min", "max", "count_distinct",
     }
 
-    # Reserved field names (cannot be selected directly)
-    RESERVED_FIELDS = {"Id", "CreatedDate", "LastModifiedDate"}
-
     @classmethod
     def validate(cls, report: Report) -> ValidationResult:
         """Validate complete report configuration."""

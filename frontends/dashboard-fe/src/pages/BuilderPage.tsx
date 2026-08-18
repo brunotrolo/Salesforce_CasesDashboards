@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { reportApi } from '@api/reportApi'
-import type { Report, ReportFilter } from '../types/report'
-import { ReportType } from '../types/report'
+import type { Report, ReportFilter } from '@shared/types/report'
+import { ReportType } from '@shared/types/report'
 
 interface ReportConfig {
   title: string

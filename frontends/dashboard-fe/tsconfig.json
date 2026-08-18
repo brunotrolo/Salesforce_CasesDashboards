@@ -25,7 +25,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@api/*": ["src/api/*"],
       "@types/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@shared/*": ["../shared/src/*"]
     }
   },
   "include": ["src"],

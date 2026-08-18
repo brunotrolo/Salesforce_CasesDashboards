@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { BarChart } from '@components/BarChart'
 import { DataTable } from '@components/DataTable'
-import { ReportExecutionResult, Report } from '@typings/report'
+import { ReportExecutionResult, Report } from '@shared/types/report'
 import { AnalyticsResult, TableData, ChartData } from '@typings/analytics'
-import { formatDuration, formatNumber } from '@utils/formatters'
+import { formatDuration, formatNumber } from '@shared/utils/formatters'
 import { exportToPDF, exportToExcel, exportToCSV, copyToClipboard } from '@utils/exporters'
 
 interface LocationState {

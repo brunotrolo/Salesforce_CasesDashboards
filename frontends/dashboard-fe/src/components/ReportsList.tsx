@@ -1,5 +1,5 @@
 import React from 'react'
-import { Report, ReportStatus } from '../types/report'
+import { Report, ReportStatus } from '@shared/types/report'
 import { ReportCard } from './ReportCard'
 
 interface ReportsListProps {

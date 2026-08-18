@@ -1,5 +1,5 @@
 import React from 'react'
-import { Report, ReportStatus } from '../types/report'
+import { Report, ReportStatus } from '@shared/types/report'
 import { formatDistanceToNow } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 

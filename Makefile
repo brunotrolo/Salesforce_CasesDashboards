@@ -62,7 +62,13 @@ test: test-backend test-frontend
 
 test-backend:
 	@echo "🧪 Running backend tests..."
-	pytest services/ -v --cov=services/ --cov-report=html
+	@for service in api-gateway auth-service mcp-client report-service logging-service; do \
+		echo "--- $$service ---"; \
+		cd services/$$service && python -m pytest tests/ -q --tb=short; \
+		cd ../..; \
+	done
+	@echo "--- integration ---"
+	python -m pytest tests/integration/ -q --tb=short
 
 test-frontend:
 	@echo "🧪 Running frontend tests..."

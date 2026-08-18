@@ -1,6 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional
-from jose import JWTError, jwt
+import jwt
 from src.config import settings
 from src.models import TokenPayload, TokenType, UserRole
 
@@ -38,7 +38,7 @@ class JWTHandler:
         if permissions is None:
             permissions = []
         
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         expires = now + timedelta(hours=self.access_token_expire_hours)
         
         payload = {
@@ -62,7 +62,7 @@ class JWTHandler:
         Returns:
             JWT refresh token
         """
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         expires = now + timedelta(days=self.refresh_token_expire_days)
         
         payload = {
@@ -112,7 +112,7 @@ class JWTHandler:
             TokenPayload se válido, None se inválido
         """
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm], options={"verify_iat": False})
             
             token_data = TokenPayload(
                 sub=payload.get("sub"),
@@ -125,7 +125,7 @@ class JWTHandler:
             
             return token_data
         
-        except JWTError:
+        except jwt.PyJWTError:
             return None
     
     def validate_access_token(self, token: str) -> Optional[TokenPayload]:
@@ -165,27 +165,27 @@ class JWTHandler:
     def is_token_expired(self, token: str) -> bool:
         """Verifica se um token está expirado."""
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm], options={"verify_iat": False})
             exp = payload.get("exp")
             
             if exp is None:
                 return True
             
-            return datetime.utcnow().timestamp() > exp
+            return datetime.now(timezone.utc).timestamp() > exp
         
-        except JWTError:
+        except jwt.PyJWTError:
             return True
     
     def get_expiration_time(self, token: str) -> Optional[datetime]:
         """Retorna o tempo de expiração de um token."""
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm], options={"verify_iat": False})
             exp = payload.get("exp")
             
             if exp:
-                return datetime.utcfromtimestamp(exp)
+                return datetime.fromtimestamp(exp, tz=timezone.utc)
             
             return None
         
-        except JWTError:
+        except jwt.PyJWTError:
             return None

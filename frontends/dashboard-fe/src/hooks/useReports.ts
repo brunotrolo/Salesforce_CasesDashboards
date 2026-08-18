@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import type { Report, ReportStatus } from '../types/report'
+import type { Report, ReportStatus } from '@shared/types/report'
 import { reportApi } from '../api/reportApi'
 
 export interface UseReportsState {

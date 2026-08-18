@@ -138,41 +138,41 @@ O projeto tem uma **arquitetura sólida** documentada no CLAUDE.md, mas a **impl
 
 **Objetivo:** Eliminar duplicação, corrigir arquitetura, establishing shared code.
 
-### 2.1 Criar shared/ package funcional
+### 2.1 Criar shared/ package funcional — FEITO
 - **Problema:** `frontends/shared/` está vazio, mas 3 apps duplicam ~1.200 linhas
 - **Ação:** Criar `frontends/shared/package.json`, mover types, api, formatters, logger, test setup
 - **Afeta:** Todos os 3 frontends
 
-### 2.2 Consolidar docker-compose
+### 2.2 Consolidar docker-compose — FEITO
 - **Problema:** 2 docker-compose.yml com versões diferentes de ES e senhas diferentes
 - **Ação:** Manter apenas o root, deletar `infra/docker-compose.yml`
 - **Arquivos:** `docker-compose.yml`, `infra/docker-compose.yml`
 
-### 2.3 Remover JWT library duplicada
+### 2.3 Remover JWT library duplicada — FEITO
 - **Problema:** `PyJWT` e `python-jose` ambos instalados
 - **Ação:** Padronizar em `PyJWT` (mais leve), remover `python-jose` do auth-service
 - **Arquivos:** `services/auth-service/requirements.txt`, `services/api-gateway/requirements.txt`
 
-### 2.4 Unificar ReportMetadata
+### 2.4 Unificar ReportMetadata — FEITO
 - **Problema:** Duas classes `ReportMetadata` com schemas diferentes
 - **Ação:** Criar em `services/shared/` e importar em ambos
 - **Arquivos:** `services/mcp-client/src/data_models.py`, `services/report-service/src/models/report.py`
 
-### 2.5 Limpar código morto
+### 2.5 Limpar código morto — FEITO
 - **Ação:** Remover `User` class em auth_manager.py, `RESERVED_FIELDS` em report_validator.py, `ContextVars` em middleware.py, `JSONFormatter` em formatters.py, `retry_on_error` síncrono
 - **Afeta:** Múltiplos arquivos backend
 
-### 2.6 Separar test deps de production deps
+### 2.6 Separar test deps de production deps — FEITO
 - **Problema:** pytest/pytest-asyncio em production requirements de 4 serviços
 - **Ação:** Mover para requirements-test.txt, usar `-r requirements.txt` para evitar duplicação
 - **Afeta:** `services/auth-service/requirements.txt`, `services/logging-service/requirements.txt`, `services/mcp-client/requirements.txt`, `services/report-service/requirements.txt`
 
-### 2.7 Corrigir pytest.ini
+### 2.7 Corrigir pytest.ini — FEITO
 - **Problema:** `testpaths` e `norecursedirs` bloqueiam testes de todos os serviços exceto api-gateway
 - **Ação:** Configurar para coletar todos os serviços
 - **Arquivo:** `pytest.ini`
 
-### 2.8 Rate limiter — cleanup de IPs antigos
+### 2.8 Rate limiter — cleanup de IPs antigos — FEITO
 - **Problema:** `rate_limit.py:15` cresce indefinidamente
 - **Ação:** Adicionar TTL para entries antigos, limitar tamanho do dict
 - **Arquivo:** `services/api-gateway/src/rate_limit.py`

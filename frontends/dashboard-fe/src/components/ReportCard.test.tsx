@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ReportCard } from './ReportCard'
-import { Report, ReportStatus, ReportType } from '../types/report'
+import { Report, ReportStatus, ReportType } from '@shared/types/report'
 
 const mockReport: Report = {
   id: 'report:123',

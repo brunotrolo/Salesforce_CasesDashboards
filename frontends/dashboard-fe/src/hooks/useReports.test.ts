@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
 import { useReports } from './useReports'
 import * as reportApi from '../api/reportApi'
-import { Report, ReportStatus, ReportType, ReportExecutionResult } from '../types/report'
+import { Report, ReportStatus, ReportType, ReportExecutionResult } from '@shared/types/report'
 
 vi.mock('@api/reportApi')
 

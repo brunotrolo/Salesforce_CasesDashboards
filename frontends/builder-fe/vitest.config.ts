@@ -4,16 +4,21 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    fs: {
+      allow: ['..', '../shared'],
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts'],
+    setupFiles: ['../shared/src/test/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       exclude: [
         'node_modules/',
-        'src/test/',
+        '../shared/src/test/',
       ]
     }
   },
@@ -27,7 +32,8 @@ export default defineConfig({
       '@stores': path.resolve(__dirname, './src/stores'),
       '@typings': path.resolve(__dirname, './src/types'),
       '@types': path.resolve(__dirname, './src/types'),
-      '@utils': path.resolve(__dirname, './src/utils')
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@shared': path.resolve(__dirname, '../shared/src'),
     }
   }
 })

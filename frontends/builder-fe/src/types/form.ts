@@ -1,4 +1,4 @@
-import { Report } from './report'
+import { Report } from '@shared/types/report'
 
 export interface FormStep {
   id: number

@@ -1,6 +1,6 @@
 import React from 'react'
 import { TableData } from '@typings/analytics'
-import { formatNumber, formatCurrency, formatDate } from '@utils/formatters'
+import { formatNumber, formatCurrency, formatDate } from '@shared/utils/formatters'
 
 interface DataTableProps {
   data: TableData

@@ -35,8 +35,8 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         request.state.trace_id = trace_id
         request.state.correlation_id = correlation_id
 
-        ContextVars.set_trace_id(trace_id)
-        ContextVars.set_correlation_id(correlation_id)
+        RequestContext.set_trace_id(trace_id)
+        RequestContext.set_correlation_id(correlation_id)
 
         start_time = time.time()
 
@@ -61,13 +61,13 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             response.headers[self.TRACE_ID_HEADER] = trace_id
             response.headers[self.CORRELATION_ID_HEADER] = correlation_id
 
-            ContextVars.clear()
+            RequestContext.clear()
 
             return response
 
         except Exception as e:
             duration_ms = int((time.time() - start_time) * 1000)
-            ContextVars.clear()
+            RequestContext.clear()
             self.logger.error(
                 f"Request failed: {request.method} {request.url.path}",
                 error=e,
@@ -81,12 +81,3 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             )
             raise
 
-
-class ContextVars:
-    """Alias for backward compatibility (now contextvars-based)."""
-
-    set_trace_id = staticmethod(RequestContext.set_trace_id)
-    get_trace_id = staticmethod(RequestContext.get_trace_id)
-    set_correlation_id = staticmethod(RequestContext.set_correlation_id)
-    get_correlation_id = staticmethod(RequestContext.get_correlation_id)
-    clear = staticmethod(RequestContext.clear)

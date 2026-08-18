@@ -1,7 +1,9 @@
 """Tests for rate limiting middleware."""
 
+import time
+
 import pytest
-from src.rate_limit import get_client_ip, rate_limiter
+from src.rate_limit import RateLimiter, get_client_ip, rate_limiter
 
 
 def test_rate_limiting_middleware_active(client):
@@ -51,3 +53,34 @@ def test_get_client_ip_falls_back_to_direct_ip(client):
     request = Request({"type": "http", "client": ("198.51.100.2", 1234)})
     ip = get_client_ip(request)
     assert ip == "198.51.100.2"
+
+
+def test_cleanup_removes_stale_entries():
+    """Entries inativas são removidas após o TTL."""
+    limiter = RateLimiter(requests_per_minute=60, max_clients=10000, entry_ttl=300)
+    limiter.is_allowed("stale-client")
+    assert "stale-client" in limiter.requests
+
+    stale_before = time.time() - 301
+    limiter.requests["stale-client"] = [stale_before]
+    limiter._last_cleanup = 0.0
+    limiter._cleanup()
+    assert "stale-client" not in limiter.requests
+
+
+def test_cleanup_respects_cleanup_interval():
+    """Cleanup não roda antes do intervalo mínimo."""
+    limiter = RateLimiter()
+    limiter.requests["client-a"] = [time.time() - 301]
+    limiter._last_cleanup = time.time()
+    limiter._cleanup()
+    assert "client-a" in limiter.requests
+
+
+def test_cleanup_keeps_recent_entries():
+    """Entries com atividade recente são mantidas."""
+    limiter = RateLimiter()
+    limiter.requests["active-client"] = [time.time()]
+    limiter._last_cleanup = 0.0
+    limiter._cleanup()
+    assert "active-client" in limiter.requests

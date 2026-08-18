@@ -1,6 +1,4 @@
-import json
 import logging
-from datetime import datetime
 from typing import Any, Dict, Optional
 from dataclasses import dataclass, field, asdict
 
@@ -24,27 +22,6 @@ class LogContext:
         filtered = {k: v for k, v in data.items() if v is not None and k != "extra"}
         filtered.update(self.extra)
         return filtered
-
-
-class JSONFormatter(logging.Formatter):
-    """JSON formatter for structured logging compatible with ELK Stack."""
-
-    def format(self, record: logging.LogRecord) -> str:
-        """Format log record as JSON."""
-        log_data = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "level": record.levelname,
-            "logger": record.name,
-            "message": record.getMessage(),
-        }
-
-        if record.exc_info:
-            log_data["exception"] = self.formatException(record.exc_info)
-
-        if hasattr(record, "context") and record.context:
-            log_data.update(record.context)
-
-        return json.dumps(log_data)
 
 
 class PerformanceFormatter:

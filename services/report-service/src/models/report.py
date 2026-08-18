@@ -2,6 +2,11 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field, ConfigDict
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "shared" / "src"))
+from report_models import ReportMetadata  # noqa: E402
 
 
 class ReportType(str, Enum):
@@ -19,16 +24,6 @@ class ReportStatus(str, Enum):
     SCHEDULED = "scheduled"
     PAUSED = "paused"
     ARCHIVED = "archived"
-
-
-class ReportMetadata(BaseModel):
-    """Report metadata."""
-    created_by: str
-    created_at: datetime
-    updated_by: Optional[str] = None
-    updated_at: Optional[datetime] = None
-    version: str = "1.0"
-    tags: List[str] = Field(default_factory=list)
 
 
 class ReportSchedule(BaseModel):

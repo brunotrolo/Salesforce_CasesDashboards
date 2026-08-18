@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Report, ReportExecutionResult, ListReportsResponse, CreateReportResponse, ReportStatus } from '@typings/report'
+import { Report, ReportExecutionResult, ListReportsResponse, CreateReportResponse, ReportStatus } from '@shared/types/report'
 
 const API_BASE = '/api'
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useReportFormStore } from '@stores/reportFormStore'
 import { FormStep } from '@components/FormStep'
 import { reportApi } from '@api/reportApi'
-import { logger } from '@utils/logger'
+import { logger } from '@shared/utils/logger'
 
 const STEPS = [
   { id: 1, title: 'Informações Básicas', subtitle: 'Nome, descrição e tipo' },

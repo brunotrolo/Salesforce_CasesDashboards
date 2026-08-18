@@ -11,20 +11,29 @@ from starlette.middleware.base import BaseHTTPMiddleware
 class RateLimiter:
     """Simple in-memory rate limiter."""
 
-    def __init__(self, requests_per_minute: int = 60, max_clients: int = 10000):
+    def __init__(
+        self,
+        requests_per_minute: int = 60,
+        max_clients: int = 10000,
+        entry_ttl: float = 300.0,
+    ):
         self.requests_per_minute = requests_per_minute
         self.max_clients = max_clients
+        self.entry_ttl = entry_ttl
         self.requests: Dict[str, list[float]] = defaultdict(list)
+        self._last_cleanup = 0.0
+        self._cleanup_interval = 30.0
 
     def _cleanup(self) -> None:
         """Remove stale client entries to prevent unbounded growth."""
-        if len(self.requests) <= self.max_clients:
-            return
-
         now = time.time()
-        # Keep only entries with recent activity
+        if now - self._last_cleanup < self._cleanup_interval:
+            return
+        self._last_cleanup = now
+
+        stale_before = now - self.entry_ttl
         for client_id in list(self.requests.keys()):
-            recent = [t for t in self.requests[client_id] if t > now - 60]
+            recent = [t for t in self.requests[client_id] if t > stale_before]
             if recent:
                 self.requests[client_id] = recent
             else:

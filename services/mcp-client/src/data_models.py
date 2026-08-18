@@ -2,17 +2,14 @@
 Data models for Salesforce reports.
 """
 
+import sys
+from pathlib import Path
 from typing import Optional, Dict, Any, List
 from pydantic import BaseModel, Field
 from datetime import datetime
 
-
-class ReportMetadata(BaseModel):
-    """Metadados do relatório."""
-    type: str = "report"
-    version: str = "1.0"
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "shared" / "src"))
+from report_models import ReportMetadata  # noqa: E402
 
 
 class ReportConfig(BaseModel):
