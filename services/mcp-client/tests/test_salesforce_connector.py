@@ -1,7 +1,8 @@
 """Tests for Salesforce connector."""
 
+import asyncio
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from src.salesforce_connector import SalesforceConnector
 from src.data_models import ReportConfig
 from src.error_handler import AuthenticationError
@@ -28,7 +29,7 @@ def test_missing_credentials():
     connector = SalesforceConnector(oauth_handler=oauth)
 
     with pytest.raises(AuthenticationError):
-        connector._get_headers()
+        connector._get_headers().send(None)
 
 
 def test_create_report_structure():
@@ -46,8 +47,18 @@ def test_create_report_structure():
 
 def test_get_headers_with_token():
     """Testar headers com token válido."""
-    connector = SalesforceConnector(oauth_handler=Mock())
-    headers = connector._get_headers()
+    oauth = Mock()
+    oauth.get_valid_token.return_value = "test_token"
+    connector = SalesforceConnector(oauth_handler=oauth)
+    headers = asyncio.run(connector._get_headers())
 
     assert "Authorization" in headers
-    assert headers["Authorization"].startswith("Bearer ")
+    assert headers["Authorization"] == "Bearer test_token"
+
+
+@pytest.mark.asyncio
+async def test_get_headers_async(connector):
+    """Testar headers com token válido via await."""
+    headers = await connector._get_headers()
+    assert "Authorization" in headers
+    assert headers["Authorization"] == "Bearer test_token"

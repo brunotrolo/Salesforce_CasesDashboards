@@ -10,11 +10,19 @@ from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from auth import get_current_user, create_access_token
 from rate_limit import RateLimitMiddleware
 from cache import cache, get_cache_key
+from errors import (
+    GatewayError,
+    ReportNotFoundError,
+    ReportValidationError,
+    InvalidStatusError,
+    ExternalServiceError,
+)
 
 # Initialize stdlib logger for bootstrap messages
 bootstrap_logger = logging.getLogger(__name__)
@@ -186,6 +194,27 @@ app.add_middleware(
 
 
 # ============================================================================
+# Error Handlers
+# ============================================================================
+
+@app.exception_handler(GatewayError)
+async def gateway_error_handler(request, exc: GatewayError):
+    """Handle domain exceptions with proper status codes."""
+    logger.error(
+        f"{exc.code}: {exc.message}",
+        context={"path": request.url.path, "detail": exc.detail},
+    )
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": {"code": exc.code, "message": exc.message},
+            "detail": exc.detail,
+            "path": request.url.path,
+        },
+    )
+
+
+# ============================================================================
 # Request/Response Models
 # ============================================================================
 
@@ -321,7 +350,10 @@ async def list_reports(
 
         report_status = None
         if status:
-            report_status = ReportStatus[status.upper()]
+            try:
+                report_status = ReportStatus[status.upper()]
+            except KeyError:
+                raise InvalidStatusError(f"Invalid report status: {status}")
 
         result = await report_manager.list_reports(
             status=report_status,
@@ -333,10 +365,10 @@ async def list_reports(
         cache.set(cache_key, result.model_dump() if hasattr(result, 'model_dump') else result)
 
         return result
-    except KeyError:
-        raise HTTPException(status_code=400, detail="Invalid report status")
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error listing reports")
+        logger.error("Error listing reports", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -378,9 +410,14 @@ async def create_report(
             user_id=current_user["user_id"],
         )
 
+        if not result:
+            raise ReportValidationError("Report validation failed", detail="Report could not be created")
+
         return result
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error creating report")
+        logger.error("Error creating report", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -396,11 +433,13 @@ async def get_report(
 
         report = await report_manager.get_report(report_id)
         if not report:
-            raise HTTPException(status_code=404, detail="Report not found")
+            raise ReportNotFoundError(f"Report {report_id} not found")
 
         return report.model_dump()
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error getting report")
+        logger.error("Error getting report", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -422,9 +461,14 @@ async def update_report(
             user_id=current_user["user_id"],
         )
 
+        if not result:
+            raise ReportNotFoundError(f"Report {report_id} not found")
+
         return result
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error updating report")
+        logger.error("Error updating report", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -439,9 +483,14 @@ async def delete_report(
         logger.info("Deleting report")
 
         result = await report_manager.delete_report(report_id)
+        if not result:
+            raise ReportNotFoundError(f"Report {report_id} not found")
+
         return result
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error deleting report")
+        logger.error("Error deleting report", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -469,8 +518,10 @@ async def execute_report(
             "data": result.data,
             "error": result.error,
         }
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error executing report")
+        logger.error("Error executing report", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -503,9 +554,14 @@ async def schedule_report(
         logger.info("Scheduling report")
 
         result = await report_manager.schedule_report(report_id, cron, user_id=current_user["user_id"])
+        if not result:
+            raise ReportNotFoundError(f"Report {report_id} not found")
+
         return result
+    except GatewayError:
+        raise
     except Exception as e:
-        logger.error("Error scheduling report")
+        logger.error("Error scheduling report", context={"error": str(e)})
         raise HTTPException(status_code=500, detail="Internal server error")
 
 

@@ -75,6 +75,10 @@ class StructuredLogger:
         duration_ms: Optional[int] = None,
     ) -> str:
         """Format log entry as JSON with all metadata."""
+        from .context import RequestContext
+        trace_id = trace_id or RequestContext.get_trace_id() or str(uuid.uuid4())
+        correlation_id = correlation_id or RequestContext.get_correlation_id() or trace_id
+
         log_entry = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "service": self.service_name,

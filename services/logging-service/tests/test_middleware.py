@@ -156,12 +156,10 @@ class TestContextVars:
         ContextVars.set_trace_id(trace_id)
         assert ContextVars.get_trace_id() == trace_id
 
-    def test_get_trace_id_generates_uuid_if_not_set(self):
-        """Test trace_id is generated if not set."""
+    def test_get_trace_id_returns_none_if_not_set(self):
+        """Test trace_id returns None when not set (logger generates as fallback)."""
         ContextVars.clear()
-        trace_id = ContextVars.get_trace_id()
-        assert trace_id is not None
-        assert len(trace_id) > 0
+        assert ContextVars.get_trace_id() is None
 
     def test_set_and_get_correlation_id(self):
         """Test setting and getting correlation_id."""
@@ -169,12 +167,10 @@ class TestContextVars:
         ContextVars.set_correlation_id(correlation_id)
         assert ContextVars.get_correlation_id() == correlation_id
 
-    def test_correlation_id_defaults_to_trace_id(self):
-        """Test correlation_id defaults to trace_id."""
+    def test_correlation_id_returns_none_without_trace(self):
+        """Test correlation_id returns None when not set."""
         ContextVars.clear()
-        trace_id = "trace-789"
-        ContextVars.set_trace_id(trace_id)
-        assert ContextVars.get_correlation_id() == trace_id
+        assert ContextVars.get_correlation_id() is None
 
     def test_clear_context(self):
         """Test clearing context vars."""

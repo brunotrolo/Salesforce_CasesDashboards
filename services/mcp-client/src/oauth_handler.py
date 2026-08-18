@@ -1,4 +1,4 @@
-import requests
+import httpx
 import secrets
 import time
 from typing import Dict, Optional, Tuple
@@ -65,7 +65,7 @@ class OAuthHandler:
             try:
                 log.debug(f"Tentativa {attempt + 1} de troca de código por token")
                 
-                response = requests.post(
+                response = httpx.post(
                     token_url,
                     data=payload,
                     timeout=settings.OAUTH_TIMEOUT
@@ -89,7 +89,7 @@ class OAuthHandler:
                 error_data = response.json()
                 raise Exception(f"Erro OAuth: {error_data.get('error_description')}")
             
-            except requests.Timeout:
+            except httpx.TimeoutException:
                 log.warning(f"Timeout na tentativa {attempt + 1}")
                 if attempt < self.retry_attempts - 1:
                     time.sleep(self.retry_delay * (2 ** attempt))
@@ -124,7 +124,7 @@ class OAuthHandler:
         }
         
         try:
-            response = requests.post(
+            response = httpx.post(
                 token_url,
                 data=payload,
                 timeout=settings.OAUTH_TIMEOUT

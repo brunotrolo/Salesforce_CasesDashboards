@@ -1,14 +1,14 @@
-import requests
-import json
+import httpx
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 from src.config import settings
 from src.logger import log
 from src.oauth_handler import OAuthHandler
+from src.error_handler import retry_async
 from src.models import Report, ReportExecutionResult, ReportStatus, ReportType
 
 class SalesforceConnector:
-    """Conector com Salesforce via API REST e MCP."""
+    """Conector com Salesforce via API REST e MCP (async, sessão única)."""
     
     def __init__(self, oauth_handler: OAuthHandler):
         self.oauth = oauth_handler
@@ -16,8 +16,16 @@ class SalesforceConnector:
         self.api_version = "v59.0"
         self.base_url = f"{self.instance_url}/services/data/{self.api_version}"
         self.timeout = settings.OAUTH_TIMEOUT
+        self._client = httpx.AsyncClient(
+            timeout=self.timeout,
+            follow_redirects=True,
+        )
     
-    def _get_headers(self) -> Dict[str, str]:
+    async def close(self):
+        """Fecha a sessão HTTP."""
+        await self._client.aclose()
+    
+    async def _get_headers(self) -> Dict[str, str]:
         """Retorna headers com autorização."""
         token = self.oauth.get_valid_token()
         return {
@@ -26,7 +34,8 @@ class SalesforceConnector:
             "Accept": "application/json",
         }
     
-    def create_report(self, report_name: str, report_data: Dict) -> str:
+    @retry_async(max_retries=3, backoff_factor=2.0)
+    async def create_report(self, report_name: str, report_data: Dict) -> str:
         """
         Cria um novo relatório no Salesforce.
         
@@ -46,11 +55,10 @@ class SalesforceConnector:
         }
         
         try:
-            response = requests.post(
+            response = await self._client.post(
                 url,
-                headers=self._get_headers(),
+                headers=await self._get_headers(),
                 json=payload,
-                timeout=self.timeout
             )
             
             if response.status_code in [200, 201]:
@@ -66,7 +74,8 @@ class SalesforceConnector:
             log.error("Falha ao criar relatório no Salesforce", error=e)
             raise
     
-    def get_report(self, report_id: str) -> Dict:
+    @retry_async(max_retries=3, backoff_factor=2.0)
+    async def get_report(self, report_id: str) -> Dict:
         """
         Obtém informações de um relatório.
         
@@ -79,10 +88,9 @@ class SalesforceConnector:
         url = f"{self.base_url}/sobjects/Report/{report_id}"
         
         try:
-            response = requests.get(
+            response = await self._client.get(
                 url,
-                headers=self._get_headers(),
-                timeout=self.timeout
+                headers=await self._get_headers(),
             )
             
             if response.status_code == 200:
@@ -99,7 +107,8 @@ class SalesforceConnector:
             log.error("Falha ao obter relatório", error=e, salesforce_id=report_id)
             raise
     
-    def list_reports(self, limit: int = 100, offset: int = 0) -> List[Dict]:
+    @retry_async(max_retries=3, backoff_factor=2.0)
+    async def list_reports(self, limit: int = 100, offset: int = 0) -> List[Dict]:
         """
         Lista relatórios no Salesforce.
         
@@ -118,11 +127,10 @@ class SalesforceConnector:
         }
         
         try:
-            response = requests.get(
+            response = await self._client.get(
                 url,
-                headers=self._get_headers(),
+                headers=await self._get_headers(),
                 params=params,
-                timeout=self.timeout
             )
             
             if response.status_code == 200:
@@ -136,7 +144,8 @@ class SalesforceConnector:
             log.error("Falha ao listar relatórios", error=e)
             raise
     
-    def update_report(self, report_id: str, updates: Dict) -> bool:
+    @retry_async(max_retries=3, backoff_factor=2.0)
+    async def update_report(self, report_id: str, updates: Dict) -> bool:
         """
         Atualiza um relatório.
         
@@ -150,11 +159,10 @@ class SalesforceConnector:
         url = f"{self.base_url}/sobjects/Report/{report_id}"
         
         try:
-            response = requests.patch(
+            response = await self._client.patch(
                 url,
-                headers=self._get_headers(),
+                headers=await self._get_headers(),
                 json=updates,
-                timeout=self.timeout
             )
             
             if response.status_code in [200, 204]:
@@ -167,7 +175,8 @@ class SalesforceConnector:
             log.error("Falha ao atualizar relatório", error=e, salesforce_id=report_id)
             raise
     
-    def delete_report(self, report_id: str) -> bool:
+    @retry_async(max_retries=3, backoff_factor=2.0)
+    async def delete_report(self, report_id: str) -> bool:
         """
         Deleta um relatório.
         
@@ -180,10 +189,9 @@ class SalesforceConnector:
         url = f"{self.base_url}/sobjects/Report/{report_id}"
         
         try:
-            response = requests.delete(
+            response = await self._client.delete(
                 url,
-                headers=self._get_headers(),
-                timeout=self.timeout
+                headers=await self._get_headers(),
             )
             
             if response.status_code in [200, 204]:
@@ -199,7 +207,8 @@ class SalesforceConnector:
             log.error("Falha ao deletar relatório", error=e, salesforce_id=report_id)
             raise
     
-    def execute_report(self, report_id: str) -> ReportExecutionResult:
+    @retry_async(max_retries=3, backoff_factor=2.0)
+    async def execute_report(self, report_id: str) -> ReportExecutionResult:
         """
         Executa um relatório no Salesforce.
         
@@ -214,10 +223,9 @@ class SalesforceConnector:
         start_time = datetime.utcnow()
         
         try:
-            response = requests.get(
+            response = await self._client.get(
                 url,
-                headers=self._get_headers(),
-                timeout=self.timeout
+                headers=await self._get_headers(),
             )
             
             execution_time = int((datetime.utcnow() - start_time).total_seconds() * 1000)

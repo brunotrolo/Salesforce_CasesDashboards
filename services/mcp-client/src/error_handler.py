@@ -2,7 +2,9 @@
 Error handling for Salesforce MCP client.
 """
 
-from typing import Optional
+from typing import Optional, Callable, Any, Awaitable
+import asyncio
+import functools
 import traceback
 import logging
 
@@ -28,6 +30,11 @@ class TokenExpiredError(AuthenticationError):
 
 class InvalidConfigError(SalesforceError):
     """Configuração inválida."""
+    pass
+
+
+class InvalidQueryError(SalesforceError):
+    """Query SOQL inválida ou insegura."""
     pass
 
 
@@ -84,20 +91,32 @@ class ErrorHandler:
 
         return MCPError(str(error))
 
-    def retry_on_error(self, func, max_retries: int = 3, backoff_factor: float = 2.0):
-        """Decorator para retry automático."""
-        def wrapper(*args, **kwargs):
+def retry_async(max_retries: int = 3, backoff_factor: float = 2.0):
+    """Decorator para retry automático em funções async (não bloqueia event loop).
+
+    Re-tenta em erros de RateLimitError e TokenExpiredError usando asyncio.sleep.
+
+    Exemplo:
+        @retry_async(max_retries=3)
+        async def fetch_data(self):
+            ...
+    """
+    logger = logging.getLogger(__name__)
+
+    def decorator(func: Callable[..., Awaitable[Any]]) -> Callable[..., Awaitable[Any]]:
+        @functools.wraps(func)
+        async def wrapper(*args, **kwargs):
             for attempt in range(max_retries):
                 try:
-                    return func(*args, **kwargs)
+                    return await func(*args, **kwargs)
                 except (RateLimitError, TokenExpiredError) as e:
                     if attempt == max_retries - 1:
                         raise
                     wait_time = backoff_factor ** attempt
-                    self.logger.warning(
-                        f"Retry attempt {attempt + 1}/{max_retries} after {wait_time}s",
+                    logger.warning(
+                        f"Async retry attempt {attempt + 1}/{max_retries} after {wait_time}s",
                         extra={"error": str(e)}
                     )
-                    import time
-                    time.sleep(wait_time)
+                    await asyncio.sleep(wait_time)
         return wrapper
+    return decorator
