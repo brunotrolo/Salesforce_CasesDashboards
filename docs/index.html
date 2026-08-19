@@ -28,6 +28,8 @@
             --linha: #e3e0d6;
             --linha-forte: #c9c5b8;
             --accent-claro: #e7f0ee;
+            --accent: #0e6e6b;
+            --accent-forte: #0a4f4c;
 
             /* Typography (matching dashboards) */
             --serif: "Newsreader", Georgia, "Times New Roman", serif;
@@ -156,6 +158,272 @@
             text-align: right;
             font-size: 14px;
             color: var(--tinta-suave);
+        }
+
+        .header-update {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .header-update-label {
+            font-size: 12px;
+            color: var(--tinta-fraca);
+        }
+
+        .btn-update {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 1px solid var(--linha-forte);
+            border-radius: 8px;
+            background: var(--fundo);
+            color: var(--tinta);
+            font-family: var(--grotesk);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-update:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent-forte);
+            background: var(--accent-claro);
+        }
+
+        .btn-update:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .btn-update:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-update.spinning .btn-update-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ═══════════════════════════════════════════════════════════ */
+        /* UPDATE MODAL */
+        /* ═══════════════════════════════════════════════════════════ */
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(32, 36, 43, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--fundo);
+            border: 1px solid var(--linha);
+            border-radius: 16px;
+            max-width: 560px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 28px;
+            box-shadow: 0 16px 48px rgba(32, 36, 43, 0.18);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-family: var(--serif);
+            font-size: 22px;
+            font-weight: 500;
+            color: var(--tinta);
+            margin: 0;
+        }
+
+        .modal-close {
+            border: none;
+            background: none;
+            font-size: 22px;
+            line-height: 1;
+            color: var(--tinta-fraca);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--tinta);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 10px;
+            background: var(--linha);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 999px;
+            transition: width 0.4s ease;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--tinta-fraca);
+            margin-bottom: 20px;
+        }
+
+        .activity-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--tinta-suave);
+            padding: 8px 12px;
+            border: 1px solid var(--linha);
+            border-radius: 8px;
+            background: var(--papel);
+        }
+
+        .activity-item.done {
+            border-color: var(--ok);
+            background: #f2f7f3;
+        }
+
+        .activity-item.failed {
+            border-color: var(--alerta);
+            background: #fbf2ef;
+        }
+
+        .activity-item.active {
+            border-color: var(--accent);
+            background: var(--accent-claro);
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--tinta-fraca);
+            flex-shrink: 0;
+        }
+
+        .activity-item.active .activity-dot {
+            background: var(--accent);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .activity-item.done .activity-dot {
+            background: var(--ok);
+        }
+
+        .activity-item.failed .activity-dot {
+            background: var(--alerta);
+        }
+
+        .activity-label {
+            flex: 1;
+        }
+
+        .activity-status {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--tinta-fraca);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .modal-done {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .btn-done {
+            padding: 8px 20px;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font-family: var(--grotesk);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .btn-done:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .token-field {
+            margin-top: 16px;
+        }
+
+        .token-field label {
+            display: block;
+            font-size: 12px;
+            color: var(--tinta-suave);
+            margin-bottom: 6px;
+        }
+
+        .token-field input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--linha-forte);
+            border-radius: 8px;
+            font-family: var(--grotesk);
+            font-size: 13px;
+            color: var(--tinta);
+        }
+
+        .token-hint {
+            font-size: 11px;
+            color: var(--tinta-fraca);
+            margin-top: 6px;
+        }
+
+        @media (max-width: 600px) {
+            .header-update {
+                align-items: flex-start;
+            }
         }
 
         /* ═══════════════════════════════════════════════════════════ */
@@ -483,8 +751,15 @@
                 </div>
             </div>
             <div class="header-meta">
-                <div>Atualizado hoje</div>
-                <div id="current-date"></div>
+                <div class="header-update">
+                    <div id="last-update-label" class="header-update-label">Verificando atualização…</div>
+                    <button id="btn-update" class="btn-update" type="button">
+                        <svg class="btn-update-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                        </svg>
+                        Atualizar agora
+                    </button>
+                </div>
             </div>
         </div>
     </header>
@@ -751,17 +1026,310 @@
         </footer>
     </div>
 
-    <script>
-        // Set current date in header
-        const now = new Date();
-        const dateFormatter = new Intl.DateTimeFormat('pt-BR', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-        document.getElementById('current-date').textContent = dateFormatter.format(now);
+    <!-- UPDATE MODAL -->
+    <div class="modal-overlay" id="update-modal" role="dialog" aria-modal="true" aria-labelledby="update-modal-title">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="update-modal-title">Atualizando dados</h2>
+                <button class="modal-close" id="modal-close" type="button" aria-label="Fechar">&times;</button>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="progress-meta">
+                <span id="progress-status">Preparando…</span>
+                <span id="progress-percent">0%</span>
+            </div>
+            <ul class="activity-list" id="activity-list"></ul>
+            <div class="token-field" id="token-field" hidden>
+                <label for="token-input">Token de acesso (GitHub PAT)</label>
+                <input type="password" id="token-input" autocomplete="off" placeholder="ghp_…">
+                <div class="token-hint">Necessário para disparar o workflow. Salvo apenas no seu navegador (localStorage).</div>
+            </div>
+            <div class="modal-done">
+                <button class="btn-done" id="modal-done" type="button" disabled>Concluir</button>
+            </div>
+        </div>
+    </div>
 
-        // Theme toggle (optional - for development)
+    <script>
+        const CONFIG = {
+            repo: 'brunotrolo/Salesforce_CasesDashboards',
+            workflow: 'manual-update.yml',
+            ref: 'main',
+            api: 'https://api.github.com',
+            tokenKey: 'gh_pat_dashboard'
+        };
+
+        const state = {
+            runId: null,
+            pollTimer: null,
+            running: false
+        };
+
+        const $ = (id) => document.getElementById(id);
+
+        /* ── Header: última atualização ─────────────────────────── */
+        const labelEl = $('last-update-label');
+
+        function formatLastSync(iso) {
+            const date = new Date(iso);
+            const today = new Date();
+            const sameDay = date.toDateString() === today.toDateString();
+            const time = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const day = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            return sameDay ? `Atualizado hoje às ${time}` : `Atualizado em ${day} às ${time}`;
+        }
+
+        async function loadLastSync() {
+            try {
+                const res = await fetch('data/metadata.json', { cache: 'no-store' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const meta = await res.json();
+                if (meta.lastSync) {
+                    labelEl.textContent = formatLastSync(meta.lastSync);
+                } else {
+                    labelEl.textContent = 'Sem registro de atualização';
+                }
+            } catch (err) {
+                labelEl.textContent = 'Não foi possível verificar a última atualização';
+            }
+        }
+
+        /* ── Modal ──────────────────────────────────────────────── */
+        const modal = $('update-modal');
+        const fill = $('progress-fill');
+        const statusEl = $('progress-status');
+        const percentEl = $('progress-percent');
+        const listEl = $('activity-list');
+        const tokenField = $('token-field');
+        const tokenInput = $('token-input');
+        const doneBtn = $('modal-done');
+
+        const ACTIVITY_LABELS = {
+            'Checkout do repositório': 'Preparando repositório',
+            'Configurar Python': 'Configurando ambiente Python',
+            'Instalar dependências': 'Instalando dependências',
+            'Buscar dados do Salesforce': 'Buscando dados do Salesforce',
+            'Gerar dashboards diário e semanal': 'Gerando dashboards',
+            'Confirmar arquivos gerados': 'Confirmando arquivos gerados',
+            'Commit e push': 'Salvando e publicando'
+        };
+
+        function activityKey(stepName) {
+            const match = Object.keys(ACTIVITY_LABELS).find(k => stepName.includes(k));
+            return match || stepName;
+        }
+
+        function renderActivities(steps) {
+            listEl.innerHTML = '';
+            steps.forEach(step => {
+                const item = document.createElement('li');
+                item.className = 'activity-item';
+                const label = ACTIVITY_LABELS[activityKey(step.name)] || step.name;
+                let statusText;
+                if (step.status === 'completed') {
+                    item.classList.add(step.conclusion === 'success' ? 'done' : 'failed');
+                    statusText = step.conclusion === 'success' ? 'Concluído' : 'Falhou';
+                } else if (step.status === 'in_progress') {
+                    item.classList.add('active');
+                    statusText = 'Em andamento';
+                } else {
+                    statusText = 'Aguardando';
+                }
+                item.innerHTML = `<span class="activity-dot"></span><span class="activity-label">${label}</span><span class="activity-status">${statusText}</span>`;
+                listEl.appendChild(item);
+            });
+        }
+
+        function computeProgress(steps) {
+            const total = steps.length;
+            if (total === 0) return 0;
+            const done = steps.filter(s => s.status === 'completed').length;
+            return Math.round((done / total) * 100);
+        }
+
+        /* ── API GitHub ─────────────────────────────────────────── */
+        function getToken() {
+            return localStorage.getItem(CONFIG.tokenKey) || '';
+        }
+
+        async function api(path, options = {}) {
+            const token = getToken();
+            const res = await fetch(`${CONFIG.api}${path}`, {
+                ...options,
+                headers: {
+                    'Accept': 'application/vnd.github+json',
+                    'Authorization': `Bearer ${token}`,
+                    'X-GitHub-Api-Version': '2022-11-28',
+                    ...(options.headers || {})
+                }
+            });
+            if (!res.ok && res.status !== 404) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || `Erro HTTP ${res.status}`);
+            }
+            return res.status === 204 ? null : res.json();
+        }
+
+        async function dispatchWorkflow() {
+            const res = await fetch(`${CONFIG.api}/repos/${CONFIG.repo}/actions/workflows/${CONFIG.workflow}/dispatches`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/vnd.github+json',
+                    'Authorization': `Bearer ${getToken()}`,
+                    'X-GitHub-Api-Version': '2022-11-28'
+                },
+                body: JSON.stringify({ ref: CONFIG.ref })
+            });
+            if (!res.ok && res.status !== 204) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || `Erro HTTP ${res.status}`);
+            }
+        }
+
+        async function findLatestRun(triggeredAt) {
+            const runs = await api(`/repos/${CONFIG.repo}/actions/runs?event=workflow_dispatch&per_page=5`);
+            if (!runs || !runs.workflow_runs || runs.workflow_runs.length === 0) return null;
+            return runs.workflow_runs.find(r =>
+                r.path === `.github/workflows/${CONFIG.workflow}` &&
+                new Date(r.created_at) >= new Date(triggeredAt)
+            ) || null;
+        }
+
+        async function pollRun() {
+            try {
+                const run = await api(`/repos/${CONFIG.repo}/actions/runs/${state.runId}`);
+                if (!run) {
+                    statusEl.textContent = 'Aguardando workflow…';
+                    return;
+                }
+                const jobs = await api(`/repos/${CONFIG.repo}/actions/runs/${state.runId}/jobs`);
+                const steps = jobs && jobs.jobs && jobs.jobs.length > 0 ? jobs.jobs[0].steps : [];
+                if (steps.length > 0) {
+                    renderActivities(steps);
+                    const pct = computeProgress(steps);
+                    fill.style.width = `${pct}%`;
+                    percentEl.textContent = `${pct}%`;
+                }
+                const active = steps.find(s => s.status === 'in_progress');
+                statusEl.textContent = active
+                    ? (ACTIVITY_LABELS[activityKey(active.name)] || active.name)
+                    : 'Processando…';
+
+                if (run.status === 'completed') {
+                    stopPolling();
+                    const failed = steps.some(s => s.conclusion === 'failure');
+                    fill.style.width = '100%';
+                    percentEl.textContent = '100%';
+                    statusEl.textContent = failed ? 'Atualização falhou' : 'Atualização concluída';
+                    doneBtn.disabled = false;
+                    await loadLastSync();
+                }
+            } catch (err) {
+                statusEl.textContent = `Erro: ${err.message}`;
+            }
+        }
+
+        function stopPolling() {
+            if (state.pollTimer) {
+                clearInterval(state.pollTimer);
+                state.pollTimer = null;
+            }
+        }
+
+        /* ── Fluxo do botão ─────────────────────────────────────── */
+        async function startUpdate() {
+            if (state.running) return;
+            state.running = true;
+            const btn = $('btn-update');
+            btn.disabled = true;
+            btn.classList.add('spinning');
+
+            modal.classList.add('open');
+            fill.style.width = '0%';
+            percentEl.textContent = '0%';
+            statusEl.textContent = 'Preparando…';
+            listEl.innerHTML = '';
+            doneBtn.disabled = true;
+
+            const token = getToken();
+            tokenField.hidden = Boolean(token);
+
+            try {
+                if (!token) {
+                    statusEl.textContent = 'Informe o token de acesso';
+                    state.running = false;
+                    btn.disabled = false;
+                    btn.classList.remove('spinning');
+                    return;
+                }
+                const triggeredAt = new Date().toISOString();
+                statusEl.textContent = 'Disparando atualização…';
+                await dispatchWorkflow();
+
+                statusEl.textContent = 'Aguardando workflow iniciar…';
+                for (let i = 0; i < 12; i++) {
+                    await new Promise(r => setTimeout(r, 5000));
+                    const run = await findLatestRun(triggeredAt);
+                    if (run) {
+                        state.runId = run.id;
+                        statusEl.textContent = 'Workflow iniciado';
+                        state.pollTimer = setInterval(pollRun, 4000);
+                        await pollRun();
+                        return;
+                    }
+                }
+                statusEl.textContent = 'Workflow não detectado. Verifique se o token tem permissão de actions.';
+                state.running = false;
+                btn.disabled = false;
+                btn.classList.remove('spinning');
+            } catch (err) {
+                statusEl.textContent = `Erro: ${err.message}`;
+                state.running = false;
+                btn.disabled = false;
+                btn.classList.remove('spinning');
+            }
+        }
+
+        /* ── Eventos ────────────────────────────────────────────── */
+        $('btn-update').addEventListener('click', startUpdate);
+        $('modal-close').addEventListener('click', () => {
+            modal.classList.remove('open');
+            if (!state.running) {
+                stopPolling();
+                $('btn-update').disabled = false;
+                $('btn-update').classList.remove('spinning');
+            }
+        });
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('open');
+                if (!state.running) {
+                    stopPolling();
+                    $('btn-update').disabled = false;
+                    $('btn-update').classList.remove('spinning');
+                }
+            }
+        });
+        doneBtn.addEventListener('click', () => {
+            modal.classList.remove('open');
+            stopPolling();
+            state.running = false;
+            $('btn-update').disabled = false;
+            $('btn-update').classList.remove('spinning');
+        });
+        tokenInput.addEventListener('change', () => {
+            const value = tokenInput.value.trim();
+            if (value) {
+                localStorage.setItem(CONFIG.tokenKey, value);
+                tokenField.hidden = true;
+            }
+        });
+
+        /* ── Inicialização ──────────────────────────────────────── */
+        loadLastSync();
+
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
         }
