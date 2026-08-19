@@ -1058,13 +1058,16 @@
             workflow: 'manual-update.yml',
             ref: 'main',
             api: 'https://api.github.com',
-            tokenKey: 'gh_pat_dashboard'
+            tokenKey: 'gh_pat_dashboard',
+            encFile: 'data/token.enc.json'
         };
 
         const state = {
             runId: null,
             pollTimer: null,
-            running: false
+            running: false,
+            tokenBlob: null,
+            hasEncryptedToken: false
         };
 
         const $ = (id) => document.getElementById(id);
@@ -1152,6 +1155,91 @@
         /* ── API GitHub ─────────────────────────────────────────── */
         function getToken() {
             return localStorage.getItem(CONFIG.tokenKey) || '';
+        }
+
+        /* ── Token cifrado (multi-PC) ───────────────────────────── */
+        function base64ToBuffer(b64) {
+            const bin = atob(b64);
+            const bytes = new Uint8Array(bin.length);
+            for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            return bytes;
+        }
+
+        function bufferToBase64(buf) {
+            let bin = '';
+            const bytes = new Uint8Array(buf);
+            for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+            return btoa(bin);
+        }
+
+        async function loadEncryptedToken() {
+            try {
+                const res = await fetch(CONFIG.encFile, { cache: 'no-store' });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                state.tokenBlob = await res.json();
+                state.hasEncryptedToken = true;
+                const tokenLabel = document.querySelector('.token-field label');
+                const tokenHint = document.querySelector('.token-hint');
+                tokenLabel.textContent = 'Senha para desbloquear o token';
+                tokenInput.placeholder = 'Digite a senha…';
+                tokenHint.textContent = 'O token está cifrado no repositório (token.enc.json). A senha fica salva apenas neste navegador.';
+            } catch (err) {
+                state.hasEncryptedToken = false;
+            }
+        }
+
+        async function decryptToken(passphrase) {
+            const blob = state.tokenBlob;
+            const enc = new TextEncoder();
+            const salt = base64ToBuffer(blob.salt);
+            const iv = base64ToBuffer(blob.iv);
+            const data = base64ToBuffer(blob.data);
+
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']
+            );
+            const key = await crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: blob.iterations || 250000,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+            const plaintext = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv, tagLength: 128 },
+                key,
+                data
+            );
+            return new TextDecoder().decode(plaintext);
+        }
+
+        async function ensureToken() {
+            const stored = getToken();
+            if (stored) return stored;
+            if (state.hasEncryptedToken) {
+                const pass = tokenInput.value.trim();
+                if (!pass) return null;
+                try {
+                    const token = await decryptToken(pass);
+                    localStorage.setItem(CONFIG.tokenKey, token);
+                    tokenInput.value = '';
+                    return token;
+                } catch (err) {
+                    throw new Error('Senha incorreta ou arquivo cifrado inválido');
+                }
+            }
+            const value = tokenInput.value.trim();
+            if (value) {
+                localStorage.setItem(CONFIG.tokenKey, value);
+                tokenInput.value = '';
+                return value;
+            }
+            return null;
         }
 
         async function api(path, options = {}) {
@@ -1253,12 +1341,17 @@
             listEl.innerHTML = '';
             doneBtn.disabled = true;
 
-            const token = getToken();
-            tokenField.hidden = Boolean(token);
-
             try {
+                let token = getToken();
                 if (!token) {
-                    statusEl.textContent = 'Informe o token de acesso';
+                    if (state.hasEncryptedToken) {
+                        statusEl.textContent = 'Digite a senha para desbloquear o token';
+                        tokenInput.value = '';
+                    } else {
+                        statusEl.textContent = 'Informe o token de acesso';
+                    }
+                    tokenField.hidden = false;
+                    tokenInput.focus();
                     state.running = false;
                     btn.disabled = false;
                     btn.classList.remove('spinning');
@@ -1319,16 +1412,30 @@
             $('btn-update').disabled = false;
             $('btn-update').classList.remove('spinning');
         });
-        tokenInput.addEventListener('change', () => {
+        tokenInput.addEventListener('change', async () => {
             const value = tokenInput.value.trim();
-            if (value) {
-                localStorage.setItem(CONFIG.tokenKey, value);
-                tokenField.hidden = true;
+            if (!value) return;
+            if (state.hasEncryptedToken) {
+                try {
+                    statusEl.textContent = 'Desbloqueando token…';
+                    const token = await decryptToken(value);
+                    localStorage.setItem(CONFIG.tokenKey, token);
+                    tokenInput.value = '';
+                    tokenField.hidden = true;
+                    statusEl.textContent = 'Token desbloqueado. Clique em "Atualizar agora" novamente.';
+                } catch (err) {
+                    statusEl.textContent = 'Senha incorreta. Tente novamente.';
+                }
+                return;
             }
+            localStorage.setItem(CONFIG.tokenKey, value);
+            tokenInput.value = '';
+            tokenField.hidden = true;
         });
 
         /* ── Inicialização ──────────────────────────────────────── */
         loadLastSync();
+        loadEncryptedToken();
 
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
